@@ -48,6 +48,8 @@ module.exports = {
          failure: "#FF6A6D",
          btnbg: "#F4F4F4",
          white: "#FFFFFF",
+         whiteGrey: '#F5F7F9',
+         inputBorder: '#CCCCCC',
       },
       borderRadius: {
         lg: "var(--radius)",

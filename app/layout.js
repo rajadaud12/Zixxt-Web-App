@@ -1,3 +1,6 @@
+import { AuthProvider } from "@/context/authContext"
+import "@/app/globals.css"
+
 export const metadata = {
   title: "Design System",
   description: "A comprehensive design system with components",
@@ -13,10 +16,8 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="font-sans bg-background min-h-screen">{children}</body>
+      <body className="font-sans bg-background min-h-screen"><AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   )
 }
-
-
-import './globals.css'

@@ -1,11 +1,10 @@
 "use client"
 import { useState } from "react"
 import { H1, H2, S1, S2, B1, B2, B3, B4, C1, C2, C3, Label } from "./utils/typography"
-import { Button } from "./utils/button"
-import { Input, SearchInput, SearchBar, DropdownSearchBar  } from "./utils/input"
+import { Input, SearchInput, SearchBar, DropdownSearchBar } from "./utils/input"
 import { Tabs } from "./utils/tabs"
 import { Dropdown } from "./utils/dropdown"
-
+import "../styles/utils.css"
 export function DesignShowcase() {
   // For testing dropdown search bar
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false)
@@ -133,11 +132,11 @@ export function DesignShowcase() {
         <div className="space-y-4">
           <S2>Button Variants</S2>
           <div className="flex flex-wrap gap-4">
-            <Button variant="default">Default</Button>
-            <Button variant="primary">Primary</Button>
-            <Button variant="dark">Dark</Button>
-            <Button variant="link">Link</Button>
-            <Button variant="primary-link">Primary Link</Button>
+            <button className="btn btnDefault btnMedium">Default</button>
+            <button className="btn btnPrimary btnMedium">Primary</button>
+            <button className="btn btnDark btnMedium">Dark</button>
+            <button className="btn btnLink btnMedium">Link</button>
+            <button className="btn btnPrimaryLink btnMedium">Primary Link</button>
           </div>
         </div>
 
@@ -145,11 +144,11 @@ export function DesignShowcase() {
         <div className="space-y-4">
           <S2>Button Sizes</S2>
           <div className="flex flex-wrap items-center gap-4">
-            <Button size="tiny">Tiny</Button>
-            <Button size="small">Small</Button>
-            <Button size="medium">Medium</Button>
-            <Button size="large">Large</Button>
-            <Button size="giant">Giant</Button>
+            <button className="btn btnDefault btnTiny">Tiny</button>
+            <button className="btn btnDefault btnSmall">Small</button>
+            <button className="btn btnDefault btnMedium">Medium</button>
+            <button className="btn btnDefault btnLarge">Large</button>
+            <button className="btn btnDefault btnGiant">Giant</button>
           </div>
         </div>
 
@@ -157,9 +156,8 @@ export function DesignShowcase() {
         <div className="space-y-4">
           <S2>Button with Icon</S2>
           <div className="flex flex-wrap gap-4">
-            <Button
-              variant="default"
-              icon={
+            <button className="btn btnDefault btnMedium">
+              <span className="mr-2">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M12 6V12L16 14"
@@ -170,14 +168,12 @@ export function DesignShowcase() {
                   />
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                 </svg>
-              }
-            >
+              </span>
               With Icon
-            </Button>
+            </button>
 
-            <Button
-              variant="primary"
-              icon={
+            <button className="btn btnPrimary btnMedium">
+              <span className="mr-2">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M12 6V12L16 14"
@@ -188,10 +184,9 @@ export function DesignShowcase() {
                   />
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                 </svg>
-              }
-            >
+              </span>
               With Icon
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -200,25 +195,19 @@ export function DesignShowcase() {
           <S2>Button States</S2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-2">
-              <Button variant="default">Normal</Button>
+              <button className="btn btnDefault btnMedium">Normal</button>
               <p className="text-sm text-textLight">Normal</p>
             </div>
             <div className="space-y-2">
-              <Button variant="default" className="bg-btnbg">
-                Hover
-              </Button>
+              <button className="btn btnDefault btnMedium bg-btnbg">Hover</button>
               <p className="text-sm text-textLight">Hover</p>
             </div>
             <div className="space-y-2">
-              <Button variant="default" className="ring-2 ring-primary/20">
-                Focus
-              </Button>
+              <button className="btn btnDefault btnMedium ring-2 ring-primary/20">Focus</button>
               <p className="text-sm text-textLight">Focus</p>
             </div>
             <div className="space-y-2">
-              <Button variant="default" disabled className="opacity-50 cursor-not-allowed">
-                Disabled
-              </Button>
+              <button className="btn btnDefault btnMedium opacity-50 cursor-not-allowed" disabled>Disabled</button>
               <p className="text-sm text-textLight">Disabled</p>
             </div>
           </div>
@@ -231,9 +220,9 @@ export function DesignShowcase() {
             <div className="space-y-4">
               <B2>Normal State</B2>
               <div className="space-y-4">
-                <button className="px-4 py-2 rounded-full border border-border bg-white text-text">btn</button>
+                <button className="btn btnDefault btnMedium">btn</button>
 
-                <button className="px-4 py-2 rounded-full border border-border bg-white text-text flex items-center">
+                <button className="btn btnDefault btnMedium flex items-center">
                   <span className="mr-2">
                     <svg viewBox="0 0 24 24" width="18" height="18">
                       <path
@@ -258,9 +247,9 @@ export function DesignShowcase() {
                   logo btn
                 </button>
 
-                <button className="px-4 py-2 rounded-full bg-primary text-white">btn</button>
+                <button className="btn btnPrimary btnMedium">btn</button>
 
-                <button className="px-4 py-2 rounded-full bg-black text-white">btn</button>
+                <button className="btn btnDark btnMedium">btn</button>
 
                 <span className="text-text">Home</span>
               </div>
@@ -269,9 +258,9 @@ export function DesignShowcase() {
             <div className="space-y-4">
               <B2>Hover State</B2>
               <div className="space-y-4">
-                <button className="px-4 py-2 rounded-full border border-border bg-btnbg text-text">btn</button>
+                <button className="btn btnDefault btnMedium bg-btnbg">btn</button>
 
-                <button className="px-4 py-2 rounded-full border border-border bg-btnbg text-text flex items-center">
+                <button className="btn btnDefault btnMedium bg-btnbg flex items-center">
                   <span className="mr-2">
                     <svg viewBox="0 0 24 24" width="18" height="18">
                       <path
@@ -296,9 +285,9 @@ export function DesignShowcase() {
                   logo btn
                 </button>
 
-                <button className="px-4 py-2 rounded-full bg-primary text-white shadow-lg">btn</button>
+                <button className="btn btnPrimary btnMedium shadow-lg">btn</button>
 
-                <button className="px-4 py-2 rounded-full bg-black text-white opacity-90">btn</button>
+                <button className="btn btnDark btnMedium opacity-90">btn</button>
 
                 <span className="text-primary">Home</span>
               </div>
@@ -309,46 +298,25 @@ export function DesignShowcase() {
 
       {/* Inputs Section */}
       <section id="inputs" className="space-y-6">
-        <H2>Inputs</H2>
+        <h2 className="typoH2">Inputs</h2>
 
         {/* Text Input */}
-        <div className="space-y-4">
-          <S2>Text Input</S2>
-          <Input label="Email" placeholder="Enter email address" />
-        </div>
+        <div className="space-y-2">
+  <label className="formLabel">Email</label>
+  <input className="formInput" placeholder="Enter your email" />
+</div>
 
-        {/* Input States */}
-        <div className="space-y-4">
-          <S2>Input States</S2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Input placeholder="Normal state" />
-              <p className="text-sm text-textLight">Normal</p>
-            </div>
-            <div className="space-y-2">
-              <Input placeholder="Focus state" className="ring-2 ring-primary/20 border-primary" />
-              <p className="text-sm text-textLight">Focus</p>
-            </div>
-            <div className="space-y-2">
-              <Input placeholder="Error state" className="border-failure focus:border-failure" />
-              <p className="text-sm text-textLight">Error</p>
-            </div>
-            <div className="space-y-2">
-              <Input placeholder="Disabled state" disabled className="bg-btnbg opacity-70" />
-              <p className="text-sm text-textLight">Disabled</p>
-            </div>
-          </div>
-        </div>
+
 
         {/* Search Inputs */}
         <div className="space-y-4">
-          <S2>Search Inputs</S2>
+          <h4 className="typoS2">Search Inputs</h4>
           <div className="space-y-4">
             <SearchInput />
             <SearchInput buttonText="Search" />
             <SearchBar className="max-w-xl" />
             <div className="max-w-xl">
-              <S2 className="mb-2 mt-4">Dropdown Search Bar</S2>
+              <h4 className="typoS2 mb-2 mt-4">Dropdown Search Bar</h4>
               <DropdownSearchBar />
             </div>
           </div>
@@ -357,7 +325,7 @@ export function DesignShowcase() {
 
       {/* Tabs Section */}
       <section id="tabs" className="space-y-6">
-        <H2>Tabs</H2>
+        <h2 className="typoH2">Tabs</h2>
         <div className="max-w-2xl">
           <Tabs tabs={tabsData} defaultTab="software" />
         </div>
@@ -365,16 +333,16 @@ export function DesignShowcase() {
 
       {/* Dropdowns Section */}
       <section id="dropdowns" className="space-y-6">
-        <H2>Dropdowns</H2>
+        <h2 className="typoH2">Dropdowns</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <S2>Default Dropdown</S2>
+            <h4 className="typoS2">Default Dropdown</h4>
             <div className="max-w-xs">
               <Dropdown options={["Service", "Product", "Support", "Contact"]} defaultValue="Service" />
             </div>
           </div>
           <div className="space-y-4">
-            <S2>Small Dropdown</S2>
+            <h4 className="typoS2">Small Dropdown</h4>
             <div className="max-w-[120px]">
               <Dropdown options={["All", "Software", "Services", "Courses"]} defaultValue="All" variant="small" />
             </div>
@@ -382,7 +350,7 @@ export function DesignShowcase() {
         </div>
 
         <div className="mt-8">
-          <S2>Responsive Dropdowns</S2>
+          <h4 className="typoS2">Responsive Dropdowns</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div className="w-full">
               <Dropdown options={["Small Width", "Option 2", "Option 3"]} defaultValue="Small Width" />

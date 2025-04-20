@@ -1,7 +1,7 @@
 import { H1, H2, S1 } from "../components/utils/typography"
-import { Button } from "../components/utils/button"
 import { DropdownSearchBar } from "../components/utils/input"
 import { DesignShowcase } from "../components/design-showcase"
+import '../styles/utils.css'
 
 export default function Home() {
   return (
@@ -36,9 +36,8 @@ export default function Home() {
             <div className="hidden md:block w-64">
               <DropdownSearchBar />
             </div>
-            <Button variant="primary" size="small">
-              Get Started
-            </Button>
+            <button className="btn btnPrimary btnMedium">Get Started</button>
+
           </div>
         </div>
       </header>
@@ -53,12 +52,10 @@ export default function Home() {
               A comprehensive design system with buttons, search bars, input fields, tabs, typography, and colors.
             </S1>
             <div className="flex justify-center space-x-4 mt-8">
-              <Button variant="primary" size="large">
-                Get Started
-              </Button>
-              <Button variant="default" size="large">
-                Learn More
-              </Button>
+            <button className="btn btnPrimary btnMedium">Get Started</button>
+            <button className="btn btnDefault btnMedium">Login</button>
+
+
             </div>
           </section>
 
@@ -123,9 +120,8 @@ export default function Home() {
                   placeholder="Your email"
                   className="w-full px-4 py-3 rounded-full border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
-                <Button variant="primary" size="small">
-                  Subscribe
-                </Button>
+                <button className="btn btnPrimary btnSmall">Primary</button>
+
               </div>
             </div>
           </div>

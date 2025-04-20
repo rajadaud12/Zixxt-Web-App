@@ -2,19 +2,6 @@
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 
-export function Input({ label, placeholder, className = "", ...props }) {
-  return (
-    <div className="space-y-2">
-      {label && <label className="text-[12px] leading-[16px] font-medium text-textLight">{label}</label>}
-      <input
-        className={`w-full px-4 py-3 rounded-full border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder-gray-400 ${className}`}
-        placeholder={placeholder}
-        {...props}
-      />
-    </div>
-  )
-}
-
 export function SearchInput({ placeholder = "What can we help you find?", buttonText, className = "", ...props }) {
   return (
     <div className={`relative ${className}`}>

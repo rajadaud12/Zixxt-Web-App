@@ -1,0 +1,111 @@
+/* Base button styles */
+.btn {
+  @apply inline-flex items-center justify-center rounded-full font-semibold transition-colors focus:outline-none min-w-[200px];
+}
+
+
+.btn2 {
+  @apply inline-flex items-center justify-center rounded-full font-semibold transition-colors focus:outline-none w-full min-w-[80px];
+}
+  
+
+
+/* Variant classes */
+.btnDefault {
+  @apply bg-white text-text border border-border hover:bg-btnbg;
+}
+
+.btnPrimary {
+  @apply bg-primary text-white hover:bg-primary/90;
+}
+
+.btnDark {
+  @apply bg-black text-white hover:bg-black/90;
+}
+
+.btnLink {
+  @apply bg-transparent text-text hover:text-primary p-0 min-w-0;
+}
+
+.btnPrimaryLink {
+  @apply bg-transparent text-primary hover:text-primary/90 p-0 min-w-0;
+}
+
+/* Size classes */
+.btnTiny {
+  @apply text-[10px] leading-[12px] px-3 py-1.5;
+}
+
+.btnSmall {
+  @apply text-[12px] leading-[16px] px-6 py-2;
+}
+
+.btnMedium {
+  @apply text-[14px] leading-[16px] px-6 py-3 h-[50px];
+}
+
+.btnLarge {
+  @apply text-[16px] leading-[20px] px-6 py-3.5 h-[50px];
+}
+
+.btnGiant {
+  @apply text-[18px] leading-[24px] px-6 py-4 h-[50px];
+}
+
+/* Typography classes */
+.typoH1 {
+  @apply text-[28px] leading-[34px] font-semibold font-sans;
+}
+
+.typoH2 {
+  @apply text-[24px] leading-[28px] font-semibold font-sans;
+}
+
+.typoS1 {
+  @apply text-[18px] leading-[28px] font-semibold font-sans;
+}
+
+.typoS2 {
+  @apply text-[16px] leading-[24px] font-semibold font-sans;
+}
+
+.typoB1 {
+  @apply text-[16px] leading-[24px] font-normal font-sans;
+}
+
+.typoB2 {
+  @apply text-[16px] leading-[24px] font-medium font-sans;
+}
+
+.typoB3 {
+  @apply text-[14px] leading-[20px] font-normal font-sans;
+}
+
+.typoB4 {
+  @apply text-[14px] leading-[20px] font-medium font-sans;
+}
+
+.typoC1 {
+  @apply text-[12px] leading-[16px] font-normal font-sans;
+}
+
+.typoC2 {
+  @apply text-[12px] leading-[16px] font-medium font-sans;
+}
+
+.typoC3 {
+  @apply text-[10px] leading-[14px] font-medium font-sans;
+}
+
+.typoLabel {
+  @apply text-[12px] leading-[16px] font-medium font-sans;
+}
+
+
+.formInput {
+  @apply w-full px-6 py-3 rounded-full border border-inputBorder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder-gray-400;
+}
+
+.formLabel {
+  @apply text-[15px] leading-[16px] font-medium text-text;
+}
