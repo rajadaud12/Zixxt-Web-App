@@ -5,7 +5,6 @@ import { useContext, useEffect } from "react"
 import { AuthContext } from "@/context/authContext"
 import { useRouter } from "next/navigation"
 import WelcomeSection from "@/components/buyer/welcomeSection"
-import SectionHeader from "@/components/buyer/sectionHeader"
 import ServiceCard from "@/components/buyer/serviceCard"
 import CourseCard from "@/components/buyer/courseCard"
 import SoftwareCard from "@/components/buyer/softwareCard"
@@ -152,13 +151,7 @@ export default function Dashboard() {
 
       <div className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Services"
-            description="Expert solutions for your business growth"
-            viewAllLink="/services"
-            showControls={true}
-          />
-
+         
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((service) => (
               <ServiceCard key={service.id} service={service} />
@@ -169,12 +162,7 @@ export default function Dashboard() {
 
       <div className="py-12 bg-whiteGrey">
         <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Courses"
-            description="Learn top skills from industry experts"
-            viewAllLink="/courses"
-            showControls={true}
-          />
+         
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
@@ -186,12 +174,7 @@ export default function Dashboard() {
 
       <div className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Software"
-            description="Explore smart software for seamless performance"
-            viewAllLink="/software"
-            showControls={true}
-          />
+         
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {software.map((item) => (

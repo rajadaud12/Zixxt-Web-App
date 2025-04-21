@@ -21,21 +21,19 @@ export default function Navbar() {
     <header className="sticky top-0 z-50">
       {/* Main Navigation Bar */}
       <div className="bg-white shadow-sm border-b border-border">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
-                {/* If you have a logo image */}
-                <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} /> 
-                {/* Text-based logo alternative */}
-
+                <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
               </Link>
             </div>
 
             {!isLoggedIn && (
               <>
-                <nav className="hidden md:flex items-center justify-center flex-1 space-x-8 ml-10">
+                {/* Before login: Max-width 1200px centered */}
+                <nav className="hidden md:flex items-center justify-center flex-1 space-x-8 ml-10 max-w-[1200px] mx-auto">
                   <Link href="/" className="px-2 py-2 text-text hover:text-primary font-medium">
                     Home
                   </Link>
@@ -129,104 +127,107 @@ export default function Navbar() {
       {/* Secondary Navigation Bar - Only after login - with Glass Effect */}
       {isLoggedIn && (
         <div className="relative">
-          {/* Curved Glass Effect Background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 blur-sm rounded-b-3xl"></div>
-          
-          {/* Glass Effect Overlay */}
-          <div className="absolute inset-0 bg-blue-100 bg-opacity-30 backdrop-filter backdrop-blur-sm rounded-b-3xl shadow-lg"></div>
-          
-          {/* Navigation Content */}
-          <div className="hidden md:block relative z-10">
-            <div className="container mx-auto px-4">
-              <nav className="flex items-center h-12">
-                <div className="flex items-center space-x-6">
-                  <Link href="/categories" className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm">
-                    Categories <ChevronDown className="ml-1 h-4 w-4" />
-                  </Link>
-                  <Link href="/home" className="text-text hover:text-primary text-sm font-medium">
-                    Home
-                  </Link>
-                  
-                  {/* Services Dropdown */}
-                  <div className="relative">
-                    <button 
-                      onClick={() => setIsServicesOpen(!isServicesOpen)}
-                      className="flex items-center text-text hover:text-primary text-sm font-medium"
-                    >
-                      Services <ChevronDown className="ml-1 h-4 w-4" />
-                    </button>
-                    {isServicesOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link href="/services/web-development" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Web Development
-                        </Link>
-                        <Link href="/services/mobile-apps" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Mobile Applications
-                        </Link>
-                        <Link href="/services/design" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Design Services
-                        </Link>
-                      </div>
-                    )}
+          {/* Curved Glass Effect Background with max-width 1200px */}
+          <div className="max-w-[1200px] mx-auto relative">
+            {/* Curved Glass Effect Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 blur-sm rounded-b-3xl"></div>
+            
+            {/* Glass Effect Overlay */}
+            <div className="absolute inset-0 bg-blue-100 bg-opacity-30 backdrop-filter backdrop-blur-sm rounded-b-3xl shadow-lg"></div>
+            
+            {/* Navigation Content */}
+            <div className="hidden md:block relative z-10">
+              <div className="max-w-[1200px] mx-auto px-4">
+                <nav className="flex items-center h-12">
+                  <div className="flex items-center space-x-6">
+                    <Link href="/categories" className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm">
+                      Categories <ChevronDown className="ml-1 h-4 w-4" />
+                    </Link>
+                    <Link href="/home" className="text-text hover:text-primary text-sm font-medium">
+                      Home
+                    </Link>
+                    
+                    {/* Services Dropdown */}
+                    <div className="relative">
+                      <button 
+                        onClick={() => setIsServicesOpen(!isServicesOpen)}
+                        className="flex items-center text-text hover:text-primary text-sm font-medium"
+                      >
+                        Services <ChevronDown className="ml-1 h-4 w-4" />
+                      </button>
+                      {isServicesOpen && (
+                        <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                          <Link href="/services/web-development" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Web Development
+                          </Link>
+                          <Link href="/services/mobile-apps" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Mobile Applications
+                          </Link>
+                          <Link href="/services/design" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Design Services
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Education Dropdown */}
+                    <div className="relative">
+                      <button 
+                        onClick={() => setIsEducationOpen(!isEducationOpen)}
+                        className="flex items-center text-text hover:text-primary text-sm font-medium"
+                      >
+                        Education <ChevronDown className="ml-1 h-4 w-4" />
+                      </button>
+                      {isEducationOpen && (
+                        <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                          <Link href="/education/courses" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Courses
+                          </Link>
+                          <Link href="/education/workshops" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Workshops
+                          </Link>
+                          <Link href="/education/resources" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Resources
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Softwares Dropdown */}
+                    <div className="relative">
+                      <button 
+                        onClick={() => setIsSoftwaresOpen(!isSoftwaresOpen)}
+                        className="flex items-center text-text hover:text-primary text-sm font-medium"
+                      >
+                        Softwares <ChevronDown className="ml-1 h-4 w-4" />
+                      </button>
+                      {isSoftwaresOpen && (
+                        <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                          <Link href="/softwares/desktop" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Desktop Apps
+                          </Link>
+                          <Link href="/softwares/web" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Web Apps
+                          </Link>
+                          <Link href="/softwares/mobile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Mobile Apps
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium">
+                      Post Request
+                    </Link>
+                    <Link href="/about" className="text-text hover:text-primary text-sm font-medium">
+                      About
+                    </Link>
+                    <Link href="/contact" className="text-text hover:text-primary text-sm font-medium">
+                      Contact
+                    </Link>
                   </div>
-                  
-                  {/* Education Dropdown */}
-                  <div className="relative">
-                    <button 
-                      onClick={() => setIsEducationOpen(!isEducationOpen)}
-                      className="flex items-center text-text hover:text-primary text-sm font-medium"
-                    >
-                      Education <ChevronDown className="ml-1 h-4 w-4" />
-                    </button>
-                    {isEducationOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link href="/education/courses" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Courses
-                        </Link>
-                        <Link href="/education/workshops" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Workshops
-                        </Link>
-                        <Link href="/education/resources" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Resources
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Softwares Dropdown */}
-                  <div className="relative">
-                    <button 
-                      onClick={() => setIsSoftwaresOpen(!isSoftwaresOpen)}
-                      className="flex items-center text-text hover:text-primary text-sm font-medium"
-                    >
-                      Softwares <ChevronDown className="ml-1 h-4 w-4" />
-                    </button>
-                    {isSoftwaresOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link href="/softwares/desktop" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Desktop Apps
-                        </Link>
-                        <Link href="/softwares/web" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Web Apps
-                        </Link>
-                        <Link href="/softwares/mobile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                          Mobile Apps
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium">
-                    Post Request
-                  </Link>
-                  <Link href="/about" className="text-text hover:text-primary text-sm font-medium">
-                    About
-                  </Link>
-                  <Link href="/contact" className="text-text hover:text-primary text-sm font-medium">
-                    Contact
-                  </Link>
-                </div>
-              </nav>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
@@ -235,7 +236,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden py-4 border-t border-border bg-white">
-          <div className="container mx-auto px-4">
+          <div className="max-w-[1200px] mx-auto px-4">
             {isLoggedIn ? (
               <>
                 <div className="relative mb-4">
