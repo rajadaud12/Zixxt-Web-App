@@ -66,6 +66,7 @@ const courses = [
     rating: 4.9,
     reviewCount: 175,
     price: "$45",
+    duration:'30 min'
   },
   {
     id: 2,
@@ -76,6 +77,8 @@ const courses = [
     rating: 4.8,
     reviewCount: 145,
     price: "$45",
+    duration:'30 min'
+
   },
   {
     id: 3,
@@ -86,6 +89,8 @@ const courses = [
     rating: 4.7,
     reviewCount: 125,
     price: "$45",
+    duration:'30 min'
+
   },
   {
     id: 4,
@@ -96,6 +101,8 @@ const courses = [
     rating: 4.9,
     reviewCount: 175,
     price: "$45",
+    duration:'30 min'
+
   },
 ]
 

@@ -1,45 +1,51 @@
-import Image from "next/image"
 import { Star } from "lucide-react"
 
-export default function CourseCard({ course }) {
+export default function CourseCard({  course }) {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow">
+    <div className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF]">
       <div className="relative">
-        <Image
-          src={course.image || "/placeholder.svg?height=200&width=300"}
+        <img
+          src={course.image || "/api/placeholder/280/160"}
           alt={course.title}
-          width={300}
-          height={200}
-          className="w-full h-48 object-cover"
+          className="w-full h-36 object-cover"
         />
+         {course.duration && (
+          <div className="absolute top-0 right-0 bg-white/20 backdrop-blur-md rounded-bl-[20px] text-white text-s px-3 py-2">
+            {course.duration}
+          </div>
+        )}
       </div>
       <div className="p-4">
-        <div className="flex items-center mb-2">
-          <div className="flex items-center mr-2">
-            <Image
-              src={course.instructorAvatar || "/placeholder.svg?height=24&width=24"}
-              alt={course.instructorName}
-              width={24}
-              height={24}
-              className="rounded-full mr-2"
-            />
-            <span className="text-sm font-medium">{course.instructorName}</span>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col">
+            <div className="flex items-center">
+              <img
+                src={course.avatar || "/api/placeholder/24/24"}
+                alt={course.sellerName}
+                className="w-6 h-6 rounded-full mr-2"
+              />
+              <span className="font-semibold text-base font-medium text-black">{course.sellerName || "kahmiri"}</span>
+            </div>
+            <span className="text-xs text-gray-500 ml-8">{course.location || "pakistan"}</span>
           </div>
-          <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded">Gold</span>
+          <span className="flex items-center justify-center w-[72px] h-[28px] text-xs rounded-[12px] bg-software bg-opacity-20 text-levelGold font-medium">Gold</span>
         </div>
-
-        <h3 className="font-medium text-sm mb-2 line-clamp-2 h-10">{course.title}</h3>
-
-        <div className="flex items-center mb-2">
-          <div className="flex items-center text-yellow-400">
-            <Star className="h-4 w-4 fill-current" />
-            <span className="text-xs ml-1">{course.rating}</span>
+        
+        <p className="text-paragraphText font-normal leading-tight mb-2 h-10 overflow-hidden text-light">
+          {course.title || "AI and Machine Learning Using Python Programming Language"}
+        </p>
+        
+        <div className="flex items-center mb-1">
+          <div className="flex items-center">
+            <Star className="w-4 h-4 fill-current text-software" />
+            <span className="font-semibold text-sm text-black ml-1 font-medium">{course.rating || "4.2"}</span>
+            <span className="text-xs text-gray-500 ml-1">/5</span>
           </div>
-          <span className="text-xs text-textLight ml-1">({course.reviewCount})</span>
+          <span className="text-xs text-gray-500 ml-1">({course.reviews || "273"})</span>
         </div>
-
-        <div className="text-sm font-semibold">From per {course.price}</div>
+        
+        <div className="font-semibold text-base font-medium text-black">From pkr {course.price || "1,141"}</div>
       </div>
     </div>
-  )
+  );
 }

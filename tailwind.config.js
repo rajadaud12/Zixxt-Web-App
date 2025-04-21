@@ -50,6 +50,9 @@ module.exports = {
          white: "#FFFFFF",
          whiteGrey: '#F5F7F9',
          inputBorder: '#CCCCCC',
+         software: '#FFB400',
+         course: '#03AA64',
+         levelGold:'#7E5600'
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -58,6 +61,9 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Albert Sans", "sans-serif"],
+      },
+      fontSize: {
+        paragraphText: '15px',
       },
     },
   },
