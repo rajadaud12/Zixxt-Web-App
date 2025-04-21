@@ -1,45 +1,43 @@
-import Image from "next/image"
+
 import { Star } from "lucide-react"
 
 export default function ServiceCard({ service }) {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow">
+    <div className="w-48 bg-white rounded overflow-hidden shadow-sm">
       <div className="relative">
-        <Image
-          src={service.image || "/placeholder.svg?height=200&width=300"}
+        <img
+          src={service.image || "/api/placeholder/200/160"}
           alt={service.title}
-          width={300}
-          height={200}
-          className="w-full h-48 object-cover"
+          className="w-full h-32 object-cover"
         />
       </div>
-      <div className="p-4">
-        <div className="flex items-center mb-2">
-          <div className="flex items-center mr-2">
-            <Image
-              src={service.sellerAvatar || "/placeholder.svg?height=24&width=24"}
+      <div className="p-3">
+        <div className="flex items-center mb-1">
+          <div className="flex items-center">
+            <img
+              src={service.avatar || "/api/placeholder/24/24"}
               alt={service.sellerName}
-              width={24}
-              height={24}
-              className="rounded-full mr-2"
+              className="w-5 h-5 rounded-full mr-1"
             />
-            <span className="text-sm font-medium">{service.sellerName}</span>
+            <span className="text-xs font-medium">{service.sellerName}</span>
           </div>
-          <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded">Gold</span>
+          <span className="ml-auto text-xs px-1.5 rounded bg-amber-100 text-amber-600 font-medium">Gold</span>
         </div>
-
-        <h3 className="font-medium text-sm mb-2 line-clamp-2 h-10">{service.title}</h3>
-
-        <div className="flex items-center mb-2">
-          <div className="flex items-center text-yellow-400">
-            <Star className="h-4 w-4 fill-current" />
-            <span className="text-xs ml-1">{service.rating}</span>
+        
+        <p className="text-xs font-medium leading-tight mb-1 h-8 overflow-hidden">
+          {service.title || "AI and Machine Learning Using Python Programming Language"}
+        </p>
+        
+        <div className="flex items-center mb-1">
+          <div className="flex items-center text-amber-500">
+            <Star className="w-3 h-3 fill-current" />
+            <span className="text-xs ml-0.5">{service.rating || "4.2"}</span>
           </div>
-          <span className="text-xs text-textLight ml-1">({service.reviewCount})</span>
+          <span className="text-xs text-gray-500 ml-1">({service.reviews || "3,275"})</span>
         </div>
-
-        <div className="text-sm font-semibold">From per {service.price}</div>
+        
+        <div className="text-xs font-medium">From plr {service.price || "1,141"}</div>
       </div>
     </div>
-  )
+  );
 }

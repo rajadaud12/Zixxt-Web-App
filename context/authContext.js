@@ -1,52 +1,28 @@
 // context/authContext.js
 "use client"
 
-import { createContext, useState, useEffect } from "react"
+import { createContext, useState } from "react"
 
 // Create the authentication context
 export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState(null)
 
-  // Check if user is logged in on mount
-  useEffect(() => {
-    // Check local storage for auth token or user data
-    const checkAuthStatus = () => {
-      const token = localStorage.getItem('authToken')
-      const userData = localStorage.getItem('userData')
-      
-      if (token && userData) {
-        setUser(JSON.parse(userData))
-        setIsLoggedIn(true)
-      }
-      
-      setLoading(false)
-    }
-    
-    checkAuthStatus()
-  }, [])
+  // No useEffect needed anymore since we're not checking localStorage
 
-  // Login function
+  // Login function - doesn't use localStorage anymore
   const login = (userData, token) => {
-    // Store auth data in local storage
-    localStorage.setItem('authToken', token)
-    localStorage.setItem('userData', JSON.stringify(userData))
-    
-    // Update state
+    // Update state only (no localStorage)
     setUser(userData)
     setIsLoggedIn(true)
   }
 
-  // Logout function
+  // Logout function - doesn't clear localStorage anymore
   const logout = () => {
-    // Clear auth data from local storage
-    localStorage.removeItem('authToken')
-    localStorage.removeItem('userData')
-    
-    // Update state
+    // Update state only
     setUser(null)
     setIsLoggedIn(false)
   }

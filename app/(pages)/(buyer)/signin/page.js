@@ -48,7 +48,7 @@ export default function SignIn() {
       login(userData, token)
       
       // Redirect to dashboard
-      router.push('/dashboard')
+      router.push('/home')
     } else {
       setError("Please enter both email and password")
     }
