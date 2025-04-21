@@ -125,25 +125,6 @@ const software = [
       "Lead & Contact Management",
     ],
   },
-  {
-    id: 2,
-    title: "Quality CRM System (Mini)",
-    provider: "XD Solutions",
-    logo: "/placeholder.svg?height=60&width=60",
-    rating: 4.8,
-    reviewCount: 145,
-    price: "79.00",
-    description:
-      "A Powerful And Efficient CRM System Designed To Streamline Business Operations With Robust Admin Controls.",
-    features: [
-      "Lead & Contact Management",
-      "Sales Pipeline Tracking",
-      "Task & Activity Management",
-      "Reports & Analytics",
-      "Lead & Contact Management",
-      "Lead & Contact Management",
-    ],
-  },
 ]
 
 export default function Dashboard() {
