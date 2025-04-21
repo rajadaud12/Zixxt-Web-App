@@ -4,7 +4,6 @@
 import { useContext, useEffect } from "react"
 import { AuthContext } from "@/context/authContext"
 import { useRouter } from "next/navigation"
-import BuyerLayout from "@/layout/buyer/buyerLayout"
 import WelcomeSection from "@/components/buyer/welcomeSection"
 import SectionHeader from "@/components/buyer/sectionHeader"
 import ServiceCard from "@/components/buyer/serviceCard"
@@ -167,7 +166,7 @@ export default function Dashboard() {
   }
 
   return (
-    <BuyerLayout>
+    <div>
       <WelcomeSection />
 
       <div className="py-12 bg-white">
@@ -222,6 +221,6 @@ export default function Dashboard() {
       </div>
 
       <ContactForm />
-    </BuyerLayout>
+    </div>
   )
 }

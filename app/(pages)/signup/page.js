@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { EyeIcon } from '@/app/ui/eye-icon'
+import { EyeIcon } from "@/app/ui/eye-icon"
 import { AuthContext } from "@/context/authContext"
-import '@/styles/utils.css'
+import "@/styles/utils.css"
 
 export default function Signup() {
   const [username, setUsername] = useState("")
@@ -17,11 +17,45 @@ export default function Signup() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [error, setError] = useState("")
-  const router = useRouter()
-  const { login } = useContext(AuthContext)
-
-  const slides = [0, 1, 2, 3] 
   
+  const router = useRouter()
+  const { isLoggedIn, login, loading } = useContext(AuthContext)
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && isLoggedIn) {
+      router.push('/home')
+    }
+  }, [isLoggedIn, loading, router])
+
+  // Slide data with images and text
+  const slides = [
+    {
+      image: "/images/illustration1.svg",
+      title: "One Platform, Endless Possibilities",
+      description:
+        "Discover a world of services, software, and educational content — all in one place. Whether you're looking to learn, grow, or create, we've got you covered.",
+    },
+    {
+      image: "/images/illustration2.svg",
+      title: "Powerful Tools at Your Fingertips",
+      description:
+        "Access cutting-edge software tailored to your needs — whether you’re building, designing, or managing. Innovation and efficiency start here.",
+    },
+    {
+      image: "/images/illustration3.svg",
+      title: "Unlock a Universe of Services",
+      description:
+        "From expert consultations to hands-on assistance, explore a variety of professional services designed to help you achieve your goals efficiently and effortlessly.",
+    },
+    {
+      image: "/images/illustration4.svg",
+      title: "Learn, Grow, Succeed",
+      description:
+        "Dive into rich educational content crafted by experts. From beginner courses to advanced knowledge, empower yourself with the skills to shape your future.",
+    },
+  ]
+
   const handleSignup = (e) => {
     e.preventDefault()
     setError("")
@@ -33,15 +67,19 @@ export default function Signup() {
     }
     
     try {
-      // Call signup function from context
-      const success = login(username, email, password)
-      
-      if (success) {
-        // Redirect to home page after successful signup
-        router.push("/home")
-      } else {
-        setError("Signup failed. Please try again.")
+      // Simulate successful signup
+      const userData = {
+        id: 1,
+        email: email,
+        name: username,
       }
+      const token = `token-${Math.random().toString(36).substring(2)}`
+      
+      // Call login function from context
+      login(userData, token)
+      
+      // Redirect to home page
+      router.push("/home")
     } catch (err) {
       setError("An error occurred during signup.")
       console.error(err)
@@ -60,14 +98,24 @@ export default function Signup() {
     setCurrentSlide(index)
   }
 
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  }
+
   return (
     <main className="flex min-h-screen signupContainer">
       {/* Left side - Signup Form */}
       <div className="w-1/2 p-8 flex flex-col justify-center items-center">
-        <div className="w-full max-w-md">
+        <div style={{ maxWidth: '28rem' }}>
           {/* Logo container aligned to the left */}
           <div className="mb-8 text-left">
-            <Image src="/images/logo.png" alt="ZIXXT Logo" width={120} height={50}  />
+            <Image
+              src="/images/logo.png"
+              alt="ZIXXT Logo"
+              width={120}
+              height={50}
+              style={{ width: '7.5rem', height: 'auto' }}
+            />
           </div>
 
           {/* Form content with left-aligned heading */}
@@ -171,7 +219,12 @@ export default function Signup() {
                 </div>
 
                 <button type="button" className="btn btnMedium btnDefault w-full flex justify-center items-center gap-2">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    style={{ width: '1.25rem', height: '1.25rem' }}
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <path
                       d="M18.1711 8.36788H17.5V8.33329H10V11.6666H14.6422C13.9272 13.6063 12.1133 15 10 15C7.23859 15 5.00001 12.7614 5.00001 9.99998C5.00001 7.23856 7.23859 5 10 5C11.2558 5 12.4033 5.48351 13.2819 6.27212L15.6711 3.88288C14.1443 2.45205 12.1718 1.66663 10 1.66663C5.39765 1.66663 1.66667 5.39761 1.66667 9.99996C1.66667 14.6023 5.39765 18.3333 10 18.3333C14.6024 18.3333 18.3333 14.6023 18.3333 9.99996C18.3333 9.44321 18.2756 8.89779 18.1711 8.36788Z"
                       fill="#FFC107"
@@ -208,44 +261,40 @@ export default function Signup() {
 
       {/* Right side - Illustration */}
       <div className="w-1/2 bg-whiteGrey p-8 flex flex-col justify-center items-center relative border-l border-border">
-      <div className="max-w-md">
-          <div className="relative">
-            <div className="mb-8">
-              <Image
-                src="/images/illustration1.svg"
-                alt="Platform features"
-                width={500}
-                height={500}
-                onClick={nextSlide}
-              />
+        <div style={{ maxWidth: '32rem' }}>
+          <div className="mb-8">
+            <Image
+              src={slides[currentSlide].image}
+              alt="Platform features"
+              width={500}
+              height={320}
+              style={{ width: '100%', height: '30rem', objectFit: 'contain' }}
+              onClick={nextSlide}
+            />
+          </div>
+          <div className="mb-8">
+            <h2 className="typoH2 text-black mb-4">{slides[currentSlide].title}</h2>
+            <p className="typoB1 text-text">{slides[currentSlide].description}</p>
+          </div>
+          <div className="flex items-center justify-between">
+            <button onClick={prevSlide} className="p-2 rounded-full" aria-label="Previous slide">
+              <span style={{ fontSize: '1.5rem' }}>‹</span>
+            </button>
+            <div className="flex space-x-2">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-2 h-2 rounded-full ${
+                    currentSlide === index ? "bg-black" : "bg-inputBorder"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
             </div>
-
-            <h2 className="typoH2 text-black mb-4">One Platform, Endless Possibilities</h2>
-            <p className="typoB1 text-text mb-8">
-              Discover a world of services, software, and educational content — all in one place. Whether you're looking
-              to learn, grow, or create, we've got you covered.
-            </p>
-
-            <div className="flex items-center justify-between">
-              <button onClick={prevSlide} className="p-2 rounded-full" aria-label="Previous slide">
-                <span className="text-2xl">‹</span>
-              </button>
-
-              <div className="flex space-x-2">
-                {slides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToSlide(index)}
-                    className={`w-2 h-2 rounded-full ${currentSlide === index ? "bg-black" : "bg-inputBorder"}`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-
-              <button onClick={nextSlide} className="p-2 rounded-full" aria-label="Next slide">
-                <span className="text-2xl">›</span>
-              </button>
-            </div>
+            <button onClick={nextSlide} className="p-2 rounded-full" aria-label="Next slide">
+              <span style={{ fontSize: '1.5rem' }}>›</span>
+            </button>
           </div>
         </div>
       </div>

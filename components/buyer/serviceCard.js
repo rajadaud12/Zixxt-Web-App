@@ -1,8 +1,21 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import { Star } from "lucide-react"
 
 export default function ServiceCard({ service }) {
+  const router = useRouter()
+
+  // Function to handle card click
+  const handleCardClick = () => {
+    router.push(`/serviceDetail/${service.id}`)
+  }
+
   return (
-    <div className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF]">
+    <div
+      className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF] cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <img
           src={service.image || "/api/placeholder/280/160"}
@@ -42,5 +55,5 @@ export default function ServiceCard({ service }) {
         <div className="font-semibold text-base font-medium text-black">From pkr {service.price || "1,141"}</div>
       </div>
     </div>
-  );
+  )
 }
