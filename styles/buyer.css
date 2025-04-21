@@ -1,69 +1,77 @@
 /* Navbar custom styles */
 .nav-link {
-    position: relative;
-    transition: color 0.3s ease;
-  }
-  
-  .nav-link::after {
-    content: "";
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: var(--primary, #018CFF);
-    transition: width 0.3s ease, left 0.3s ease;
-  }
-  
-  .nav-link:hover::after,
-  .nav-link.active::after {
-    width: 100%;
-    left: 0;
-  }
-  
-  /* Custom dropdown styles */
-  .custom-dropdown {
-    position: relative;
-  }
-  
-  .custom-dropdown-content {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--white, #FFFFFF);
-    min-width: 200px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 0.5rem 0;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    z-index: 50;
-  }
-  
-  .custom-dropdown:hover .custom-dropdown-content {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-  
-  /* Search bar styles */
-  .search-bar-container {
-    position: relative;
-    transition: width 0.3s ease;
-  }
-  
-  .search-bar-container:focus-within {
-    width: 300px;
-  }
-  
-  /* Custom btn overrides for navbar */
-  .btn.nav-btn {
-    min-width: auto;
-  }
-  
-  /* Override for min-width on sign-up button */
-  .btn.btnSmall.nav-signup {
-    min-width: 120px;
-  }
+  position: relative;
+  transition: color 0.3s ease;
+  padding: 0.5rem 0.75rem;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #018CFF;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Custom dropdown styles */
+.custom-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.custom-dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #FFFFFF;
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 50;
+}
+
+.custom-dropdown:hover .custom-dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Search bar styles */
+.search-bar-container {
+  position: relative;
+  transition: width 0.3s ease;
+}
+
+.search-bar-container input {
+  background-color: #F9FAFB;
+  border-color: #E6ECEF;
+}
+
+.search-bar-container:focus-within input {
+  background-color: #FFFFFF;
+  border-color: #018CFF;
+}
+
+/* Custom btn overrides for navbar */
+.btn-primary-custom {
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  box-shadow: 0 4px 10px rgba(1, 140, 255, 0.3);
+}
