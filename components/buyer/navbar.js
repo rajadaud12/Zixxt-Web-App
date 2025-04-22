@@ -60,21 +60,6 @@ export default function Navbar() {
                     </Link>
                   </nav>
 
-<<<<<<< HEAD
-                <div className="hidden md:flex items-center space-x-3">
-                  <Link 
-                    href="/signin" 
-                    className="px-5 py-2 text-text hover:text-primary rounded-full border border-gray-200 shadow-sm font-medium transition-all"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="btn btnDefault btnSmall w-[100px] "
-                  >
-                    Sign Up
-                  </Link>
-=======
                   {/* Increased spacing between nav links and buttons */}
                   <div className="flex items-center space-x-4 ml-16">
                     <Link
@@ -90,7 +75,6 @@ export default function Navbar() {
                       Sign Up
                     </Link>
                   </div>
->>>>>>> 832652efc2b5f5ba76f83d2311efa8891e894c07
                 </div>
               </>
             )}
