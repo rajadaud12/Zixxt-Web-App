@@ -216,7 +216,7 @@ export default function CourseDetail({ params }) {
                         recommendation: { rating: 4.8, comment: "I would definitely recommend this course to others!" },
                         responseTime: { rating: 4.3, comment: "The instructor responded quickly to my queries." },
                         expectations: { rating: 4.1, comment: "Overall, the course met my expectations well." },
-                        additionalImages: ['/images/servicesPictures/service1.png',  '/images/servicesPictures/service2.png', '/images/servicesPictures/service3.png',],
+                        additionalImages: ['/images/servicesPictures/service1.png', '/images/servicesPictures/service2.png', '/images/servicesPictures/service3.png',],
                     },
                 },
                 {
@@ -232,7 +232,7 @@ export default function CourseDetail({ params }) {
                         recommendation: { rating: 4.9, comment: "Highly recommend this course!" },
                         responseTime: { rating: 4.4, comment: "Responses were prompt and helpful." },
                         expectations: { rating: 4.5, comment: "Fully met my expectations." },
-                        additionalImages: ['/images/servicesPictures/service1.png',  '/images/servicesPictures/service2.png',],
+                        additionalImages: ['/images/servicesPictures/service1.png', '/images/servicesPictures/service2.png',],
                     },
                 },
             ],
@@ -425,17 +425,19 @@ export default function CourseDetail({ params }) {
 
                             {/* Languages and Skills - Moved Below Gallery */}
                             <div className="mx-auto pt-6">
-                                <div className="border border-border rounded-[20px] p-4 flex justify-between">
-                                    <div>
+                                <div className="border border-border rounded-[20px] p-6 flex justify-between">
+                                    <div className="flex-1 pr-4">
                                         <p className="text-sm font-semibold text-text mb-1">Available In</p>
                                         <p className="text-base text-text">{course.languages.join(', ')}</p>
                                     </div>
-                                    <div>
+                                    <div className="w-px bg-border mx-4"></div> {/* Vertical Divider */}
+                                    <div className="flex-1 pl-4">
                                         <p className="text-sm font-semibold text-text mb-1">Skills You'll Gain</p>
                                         <p className="text-base text-text">{course.skills.join(', ')}</p>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
                         {/* Description Section */}
@@ -484,11 +486,10 @@ export default function CourseDetail({ params }) {
                                             {course.programDetails.map((chapter) => (
                                                 <button
                                                     key={chapter.chapter}
-                                                    className={`w-full text-left py-2 px-4 rounded-lg text-sm ${
-                                                        selectedChapter === chapter.chapter
+                                                    className={`w-full text-left py-2 px-4 rounded-lg text-sm ${selectedChapter === chapter.chapter
                                                             ? 'bg-primary text-white'
                                                             : 'text-textLight hover:bg-gray-100'
-                                                    }`}
+                                                        }`}
                                                     onClick={() => setSelectedChapter(chapter.chapter)}
                                                 >
                                                     Chapter {chapter.chapter}
@@ -501,7 +502,7 @@ export default function CourseDetail({ params }) {
                                 {/* Main Content: Selected Chapter Details */}
                                 <div className="w-3/4">
                                     {currentChapter && (
-                                        <div className="p-6 bg-secondary border border-border rounded-[20px]">
+                                        <div className="p-6 border border-border rounded-[20px]">
                                             <h3 className="text-[15px] font-medium text-text mb-2">
                                                 Chapter {currentChapter.chapter}: {currentChapter.title}
                                             </h3>
@@ -513,7 +514,7 @@ export default function CourseDetail({ params }) {
                                                         {currentChapter.topics.map((topic, topicIndex) => (
                                                             <span
                                                                 key={topicIndex}
-                                                                className="px-4 py-2 bg-white border border-border rounded-full text-text text-sm"
+                                                                className="px-4 py-2 bg-whiteGrey border border-border rounded-full text-text text-sm"
                                                             >
                                                                 {topic}
                                                             </span>
