@@ -145,7 +145,7 @@ export function DesignShowcase() {
           <S2>Button Sizes</S2>
           <div className="flex flex-wrap items-center gap-4">
             <button className="btn btnDefault btnTiny">Tiny</button>
-            <button className="btn btnDefault btnSmall">Small</button>
+            <button className="btn btnDefault btnSmall min-w-[200px] ">Small</button>
             <button className="btn btnDefault btnMedium">Medium</button>
             <button className="btn btnDefault btnLarge">Large</button>
             <button className="btn btnDefault btnGiant">Giant</button>

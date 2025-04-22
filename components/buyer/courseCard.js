@@ -1,15 +1,27 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import { Star } from "lucide-react"
 
-export default function CourseCard({  course }) {
+export default function CourseCard({ course }) {
+  const router = useRouter()
+
+  const handleCardClick = () => {
+    router.push(`/courseDetail/${course.id}`)
+  }
+
   return (
-    <div className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF]">
+    <div
+      className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF] cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <img
           src={course.image || "/api/placeholder/280/160"}
           alt={course.title}
           className="w-full h-36 object-cover"
         />
-         {course.duration && (
+        {course.duration && (
           <div className="absolute top-0 right-0 bg-white/20 backdrop-blur-md rounded-bl-[20px] text-white text-s px-3 py-2">
             {course.duration}
           </div>
@@ -24,17 +36,21 @@ export default function CourseCard({  course }) {
                 alt={course.sellerName}
                 className="w-6 h-6 rounded-full mr-2"
               />
-              <span className="font-semibold text-base font-medium text-black">{course.sellerName || "kahmiri"}</span>
+              <span className="font-semibold text-base font-medium text-black">
+                {course.sellerName || "kahmiri"}
+              </span>
             </div>
             <span className="text-xs text-gray-500 ml-8">{course.location || "pakistan"}</span>
           </div>
-          <span className="flex items-center justify-center w-[72px] h-[28px] text-xs rounded-[12px] bg-software bg-opacity-20 text-levelGold font-medium">Gold</span>
+          <span className="flex items-center justify-center w-[72px] h-[28px] text-xs rounded-[12px] bg-software bg-opacity-20 text-levelGold font-medium">
+            Gold
+          </span>
         </div>
-        
+
         <p className="text-paragraphText font-normal leading-tight mb-2 h-10 overflow-hidden text-light">
           {course.title || "AI and Machine Learning Using Python Programming Language"}
         </p>
-        
+
         <div className="flex items-center mb-1">
           <div className="flex items-center">
             <Star className="w-4 h-4 fill-current text-software" />
@@ -43,9 +59,11 @@ export default function CourseCard({  course }) {
           </div>
           <span className="text-xs text-gray-500 ml-1">({course.reviews || "273"})</span>
         </div>
-        
-        <div className="font-semibold text-base font-medium text-black">From pkr {course.price || "1,141"}</div>
+
+        <div className="font-semibold text-base font-medium text-black">
+          From pkr {course.price || "1,141"}
+        </div>
       </div>
     </div>
-  );
+  )
 }
