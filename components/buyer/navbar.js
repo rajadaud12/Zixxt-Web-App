@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useContext, useState } from "react"
 import { AuthContext } from "@/context/authContext"
+import {DropdownSearchBar} from "@/components/utils/input"
 import { Search, Bell, ChevronDown, Menu, X, Heart, MessageSquare } from "lucide-react"
 
 export default function Navbar() {
@@ -20,34 +21,46 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50">
       {/* Main Navigation Bar */}
-      <div className="bg-white shadow-sm border-b border-border">
-        <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
+      <div className="relative">
+        {/* Curved Background for non-logged in state */}
+        {!isLoggedIn && (
+          <div className="absolute inset-0 max-w-[1200px] mx-auto bg-white rounded-b-[70px] shadow-sm border-b border-border"></div>
+        )}
+
+        {/* Regular background for logged in state */}
+        {isLoggedIn && (
+          <div className="absolute inset-0 bg-white shadow-sm border-b border-border"></div>
+        )}
+
+        <div className="relative w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center">
-                <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
-              </Link>
-            </div>
 
             {!isLoggedIn && (
               <>
-                {/* Before login: Max-width 1200px centered */}
-                <nav className="hidden md:flex items-center justify-center flex-1 space-x-8 ml-10 max-w-[1200px] mx-auto">
-                  <Link href="/" className="px-2 py-2 text-text hover:text-primary font-medium">
-                    Home
-                  </Link>
-                  <Link href="/services" className="px-2 py-2 text-text hover:text-primary font-medium">
-                    Services
-                  </Link>
-                  <Link href="/about" className="px-2 py-2 text-text hover:text-primary font-medium">
-                    About
-                  </Link>
-                  <Link href="/help" className="px-2 py-2 text-text hover:text-primary font-medium">
-                    Help
-                  </Link>
-                </nav>
+                {/* Before login: Max-width 1200px centered with increased spacing */}
+                <div className="hidden mx-auto max-w-[1100px] md:flex items-center justify-between w-full">
+                {/* Logo with increased left margin */}
+                  <div className="flex-shrink-0 mr-6 ml-4">
+                    <Link href="/" className="flex items-center">
+                      <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
+                    </Link>
+                  </div>
+                  <nav className="flex items-center justify-center space-x-10">
+                    <Link href="/" className="px-2 py-2 text-text hover:text-primary font-medium">
+                      Home
+                    </Link>
+                    <Link href="/services" className="px-2 py-2 text-text hover:text-primary font-medium">
+                      Services
+                    </Link>
+                    <Link href="/about" className="px-2 py-2 text-text hover:text-primary font-medium">
+                      About
+                    </Link>
+                    <Link href="/help" className="px-2 py-2 text-text hover:text-primary font-medium">
+                      Help
+                    </Link>
+                  </nav>
 
+<<<<<<< HEAD
                 <div className="hidden md:flex items-center space-x-3">
                   <Link 
                     href="/signin" 
@@ -61,32 +74,41 @@ export default function Navbar() {
                   >
                     Sign Up
                   </Link>
+=======
+                  {/* Increased spacing between nav links and buttons */}
+                  <div className="flex items-center space-x-4 ml-16">
+                    <Link
+                      href="/signin"
+                      className="btn2 btnDefault btnMedium"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="btn2 btnPrimary btnMedium"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+>>>>>>> 832652efc2b5f5ba76f83d2311efa8891e894c07
                 </div>
               </>
             )}
 
             {isLoggedIn && (
-              <div className="hidden md:flex items-center space-x-5 flex-1 ml-8">
-                {/* Search Bar */}
-                <div className="relative flex-1 max-w-md">
-                  <div className="flex items-center w-full">
-                    <div className="absolute left-3 flex items-center pointer-events-none">
-                      <Search className="h-4 w-4 text-textLight" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="What can we help you find?"
-                      className="py-2 pl-10 pr-24 w-full rounded-full border border-border bg-whiteGrey focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-sm"
-                    />
-                    <div className="absolute right-2 flex items-center bg-white rounded-full border border-border px-2 py-1">
-                      <span className="text-xs text-textLight mr-1">Services</span>
-                      <ChevronDown className="h-3 w-3 text-textLight" />
-                    </div>
-                  </div>
+              <div className="hidden mx-auto md:flex items-center justify-between w-full">
+                {/* Logo with increased left margin */}
+                <div className="flex-shrink-0 mr-6 ml-4">
+                  <Link href="/" className="flex items-center">
+                    <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
+                  </Link>
                 </div>
+                <div className="flex-2 w-[500px]">
 
-                {/* Icons and User */}
-                <div className="flex items-center space-x-5 ml-auto">
+                <DropdownSearchBar />
+                </div>
+                {/* Icons and User with improved spacing */}
+                <div className="flex items-center space-x-8 mr-4">
                   <button className="text-textLight hover:text-primary">
                     <Heart className="h-5 w-5" />
                   </button>
@@ -101,7 +123,7 @@ export default function Navbar() {
                   <Link href="/orders" className="text-text hover:text-primary font-medium">
                     Orders
                   </Link>
-                  <div className="flex items-center">
+                  <div className="flex items-center ml-2">
                     <Image
                       src={user?.avatar || "/api/placeholder/32/32"}
                       alt="User Avatar"
@@ -128,28 +150,25 @@ export default function Navbar() {
       {isLoggedIn && (
         <div className="relative">
           {/* Curved Glass Effect Background with max-width 1200px */}
-          <div className="max-w-[1200px] mx-auto relative">
-            {/* Curved Glass Effect Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 blur-sm rounded-b-3xl"></div>
-            
+          <div className="max-w-[1200px] h-[70px] mx-auto relative">
             {/* Glass Effect Overlay */}
-            <div className="absolute inset-0 bg-blue-100 bg-opacity-30 backdrop-filter backdrop-blur-sm rounded-b-3xl shadow-lg"></div>
-            
-            {/* Navigation Content */}
-            <div className="hidden md:block relative z-10">
-              <div className="max-w-[1200px] mx-auto px-4">
-                <nav className="flex items-center h-12">
-                  <div className="flex items-center space-x-6">
+            <div className="absolute inset-0 bg-secondary backdrop-filter backdrop-blur-sm rounded-b-[70px]"></div>
+
+            {/* Navigation Content with better centering and spacing */}
+            <div className="hidden md:block relative z-10 h-full">
+              <div className="max-w-[1200px] mx-auto px-6 h-full">
+                <nav className="flex items-center justify-center h-full">
+                  <div className="flex items-center justify-center space-x-10 px-4">
                     <Link href="/categories" className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm">
                       Categories <ChevronDown className="ml-1 h-4 w-4" />
                     </Link>
-                    <Link href="/home" className="text-text hover:text-primary text-sm font-medium">
+                    <Link href="/home" className="text-text hover:text-primary text-sm font-medium px-1">
                       Home
                     </Link>
-                    
+
                     {/* Services Dropdown */}
                     <div className="relative">
-                      <button 
+                      <button
                         onClick={() => setIsServicesOpen(!isServicesOpen)}
                         className="flex items-center text-text hover:text-primary text-sm font-medium"
                       >
@@ -169,10 +188,10 @@ export default function Navbar() {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Education Dropdown */}
                     <div className="relative">
-                      <button 
+                      <button
                         onClick={() => setIsEducationOpen(!isEducationOpen)}
                         className="flex items-center text-text hover:text-primary text-sm font-medium"
                       >
@@ -192,10 +211,10 @@ export default function Navbar() {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Softwares Dropdown */}
                     <div className="relative">
-                      <button 
+                      <button
                         onClick={() => setIsSoftwaresOpen(!isSoftwaresOpen)}
                         className="flex items-center text-text hover:text-primary text-sm font-medium"
                       >
@@ -215,14 +234,14 @@ export default function Navbar() {
                         </div>
                       )}
                     </div>
-                    
-                    <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium">
+
+                    <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium px-1">
                       Post Request
                     </Link>
-                    <Link href="/about" className="text-text hover:text-primary text-sm font-medium">
+                    <Link href="/about" className="text-text hover:text-primary text-sm font-medium px-1">
                       About
                     </Link>
-                    <Link href="/contact" className="text-text hover:text-primary text-sm font-medium">
+                    <Link href="/contact" className="text-text hover:text-primary text-sm font-medium px-1">
                       Contact
                     </Link>
                   </div>
@@ -235,19 +254,16 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden py-4 border-t border-border bg-white">
+        <div className={`md:hidden py-4 ${!isLoggedIn ? "rounded-b-[40px]" : "border-t border-border"} bg-white`}>
           <div className="max-w-[1200px] mx-auto px-4">
             {isLoggedIn ? (
               <>
                 <div className="relative mb-4">
+
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <Search className="h-4 w-4 text-textLight" />
                   </div>
-                  <input
-                    type="text"
-                    placeholder="What can we help you find?"
-                    className="py-2 pl-10 pr-4 w-full rounded-full border border-border bg-whiteGrey focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-sm"
-                  />
+                  <DropdownSearchBar />
                 </div>
                 <nav className="flex flex-col space-y-3">
                   <Link href="/categories" className="px-3 py-2 text-blue-600 hover:text-blue-800 font-medium flex items-center">
@@ -257,7 +273,7 @@ export default function Navbar() {
                     Home
                   </Link>
                   <div className="relative">
-                    <button 
+                    <button
                       onClick={() => setIsServicesOpen(!isServicesOpen)}
                       className="px-3 py-2 text-text hover:text-primary flex items-center justify-between w-full font-medium"
                     >
@@ -278,7 +294,7 @@ export default function Navbar() {
                     )}
                   </div>
                   <div className="relative">
-                    <button 
+                    <button
                       onClick={() => setIsEducationOpen(!isEducationOpen)}
                       className="px-3 py-2 text-text hover:text-primary flex items-center justify-between w-full font-medium"
                     >
@@ -299,7 +315,7 @@ export default function Navbar() {
                     )}
                   </div>
                   <div className="relative">
-                    <button 
+                    <button
                       onClick={() => setIsSoftwaresOpen(!isSoftwaresOpen)}
                       className="px-3 py-2 text-text hover:text-primary flex items-center justify-between w-full font-medium"
                     >
@@ -348,6 +364,12 @@ export default function Navbar() {
               </>
             ) : (
               <nav className="flex flex-col space-y-3">
+                                 {/* Logo with increased left margin */}
+                                 <div className="flex-shrink-0 mr-6 ml-4">
+                  <Link href="/" className="flex items-center">
+                    <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
+                  </Link>
+                </div>
                 <Link href="/" className="px-3 py-2 text-text hover:text-primary font-medium">
                   Home
                 </Link>
@@ -360,8 +382,8 @@ export default function Navbar() {
                 <Link href="/help" className="px-3 py-2 text-text hover:text-primary font-medium">
                   Help
                 </Link>
-                <div className="pt-2 flex flex-col space-y-3">
-                  <Link href="/signin" className="px-3 py-2 text-text hover:text-primary font-medium rounded-full border border-gray-200 text-center">
+                <div className="pt-4 flex flex-col space-y-4">
+                  <Link href="/signin" className="px-5 py-2 text-text hover:text-primary font-medium rounded-full border border-gray-200 text-center">
                     Sign In
                   </Link>
                   <Link
