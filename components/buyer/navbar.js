@@ -6,6 +6,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { AuthContext } from "@/context/authContext";
 import { DropdownSearchBar } from "@/components/utils/input";
 import { Search, Bell, ChevronDown, Menu, X, Heart, MessageSquare } from "lucide-react";
+import { categoriesData } from "@/app/data/categories"; // Import the categories
 
 export default function Navbar() {
   const { isLoggedIn, user } = useContext(AuthContext);
@@ -28,20 +29,16 @@ export default function Navbar() {
   // Handle scroll stop to show/hide secondary navbar with 500ms delay
   useEffect(() => {
     const handleScroll = () => {
-      // Mark as scrolling and hide navbar
       setIsScrolling(true);
       setShowSecondaryNav(false);
 
-      // Clear any existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
 
-      // Set timeout to detect scroll stop after 500ms
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
         setShowSecondaryNav(true);
-        // console.log("Scroll stopped, showing navbar after 500ms delay");
       }, 500);
     };
 
@@ -72,6 +69,40 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Common Dropdown Component
+  const DropdownMenu = ({ items, isOpen }) =>
+    isOpen && (
+      <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-[1200px] bg-white rounded-md shadow-lg py-4 z-50">
+        <div className="grid grid-cols-5 gap-4 px-4">
+          {items.map((category, index) => (
+            <div key={index}>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">{category.main}</h3>
+              <ul>
+                {category.sub.map((subItem, subIndex) => (
+                  <li key={subIndex}>
+                    <Link
+                      href={subItem.link}
+                      className="block px-2 py-1 text-sm text-gray-700 hover:text-blue-600"
+                    >
+                      {subItem.name}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link
+                    href={category.viewAll}
+                    className="block px-2 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    View All
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
   return (
     <header className="sticky top-0 z-50">
       {/* Main Navigation Bar */}
@@ -86,23 +117,21 @@ export default function Navbar() {
           <div className="absolute inset-0 bg-white shadow-sm border-b border-border"></div>
         )}
 
-        <div className="relative max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8">
+        <div className="relative max-w-[1100px] mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Before Login */}
             {!isLoggedIn && (
               <div className="hidden md:flex items-center justify-between w-full">
-                {/* Logo */}
                 <div className="flex-shrink-0">
                   <Link href="/" className="flex items-center">
                     <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
                   </Link>
                 </div>
-                {/* Nav Links */}
                 <nav className="flex items-center space-x-8">
                   <Link href="/" className="px-2 py-2 text-text hover:text-primary font-medium">
                     Home
                   </Link>
-                  <Link href="/services" className="px-2 py-2 text-text hover:text-primary font-medium">
+                  <Link href="serviceListings" className="px-2 py-2 text-text hover:text-primary font-medium">
                     Services
                   </Link>
                   <Link href="/about" className="px-2 py-2 text-text hover:text-primary font-medium">
@@ -112,7 +141,6 @@ export default function Navbar() {
                     Help
                   </Link>
                 </nav>
-                {/* Buttons */}
                 <div className="flex items-center space-x-4">
                   <Link href="/signin" className="btn2 btnDefault btnSmall">
                     Sign In
@@ -127,17 +155,14 @@ export default function Navbar() {
             {/* After Login */}
             {isLoggedIn && (
               <div className="hidden md:flex items-center justify-between w-full">
-                {/* Logo */}
                 <div className="flex-shrink-0">
                   <Link href="/" className="flex items-center">
                     <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
                   </Link>
                 </div>
-                {/* Search Bar */}
                 <div className="flex-1 max-w-[500px] mx-4">
                   <DropdownSearchBar />
                 </div>
-                {/* Icons and User */}
                 <div className="flex items-center space-x-4">
                   <button className="text-textLight hover:text-primary">
                     <Heart className="h-5 w-5" />
@@ -185,10 +210,8 @@ export default function Navbar() {
               : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
         >
-          {/* Curved Glass Effect Background */}
           <div className="max-w-[1200px] h-[70px] mx-auto relative">
             <div className="absolute inset-0 bg-secondary backdrop-filter backdrop-blur-sm rounded-b-[70px]"></div>
-            {/* Navigation Content */}
             <div className="relative z-10 h-full">
               <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 h-full">
                 <nav className="hidden md:flex items-center justify-center h-full space-x-8">
@@ -202,97 +225,40 @@ export default function Navbar() {
                     Home
                   </Link>
                   {/* Services Dropdown */}
-                  <div className="relative" ref={servicesRef}>
-                    <button
-                      onClick={() => setIsServicesOpen(!isServicesOpen)}
-                      className="flex items-center text-text hover:text-primary text-sm font-medium"
-                    >
+                  <div
+                    className="relative"
+                    ref={servicesRef}
+                    onMouseEnter={() => setIsServicesOpen(true)}
+                    onMouseLeave={() => setIsServicesOpen(false)}
+                  >
+                    <button className="flex items-center text-text hover:text-primary text-sm font-medium">
                       Services <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
-                    {isServicesOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link
-                          href="/services/web-development"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Web Development
-                        </Link>
-                        <Link
-                          href="/services/mobile-apps"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Mobile Applications
-                        </Link>
-                        <Link
-                          href="/services/design"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Design Services
-                        </Link>
-                      </div>
-                    )}
+                    <DropdownMenu items={categoriesData.services} isOpen={isServicesOpen} />
                   </div>
                   {/* Education Dropdown */}
-                  <div className="relative" ref={educationRef}>
-                    <button
-                      onClick={() => setIsEducationOpen(!isEducationOpen)}
-                      className="flex items-center text-text hover:text-primary text-sm font-medium"
-                    >
+                  <div
+                    className="relative"
+                    ref={educationRef}
+                    onMouseEnter={() => setIsEducationOpen(true)}
+                    onMouseLeave={() => setIsEducationOpen(false)}
+                  >
+                    <button className="flex items-center text-text hover:text-primary text-sm font-medium">
                       Education <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
-                    {isEducationOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link
-                          href="/education/courses"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Courses
-                        </Link>
-                        <Link
-                          href="/education/workshops"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Workshops
-                        </Link>
-                        <Link
-                          href="/education/resources"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Resources
-                        </Link>
-                      </div>
-                    )}
+                    <DropdownMenu items={categoriesData.education} isOpen={isEducationOpen} />
                   </div>
                   {/* Softwares Dropdown */}
-                  <div className="relative" ref={softwaresRef}>
-                    <button
-                      onClick={() => setIsSoftwaresOpen(!isSoftwaresOpen)}
-                      className="flex items-center text-text hover:text-primary text-sm font-medium"
-                    >
+                  <div
+                    className="relative"
+                    ref={softwaresRef}
+                    onMouseEnter={() => setIsSoftwaresOpen(true)}
+                    onMouseLeave={() => setIsSoftwaresOpen(false)}
+                  >
+                    <button className="flex items-center text-text hover:text-primary text-sm font-medium">
                       Softwares <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
-                    {isSoftwaresOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link
-                          href="/softwares/desktop"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Desktop Apps
-                        </Link>
-                        <Link
-                          href="/softwares/web"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Web Apps
-                        </Link>
-                        <Link
-                          href="/softwares/mobile"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Mobile Apps
-                        </Link>
-                      </div>
-                    )}
+                    <DropdownMenu items={categoriesData.softwares} isOpen={isSoftwaresOpen} />
                   </div>
                   <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium">
                     Post Request
@@ -332,6 +298,7 @@ export default function Navbar() {
                   <Link href="/home" className="px-3 py-2 text-text hover:text-primary font-medium">
                     Home
                   </Link>
+                  {/* Mobile Services Dropdown */}
                   <div className="relative">
                     <button
                       onClick={() => setIsServicesOpen(!isServicesOpen)}
@@ -341,27 +308,30 @@ export default function Navbar() {
                     </button>
                     {isServicesOpen && (
                       <div className="pl-6 mt-1 space-y-1">
-                        <Link
-                          href="/services/web-development"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Web Development
-                        </Link>
-                        <Link
-                          href="/services/mobile-apps"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Mobile Applications
-                        </Link>
-                        <Link
-                          href="/services/design"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Design Services
-                        </Link>
+                        {categoriesData.services.map((category, index) => (
+                          <div key={index}>
+                            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-1">{category.main}</h3>
+                            {category.sub.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                href={subItem.link}
+                                className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                            <Link
+                              href={category.viewAll}
+                              className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              View All
+                            </Link>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
+                  {/* Mobile Education Dropdown */}
                   <div className="relative">
                     <button
                       onClick={() => setIsEducationOpen(!isEducationOpen)}
@@ -371,27 +341,30 @@ export default function Navbar() {
                     </button>
                     {isEducationOpen && (
                       <div className="pl-6 mt-1 space-y-1">
-                        <Link
-                          href="/education/courses"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Courses
-                        </Link>
-                        <Link
-                          href="/education/workshops"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Workshops
-                        </Link>
-                        <Link
-                          href="/education/resources"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Resources
-                        </Link>
+                        {categoriesData.education.map((category, index) => (
+                          <div key={index}>
+                            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-1">{category.main}</h3>
+                            {category.sub.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                href={subItem.link}
+                                className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                            <Link
+                              href={category.viewAll}
+                              className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              View All
+                            </Link>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
+                  {/* Mobile Softwares Dropdown */}
                   <div className="relative">
                     <button
                       onClick={() => setIsSoftwaresOpen(!isSoftwaresOpen)}
@@ -401,24 +374,26 @@ export default function Navbar() {
                     </button>
                     {isSoftwaresOpen && (
                       <div className="pl-6 mt-1 space-y-1">
-                        <Link
-                          href="/softwares/desktop"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Desktop Apps
-                        </Link>
-                        <Link
-                          href="/softwares/web"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Web Apps
-                        </Link>
-                        <Link
-                          href="/softwares/mobile"
-                          className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
-                        >
-                          Mobile Apps
-                        </Link>
+                        {categoriesData.softwares.map((category, index) => (
+                          <div key={index}>
+                            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-1">{category.main}</h3>
+                            {category.sub.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                href={subItem.link}
+                                className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                            <Link
+                              href={category.viewAll}
+                              className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              View All
+                            </Link>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -460,7 +435,7 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link href="/services" className="px-3 py-2 text-text hover:text-primary font-medium">
-                    Services
+                  Services
                 </Link>
                 <Link href="/about" className="px-3 py-2 text-text hover:text-primary font-medium">
                   About

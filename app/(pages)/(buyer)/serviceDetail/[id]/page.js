@@ -48,7 +48,7 @@ export default function ServiceDetail({ params }) {
 
     const service = {
         id,
-        title: 'I will design a custom logo for your brand',
+        title: 'I will design a custom logo for your brandkjnjnjnjiinuin',
         profile: {
             name: 'Daud Bin Nasar',
             level: 'Gold',

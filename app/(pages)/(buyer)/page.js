@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import CategoryCard from "@/components/buyer/categoryCard"
+import SectionCard from "@/components/buyer/sectionCard"
 import CourseCard from "@/components/buyer/courseCard"
 import SoftwareCard from "@/components/buyer/softwareCard"
 import ServiceCard from "@/components/buyer/serviceCard"
@@ -370,13 +370,52 @@ export default function Home() {
   const softwares = [
     {
       id: 1,
+      logo: "/api/placeholder/70/70",
+      companyName: "Venhash Solutions",
+      country: "Pakistan",
+      title: "Duality CRM System With Admin Functionalities",
+      rating: 4.2,
+      reviewCount: 273,
+      price: 123,
+      level: "Gold",
+      description: "A Powerful And Efficient CRM System Designed To Manage Customer Relationships, Track Sales, And Streamline Business Operations With Robust Admin Controls.",
+      updated: "Feb 2025",
+      features: [
+        "Lead & Contact Management",
+        "Task & Activity Management",
+        "Sales Pipeline Tracking",
+        "Reports & Analytics",
+        "Lead & Contact Management",
+        "Lead & Contact Management",
+        "Lead & Contact Management",
+        "Lead & Contact Management",
+        "Lead & Contact Management"
+      ]
     },
     {
       id: 2,
-    },
-    {
-      id:3,
-    },
+      logo: "/api/placeholder/70/70",
+      companyName: "TechCorp",
+      country: "USA",
+      title: "Enterprise ERP Solution",
+      rating: 4.5,
+      reviewCount: 150,
+      price: 200,
+      level: "Platinum",
+      description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently.",
+      updated: "Jan 2025",
+      features: [
+        "Inventory Management",
+        "HR Management",
+        "Financial Reporting",
+        "Supply Chain Management",
+        "Inventory Management",
+        "Inventory Management",
+        "Inventory Management",
+        "Inventory Management",
+        "Inventory Management"
+      ]
+    }
   ];
 
   const toggleFAQ = (index) => {
@@ -445,7 +484,7 @@ export default function Home() {
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[14px]">
             {categories.map((category, index) => (
-              <CategoryCard key={index} category={category} />
+              <SectionCard key={index} category={category} />
             ))}
           </div>
         </div>
@@ -475,7 +514,7 @@ export default function Home() {
             items={softwares}
             cardType="software"
             renderItem={(software, index) => (
-             <SoftwareCard/>
+             <SoftwareCard software={software}/>
             )}
           />
         </div>

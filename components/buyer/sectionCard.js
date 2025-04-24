@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 
-export default function CategoryCard({ category }) {
+export default function SectionCard({ category }) {
   return (
     <div className="bg-gray-50 rounded-3xl p-6 text-left shadow-sm hover:shadow-md transition-shadow">
       <div className="bg-blue-400 inline-flex items-center justify-center w-12 h-12 rounded-full mb-4">

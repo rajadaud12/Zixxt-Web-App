@@ -54,7 +54,7 @@
 
 /* Typography classes */
 .typoH1 {
-  @apply text-[28px] leading-[34px] font-semibold font-sans;
+  @apply text-[40px] leading-[34px] font-semibold font-sans;
 }
 
 .typoH2 {
