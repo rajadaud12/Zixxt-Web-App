@@ -21,6 +21,7 @@ export default function Navbar() {
   const educationRef = useRef(null);
   const softwaresRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
+  const closeTimeoutRef = useRef(null); // Ref to store the timeout for closing dropdowns
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -70,7 +71,7 @@ export default function Navbar() {
   }, []);
 
   // Common Dropdown Component
-  const DropdownMenu = ({ items, isOpen }) =>
+  const DropdownMenu = ({ items, isOpen, onClose }) =>
     isOpen && (
       <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[90vw] max-w-[1200px] bg-white rounded-md shadow-lg py-4 z-50">
         <div className="grid grid-cols-5 gap-4 px-4">
@@ -83,6 +84,7 @@ export default function Navbar() {
                     <Link
                       href={subItem.link}
                       className="block px-2 py-1 text-sm text-gray-700 hover:text-blue-600"
+                      onClick={onClose} // Close dropdown on click
                     >
                       {subItem.name}
                     </Link>
@@ -92,6 +94,7 @@ export default function Navbar() {
                   <Link
                     href={category.viewAll}
                     className="block px-2 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                    onClick={onClose} // Close dropdown on click
                   >
                     View All
                   </Link>
@@ -102,6 +105,51 @@ export default function Navbar() {
         </div>
       </div>
     );
+
+  // Functions to handle delayed closing for each dropdown
+  const handleMouseLeaveServices = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsServicesOpen(false);
+    }, 10); // 1-second delay
+  };
+
+  const handleMouseEnterServices = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current); // Clear the timeout if mouse re-enters
+    }
+    setIsServicesOpen(true);
+  };
+
+  const handleMouseLeaveEducation = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsEducationOpen(false);
+    }, 10); // 1-second delay
+  };
+
+  const handleMouseEnterEducation = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current); // Clear the timeout if mouse re-enters
+    }
+    setIsEducationOpen(true);
+  };
+
+  const handleMouseLeaveSoftwares = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsSoftwaresOpen(false);
+    }, 10); // 1-second delay
+  };
+
+  const handleMouseEnterSoftwares = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current); // Clear the timeout if mouse re-enters
+    }
+    setIsSoftwaresOpen(true);
+  };
+
+  // Functions to close dropdowns immediately on click
+  const closeServices = () => setIsServicesOpen(false);
+  const closeEducation = () => setIsEducationOpen(false);
+  const closeSoftwares = () => setIsSoftwaresOpen(false);
 
   return (
     <header className="sticky top-0 z-50">
@@ -228,37 +276,49 @@ export default function Navbar() {
                   <div
                     className="relative"
                     ref={servicesRef}
-                    onMouseEnter={() => setIsServicesOpen(true)}
-                    onMouseLeave={() => setIsServicesOpen(false)}
+                    onMouseEnter={handleMouseEnterServices}
+                    onMouseLeave={handleMouseLeaveServices}
                   >
                     <button className="flex items-center text-text hover:text-primary text-sm font-medium">
                       Services <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
-                    <DropdownMenu items={categoriesData.services} isOpen={isServicesOpen} />
+                    <DropdownMenu
+                      items={categoriesData.services}
+                      isOpen={isServicesOpen}
+                      onClose={closeServices}
+                    />
                   </div>
                   {/* Education Dropdown */}
                   <div
                     className="relative"
                     ref={educationRef}
-                    onMouseEnter={() => setIsEducationOpen(true)}
-                    onMouseLeave={() => setIsEducationOpen(false)}
+                    onMouseEnter={handleMouseEnterEducation}
+                    onMouseLeave={handleMouseLeaveEducation}
                   >
                     <button className="flex items-center text-text hover:text-primary text-sm font-medium">
                       Education <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
-                    <DropdownMenu items={categoriesData.education} isOpen={isEducationOpen} />
+                    <DropdownMenu
+                      items={categoriesData.education}
+                      isOpen={isEducationOpen}
+                      onClose={closeEducation}
+                    />
                   </div>
                   {/* Softwares Dropdown */}
                   <div
                     className="relative"
                     ref={softwaresRef}
-                    onMouseEnter={() => setIsSoftwaresOpen(true)}
-                    onMouseLeave={() => setIsSoftwaresOpen(false)}
+                    onMouseEnter={handleMouseEnterSoftwares}
+                    onMouseLeave={handleMouseLeaveSoftwares}
                   >
                     <button className="flex items-center text-text hover:text-primary text-sm font-medium">
                       Softwares <ChevronDown className="ml-1 h-4 w-4" />
                     </button>
-                    <DropdownMenu items={categoriesData.softwares} isOpen={isSoftwaresOpen} />
+                    <DropdownMenu
+                      items={categoriesData.softwares}
+                      isOpen={isSoftwaresOpen}
+                      onClose={closeSoftwares}
+                    />
                   </div>
                   <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium">
                     Post Request
@@ -316,6 +376,7 @@ export default function Navbar() {
                                 key={subIndex}
                                 href={subItem.link}
                                 className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
+                                onClick={() => setIsServicesOpen(false)} // Close dropdown on click
                               >
                                 {subItem.name}
                               </Link>
@@ -323,6 +384,7 @@ export default function Navbar() {
                             <Link
                               href={category.viewAll}
                               className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              onClick={() => setIsServicesOpen(false)} // Close dropdown on click
                             >
                               View All
                             </Link>
@@ -349,6 +411,7 @@ export default function Navbar() {
                                 key={subIndex}
                                 href={subItem.link}
                                 className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
+                                onClick={() => setIsEducationOpen(false)} // Close dropdown on click
                               >
                                 {subItem.name}
                               </Link>
@@ -356,6 +419,7 @@ export default function Navbar() {
                             <Link
                               href={category.viewAll}
                               className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              onClick={() => setIsEducationOpen(false)} // Close dropdown on click
                             >
                               View All
                             </Link>
@@ -382,6 +446,7 @@ export default function Navbar() {
                                 key={subIndex}
                                 href={subItem.link}
                                 className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
+                                onClick={() => setIsSoftwaresOpen(false)} // Close dropdown on click
                               >
                                 {subItem.name}
                               </Link>
@@ -389,6 +454,7 @@ export default function Navbar() {
                             <Link
                               href={category.viewAll}
                               className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              onClick={() => setIsSoftwaresOpen(false)} // Close dropdown on click
                             >
                               View All
                             </Link>
