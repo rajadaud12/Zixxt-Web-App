@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useRef,useEffect } from 'react';
-import { Heart, Star, Share2, FileText, List, Video } from 'lucide-react';
+import { Heart, Star, Share2, FileText, List, Video,Check } from 'lucide-react';
 import { Dropdown } from '@/components/utils/dropdown';
 import ReviewTestimonial from '@/components/buyer/reviewTestimonial'
 import { ChevronRight, ChevronLeft, } from "lucide-react";
