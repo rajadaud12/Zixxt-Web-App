@@ -7,10 +7,15 @@ import SectionCard from "@/components/buyer/sectionCard"
 import CourseCard from "@/components/buyer/courseCard"
 import SoftwareCard from "@/components/buyer/softwareCard"
 import ServiceCard from "@/components/buyer/serviceCard"
+import { Main } from "@/components/buyer/heroComponents"
 
-import { ChevronRight, ChevronLeft, Send } from "lucide-react"
+import { ChevronRight, ChevronLeft, Send, ArrowRight } from "lucide-react";
+
+
 import '@/styles/utils.css'
 // Enhanced CardSlider component to match the design in images
+
+
 const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardType }) => {
   const sliderRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -82,7 +87,7 @@ const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardT
     <div className="w-full">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-black">{title}</h2>
+          <h2 className="text-5xl font-semiBold text-black">{title}</h2>
           <p className="text-sm text-gray-500">{subtitle}</p>
         </div>
         <div className="flex space-x-2">
@@ -402,7 +407,7 @@ export default function Home() {
       reviewCount: 150,
       price: 200,
       level: "Platinum",
-      description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently.",
+      description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently. Large enterprises to manage all business operations efficiently.",
       updated: "Jan 2025",
       features: [
         "Inventory Management",
@@ -445,48 +450,16 @@ export default function Home() {
   return (
     <main className="bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-16">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-            Your All In One Platform For Services, Education, And Software
-          </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            A Unified Hub Offering Endless Possibilities In Services, Education, And Software
-          </p>
-          <div className="flex justify-center space-x-4 mb-12">
-            <Link
-              href="/signup"
-              className="px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition-all"
-            >
-              Join Now
-            </Link>
-            <Link
-              href="/signin"
-              className="px-6 py-3 bg-white text-black border border-gray-300 rounded-full font-semibold hover:bg-gray-100 transition-all"
-            >
-              Sign In
-            </Link>
-          </div>
-          <div className="flex justify-center">
-            <Image
-              src="/hero-illustration.png" // Placeholder for the hero illustration
-              alt="Services, Education, Software Flow"
-              width={800}
-              height={400}
-              className="w-full max-w-4xl"
-            />
-          </div>
+      <section className="bg-gradient-to-b from-blue-16 to-white py-30">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center mt-[50px]">
+          <Main />
         </div>
       </section>
 
       {/* Categories Section */}
       <section className="py-16">
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[14px]">
-            {categories.map((category, index) => (
-              <SectionCard key={index} category={category} />
-            ))}
-          </div>
+          <SectionCard />
         </div>
       </section>
 

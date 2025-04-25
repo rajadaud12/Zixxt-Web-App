@@ -1,9 +1,221 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import { Heart, Clock, Check, ChevronRight, Star, Share2, FileText, List, Video } from 'lucide-react';
+import React, { useState, useRef,useEffect } from 'react';
+import { Heart, Clock, Check, Star, Share2, FileText, List, Video } from 'lucide-react';
 import { Dropdown } from '@/components/utils/dropdown';
 import ServiceCard from '@/components/buyer/serviceCard';
 import ReviewTestimonial from '@/components/buyer/reviewTestimonial'
+import { ChevronRight, ChevronLeft, Send, ArrowRight } from "lucide-react";
+import CourseCard from '@/components/buyer/courseCard';
+
+
+
+
+const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardType }) => {
+    const sliderRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startPos, setStartPos] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(true);
+  
+    // Check if we need to show navigation arrows
+    useEffect(() => {
+      if (!sliderRef.current) return;
+      
+      const checkArrows = () => {
+        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+        setShowLeftArrow(scrollLeft > 0);
+        setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5); // 5px buffer
+      };
+      
+      checkArrows();
+      sliderRef.current.addEventListener('scroll', checkArrows);
+      return () => {
+        if (sliderRef.current) {
+          sliderRef.current.removeEventListener('scroll', checkArrows);
+        }
+      };
+    }, [items]);
+  
+    // Mouse drag handlers
+    const handleMouseDown = (e) => {
+      setIsDragging(true);
+      setStartPos(e.pageX - sliderRef.current.offsetLeft);
+      setScrollLeft(sliderRef.current.scrollLeft);
+    };
+  
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - sliderRef.current.offsetLeft;
+      const walk = (x - startPos) * 2; // Multiply for faster scrolling
+      sliderRef.current.scrollLeft = scrollLeft - walk;
+    };
+  
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+  
+    const handleMouseLeave = () => {
+      setIsDragging(false);
+    };
+  
+    // Navigation handlers
+    const slideLeft = () => {
+      if (!sliderRef.current) return;
+      sliderRef.current.scrollBy({
+        left: -cardWidth - 14, // Scroll one card width + padding
+        behavior: 'smooth'
+      });
+    };
+  
+    const scrollRight = () => {
+      if (!sliderRef.current) return;
+      sliderRef.current.scrollBy({
+        left: cardWidth + 14, // Scroll one card width + padding
+        behavior: 'smooth'
+      });
+    };
+  
+    return (
+      <div className="w-full">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-5xl font-semiBold text-black">{title}</h2>
+            <p className="text-sm text-gray-500">{subtitle}</p>
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={slideLeft}
+              className={`p-2 bg-white rounded-full shadow-sm hover:bg-gray-100 transition-opacity ${!showLeftArrow ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!showLeftArrow}
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              onClick={scrollRight}
+              className={`p-2 bg-white rounded-full shadow-sm hover:bg-gray-100 transition-opacity ${!showRightArrow ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!showRightArrow}
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        </div>
+        
+        <div 
+          className="w-full overflow-hidden"
+        >
+          <div 
+            ref={sliderRef}
+            className={`flex overflow-x-auto scrollbar-hide scroll-smooth`}
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
+  {items.map((item, index) => (
+    <div 
+      key={index} 
+      className="flex-none mr-[14px] first:pl-0"
+      style={{ width: cardType === 'software' ? 'auto' : `${cardWidth}px` }} 
+    >
+      {renderItem(item, index)}
+    </div>
+  ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
+
+  const courses = [
+    {
+      image: "/course1.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course2.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course3.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course4.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course2.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course2.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course2.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+      image: "/course2.jpg",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+  ];
+
+
+  
 
 export default function CourseDetail({ params }) {
     const { id } = React.use(params);
@@ -237,52 +449,6 @@ export default function CourseDetail({ params }) {
                 },
             ],
         },
-        relatedCourses: [
-            {
-                id: 1,
-                title: 'AI and Machine Learning Using Python Programming Language',
-                image: '/course-image1.jpg',
-                rating: 4.2,
-                reviews: 273,
-                price: 34.99,
-                avatar: '',
-                sellerName: 'Silly Vein',
-                location: 'Pakistan',
-            },
-            {
-                id: 2,
-                title: 'AI and Machine Learning Using Python Programming Language',
-                image: '/course-image2.jpg',
-                rating: 4.7,
-                reviews: 142,
-                price: 49.99,
-                avatar: '',
-                sellerName: 'Silly Vein',
-                location: 'Pakistan',
-            },
-            {
-                id: 3,
-                title: 'AI and Machine Learning Using Python Programming Language',
-                image: '/course-image3.jpg',
-                rating: 4.2,
-                reviews: 273,
-                price: 39.99,
-                avatar: '',
-                sellerName: 'Silly Vein',
-                location: 'Pakistan',
-            },
-            {
-                id: 4,
-                title: 'AI and Machine Learning Using Python Programming Language',
-                image: '/course-image4.jpg',
-                rating: 4.5,
-                reviews: 195,
-                price: 44.99,
-                avatar: '',
-                sellerName: 'Silly Vein',
-                location: 'Pakistan',
-            },
-        ],
         galleryImages: [
             '/images/servicesPictures/service1.png',
             '/images/servicesPictures/service2.png',
@@ -702,32 +868,21 @@ export default function CourseDetail({ params }) {
                 </div>
             </div>
 
-            {/* Explore Similar Courses Section */}
-            <div className="bg-whiteGrey py-12 relative z-20">
-                <div className="mx-auto px-4 max-w-[1240px]">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="typoH2 text-text">Explore Similar Courses</h2>
-                        <p className="text-textLight">Expand your knowledge and skills further</p>
-                        <div className="flex space-x-2">
-                            <button className="p-2 rounded-full border border-border bg-white">
-                                <ChevronRight className="w-5 h-5 rotate-180" />
-                            </button>
-                            <button className="p-2 rounded-full border border-border bg-white">
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {course.relatedCourses.map((item) => (
-                            <ServiceCard
-                                key={item.id}
-                                service={item}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
+                  {/* Courses Section */}
+                  <section className="py-16">
+                    <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
+                      <CardSlider 
+                        title="Similar Courses"
+                        subtitle="Expand your knowledge and skills further"
+                        items={courses}
+                        cardWidth={280}
+                        renderItem={(course, index) => (
+                          <CourseCard key={index} course={course} />
+                        )}
+                      />
+                      </div>
+                  </section>
         </div>
     );
 }

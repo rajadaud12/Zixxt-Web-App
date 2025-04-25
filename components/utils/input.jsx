@@ -88,7 +88,6 @@ export function SearchBar({ className = "" }) {
     </div>
   )
 }
-
 export function DropdownSearchBar({ className = "" }) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState("Services")
@@ -101,11 +100,11 @@ export function DropdownSearchBar({ className = "" }) {
 
   return (
     <div className={`relative ${className}`}>
-      <div className="flex items-center rounded-full bg-btnbg overflow-hidden">
-        <div className="flex items-center flex-1">
+      <div className="flex items-center h-full rounded-full bg-btnbg overflow-hidden">
+        <div className="flex items-center flex-1 h-full">
           <div className="pl-3">
             <svg
-              className="w-5 h-5 text-textLight"
+              className="w-4 h-4 text-textLight"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -122,18 +121,18 @@ export function DropdownSearchBar({ className = "" }) {
           </div>
           <input
             type="search"
-            className="w-full p-3 pl-2 bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-400"
+            className="w-full h-full py-1 pl-2 bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-400 text-sm"
             placeholder="What can we help you find?"
           />
         </div>
-        <div>
+        <div className="h-full">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center px-4 py-3 text-text bg-secondary rounded-r-full"
+            className="flex items-center h-full px-3 text-text bg-secondary rounded-r-full text-sm"
             type="button"
           >
             {selected}
-            <ChevronDown className="ml-2 h-4 w-4" />
+            <ChevronDown className="ml-1 h-3 w-3" />
           </button>
         </div>
       </div>
@@ -145,7 +144,7 @@ export function DropdownSearchBar({ className = "" }) {
               <li key={option}>
                 <button
                   onClick={() => handleSelect(option)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-btnbg ${
+                  className={`block w-full text-left px-4 py-1.5 hover:bg-btnbg text-sm ${
                     selected === option ? "text-primary" : "text-text"
                   }`}
                   type="button"

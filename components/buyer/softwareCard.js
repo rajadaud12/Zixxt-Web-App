@@ -7,7 +7,6 @@ import { Star } from "lucide-react";
 export default function SoftwareCard({ software }) {
   const router = useRouter();
   
-
   // Function to handle card click
   const handleCardClick = () => {
     router.push(`/softwareDetail/${software.id}`);
@@ -19,7 +18,7 @@ export default function SoftwareCard({ software }) {
       onClick={handleCardClick}
     >
       <div className="p-6">
-        <div className="flex ml-[30px] mb-[30px]">
+        <div className="flex mx-[30px] mb-[30px]">
           {/* Left side with logo */}
           <div className="mr-8">
             <div className="w-[100px] h-[100px] bg-whiteGrey rounded-[16px] flex items-center justify-center overflow-hidden">
@@ -58,9 +57,9 @@ export default function SoftwareCard({ software }) {
                 </div>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-gray-500 mr-1">from</span>
+                <span className="text-sm text-gray-500 mr-1">from </span>
                 <span className="text-4xl font-medium text-black">
-                  {software.price || "$123.00"}
+                  {`$${software.price || "123.00"}`}
                 </span>
               </div>
             </div>
@@ -84,8 +83,8 @@ export default function SoftwareCard({ software }) {
           </div>
         </div>
 
-        {/* Content below logo with left margin */}
-        <div className="ml-[30px]">
+        {/* Content below logo with equal margins */}
+        <div className="mx-[30px]">
           {/* Description */}
           <p className="text-paragraphText text-light mb-5">
             {software.description ||

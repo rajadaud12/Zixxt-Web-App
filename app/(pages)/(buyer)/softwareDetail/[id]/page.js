@@ -1,9 +1,185 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Check, ChevronRight, Star, Share2 } from 'lucide-react';
 import { Dropdown } from '@/components/utils/dropdown';
 import SoftwareCard from '@/components/buyer/softwareCard';
 import ReviewTestimonial from '@/components/buyer/reviewTestimonial';
+import { ChevronLeft, Send, ArrowRight } from "lucide-react";
+
+
+const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardType }) => {
+  const sliderRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPos, setStartPos] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+
+  // Check if we need to show navigation arrows
+  useEffect(() => {
+    if (!sliderRef.current) return;
+    
+    const checkArrows = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5); // 5px buffer
+    };
+    
+    checkArrows();
+    sliderRef.current.addEventListener('scroll', checkArrows);
+    return () => {
+      if (sliderRef.current) {
+        sliderRef.current.removeEventListener('scroll', checkArrows);
+      }
+    };
+  }, [items]);
+
+  // Mouse drag handlers
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartPos(e.pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startPos) * 2; // Multiply for faster scrolling
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  // Navigation handlers
+  const slideLeft = () => {
+    if (!sliderRef.current) return;
+    sliderRef.current.scrollBy({
+      left: -cardWidth - 14, // Scroll one card width + padding
+      behavior: 'smooth'
+    });
+  };
+
+  const scrollRight = () => {
+    if (!sliderRef.current) return;
+    sliderRef.current.scrollBy({
+      left: cardWidth + 14, // Scroll one card width + padding
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-5xl font-semiBold text-black">{title}</h2>
+          <p className="text-sm text-gray-500">{subtitle}</p>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            onClick={slideLeft}
+            className={`p-2 bg-white rounded-full shadow-sm hover:bg-gray-100 transition-opacity ${!showLeftArrow ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={!showLeftArrow}
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={scrollRight}
+            className={`p-2 bg-white rounded-full shadow-sm hover:bg-gray-100 transition-opacity ${!showRightArrow ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={!showRightArrow}
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+      </div>
+      
+      <div 
+        className="w-full overflow-hidden"
+      >
+        <div 
+          ref={sliderRef}
+          className={`flex overflow-x-auto scrollbar-hide scroll-smooth`}
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+{items.map((item, index) => (
+  <div 
+    key={index} 
+    className="flex-none mr-[14px] first:pl-0"
+    style={{ width: cardType === 'software' ? 'auto' : `${cardWidth}px` }} 
+  >
+    {renderItem(item, index)}
+  </div>
+))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+  // Software data to match your image
+  const softwares = [
+    {
+      id: 1,
+      logo: "/api/placeholder/70/70",
+      companyName: "Venhash Solutions",
+      country: "Pakistan",
+      title: "Duality CRM System With Admin Functionalities",
+      rating: 4.2,
+      reviewCount: 273,
+      price: 123,
+      level: "Gold",
+      description: "A Powerful And Efficient CRM System Designed To Manage Customer Relationships, Track Sales, And Streamline Business Operations With Robust Admin Controls.",
+      updated: "Feb 2025",
+      features: [
+        "Lead & Contact Management",
+        "Task & Activity Management",
+        "Sales Pipeline Tracking",
+        "Reports & Analytics",
+        "Lead & Contact Management",
+        "Lead & Contact Management",
+        "Lead & Contact Management",
+        "Lead & Contact Management",
+        "Lead & Contact Management"
+      ]
+    },
+    {
+      id: 2,
+      logo: "/api/placeholder/70/70",
+      companyName: "TechCorp",
+      country: "USA",
+      title: "Enterprise ERP Solution",
+      rating: 4.5,
+      reviewCount: 150,
+      price: 200,
+      level: "Platinum",
+      description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently. Large enterprises to manage all business operations efficiently.",
+      updated: "Jan 2025",
+      features: [
+        "Inventory Management",
+        "HR Management",
+        "Financial Reporting",
+        "Supply Chain Management",
+        "Inventory Management",
+        "Inventory Management",
+        "Inventory Management",
+        "Inventory Management",
+        "Inventory Management"
+      ]
+    }
+  ];
+
+
 
 export default function SoftwareDetail({ params }) {
   const { id } = React.use(params);
@@ -581,29 +757,21 @@ export default function SoftwareDetail({ params }) {
         </div>
       </div>
 
-      {/* Explore Software Section */}
-      <div className="bg-whiteGrey py-12 relative z-20">
-        <div className="mx-auto px-4 max-w-[1240px]">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="typoH2 text-text">Explore Software</h2>
-            <p className="text-textLight">A seamless business operations system designed to scale</p>
-            <div className="flex space-x-2">
-              <button className="p-2 rounded-full border border-border bg-white">
-                <ChevronRight className="w-5 h-5 rotate-180" />
-              </button>
-              <button className="p-2 rounded-full border border-border bg-white">
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            {software.relatedSoftwares.map((item) => (
-              <SoftwareCard key={item.id} software={item} />
-            ))}
-          </div>
+      {/* Software Section */}
+      <section className="py-16">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
+          <CardSlider 
+            title="Explore Software"
+            subtitle="A seamless business operations system designed to scale"
+            items={softwares}
+            cardType="software"
+            renderItem={(software, index) => (
+             <SoftwareCard software={software}/>
+            )}
+          />
         </div>
-      </div>
+      </section>
     </div>
   );
 }

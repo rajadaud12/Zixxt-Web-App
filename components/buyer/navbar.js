@@ -83,7 +83,7 @@ export default function Navbar() {
                   <li key={subIndex}>
                     <Link
                       href={subItem.link}
-                      className="block px-2 py-1 text-sm text-gray-700 hover:text-blue-600"
+                      className="block px-2 py-1 text-sm text-gray-700 hover:text-primary"
                       onClick={onClose} // Close dropdown on click
                     >
                       {subItem.name}
@@ -93,7 +93,7 @@ export default function Navbar() {
                 <li>
                   <Link
                     href={category.viewAll}
-                    className="block px-2 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                    className="block px-2 py-1 text-sm text-primary hover:primary font-medium"
                     onClick={onClose} // Close dropdown on click
                   >
                     View All
@@ -152,20 +152,20 @@ export default function Navbar() {
   const closeSoftwares = () => setIsSoftwaresOpen(false);
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-[120]">
       {/* Main Navigation Bar */}
       <div className="relative">
         {/* Curved Background for non-logged-in state */}
         {!isLoggedIn && (
-          <div className="absolute inset-0 max-w-[1200px] mx-auto bg-white rounded-b-[70px] shadow-sm border-b border-border h-[71.5px]"></div>
+          <div className="absolute inset-0 max-w-[1200px] mx-auto bg-white rounded-b-[70px] shadow-md border-b border-border h-[71.5px]"></div>
         )}
 
-        {/* Regular background for logged-in state */}
+        {/* Modified shadow for logged-in state that will cast shadow downward */}
         {isLoggedIn && (
-          <div className="absolute inset-0 bg-white shadow-sm border-b border-border"></div>
+          <div className="absolute inset-0 bg-white border-b border-border shadow-md z-10"></div>
         )}
 
-        <div className="relative max-w-[1100px] mx-auto px-4 md:px-6 lg:px-8">
+        <div className="relative max-w-[1100px] mx-auto px-4 md:px-6 lg:px-8 z-20">
           <div className="flex items-center justify-between h-16">
             {/* Before Login */}
             {!isLoggedIn && (
@@ -201,16 +201,20 @@ export default function Navbar() {
             )}
 
             {/* After Login */}
+
             {isLoggedIn && (
-              <div className="hidden md:flex items-center justify-between w-full">
-                <div className="flex-shrink-0">
-                  <Link href="/" className="flex items-center">
-                    <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
-                  </Link>
-                </div>
-                <div className="flex-1 max-w-[500px] mx-4">
-                  <DropdownSearchBar />
-                </div>
+  <div className="hidden md:flex items-center justify-between w-full">
+    <div className="flex-shrink-0">
+      <Link href="/" className="flex items-center">
+        <Image src="/images/logo.png" alt="ZIXI Logo" width={90} height={30} />
+      </Link>
+    </div>
+    <div className="flex-1 max-w-[350px] mx-4 ml-[50px]">
+      {/* Apply custom styling to reduce height just for this instance */}
+      <div className="h-9"> {/* Added wrapper with fixed height */}
+        <DropdownSearchBar className="!py-0 text-sm h-full" />
+      </div>
+    </div>
                 <div className="flex items-center space-x-4">
                   <button className="text-textLight hover:text-primary">
                     <Heart className="h-5 w-5" />
@@ -249,10 +253,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Secondary Navigation Bar (Logged-In) */}
+      {/* Secondary Navigation Bar (Logged-In) - Positioned relative to be under the shadow */}
       {isLoggedIn && (
         <div
-          className={`relative transition-all duration-500 ease-in-out ${
+          className={`relative transition-all duration-500 ease-in-out z-0 ${
             showSecondaryNav
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-2 pointer-events-none"
@@ -265,7 +269,7 @@ export default function Navbar() {
                 <nav className="hidden md:flex items-center justify-center h-full space-x-8">
                   <Link
                     href="/categories"
-                    className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
+                    className="flex items-center text-primary hover:text-primary font-medium text-sm"
                   >
                     Categories <ChevronDown className="ml-1 h-4 w-4" />
                   </Link>
@@ -351,7 +355,7 @@ export default function Navbar() {
                 <nav className="flex flex-col space-y-3">
                   <Link
                     href="/categories"
-                    className="px-3 py-2 text-blue-600 hover:text-blue-800 font-medium flex items-center"
+                    className="px-3 py-2 text-primary hover:text-primary font-medium flex items-center"
                   >
                     Categories <ChevronDown className="ml-1 h-4 w-4" />
                   </Link>
@@ -383,7 +387,7 @@ export default function Navbar() {
                             ))}
                             <Link
                               href={category.viewAll}
-                              className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              className="block px-3 py-1 text-sm text-primaryhover:text-primary font-medium"
                               onClick={() => setIsServicesOpen(false)} // Close dropdown on click
                             >
                               View All
@@ -418,7 +422,7 @@ export default function Navbar() {
                             ))}
                             <Link
                               href={category.viewAll}
-                              className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              className="block px-3 py-1 text-sm text-primary hover:text-primary font-medium"
                               onClick={() => setIsEducationOpen(false)} // Close dropdown on click
                             >
                               View All
@@ -453,7 +457,7 @@ export default function Navbar() {
                             ))}
                             <Link
                               href={category.viewAll}
-                              className="block px-3 py-1 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              className="block px-3 py-1 text-sm text-primary hover:text-primary font-medium"
                               onClick={() => setIsSoftwaresOpen(false)} // Close dropdown on click
                             >
                               View All
@@ -518,7 +522,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/signup"
-                    className="flex items-center justify-center rounded-full bg-primary text-white hover:bg-blue-600 font-semibold px-6 py-2"
+                    className="flex items-center justify-center rounded-full bg-primary text-white hover:bg-primary font-semibold px-6 py-2"
                   >
                     Sign Up
                   </Link>
