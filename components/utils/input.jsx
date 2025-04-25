@@ -91,7 +91,7 @@ export function SearchBar({ className = "" }) {
 export function DropdownSearchBar({ className = "" }) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState("Services")
-  const options = ["Services", "Products", "Support", "Resources"]
+  const options = ["Services", "Softwares", "Education"]
 
   const handleSelect = (option) => {
     setSelected(option)

@@ -238,7 +238,7 @@ function CategoryCard({ category }) {
   }, [startIndex, columnWidth]);
 
   return (
-    <div className="bg-white rounded-[20px] border border-border shadow-sm overflow-hidden">
+    <div className="categoriesContainer bg-white rounded-[20px] border border-border shadow-sm overflow-hidden">
       <div className="flex">
         {/* Left Side - Image (Fixed Width) */}
         <div className="w-[128px] md:w-[160px] lg:w-[200px] min-w-[128px] md:min-w-[160px] lg:min-w-[200px] relative flex-shrink-0">

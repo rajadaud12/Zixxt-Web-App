@@ -5,62 +5,12 @@ import { Dropdown } from "@/components/utils/Dropdown"
 import { SearchInput } from "@/components/utils/input"
 import SoftwareCard from "@/components/buyer/SoftwareCard"
 import { Star, ChevronRight, ChevronLeft } from "lucide-react"
+import { softwares } from "@/app/data/products";
 
-// Mock data for software listings
-const mockSoftware = [
-  {
-    id: 1,
-    logo: "/api/placeholder/70/70",
-    companyName: "Venhash Solutions",
-    country: "Pakistan",
-    title: "Duality CRM System With Admin Functionalities",
-    rating: 4.2,
-    reviewCount: 273,
-    price: 123,
-    level: "Gold",
-    description: "A Powerful And Efficient CRM System Designed To Manage Customer Relationships, Track Sales, And Streamline Business Operations With Robust Admin Controls.",
-    updated: "Feb 2025",
-    features: [
-      "Lead & Contact Management",
-      "Task & Activity Management",
-      "Sales Pipeline Tracking",
-      "Reports & Analytics",
-      "Lead & Contact Management",
-      "Lead & Contact Management",
-      "Lead & Contact Management",
-      "Lead & Contact Management",
-      "Lead & Contact Management"
-    ]
-  },
-  {
-    id: 2,
-    logo: "/api/placeholder/70/70",
-    companyName: "TechCorp",
-    country: "USA",
-    title: "Enterprise ERP Solution",
-    rating: 4.5,
-    reviewCount: 150,
-    price: 200,
-    level: "Platinum",
-    description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently.",
-    updated: "Jan 2025",
-    features: [
-      "Inventory Management",
-      "HR Management",
-      "Financial Reporting",
-      "Supply Chain Management",
-      "Inventory Management",
-      "Inventory Management",
-      "Inventory Management",
-      "Inventory Management",
-      "Inventory Management"
-    ]
-  }
-]
 
-// Extend mockSoftware to have enough data for pagination
-const extendedMockSoftware = Array.from({ length: 48 }, (_, index) => {
-  const baseSoftware = mockSoftware[index % mockSoftware.length]
+// Extend softwares to have enough data for pagination
+const extendedsoftwares = Array.from({ length: 48 }, (_, index) => {
+  const baseSoftware = softwares[index % softwares.length]
   return {
     ...baseSoftware,
     id: index + 1,
@@ -185,7 +135,7 @@ export default function SoftwareListings() {
   const softwaresPerPage = 8
 
   // Filter logic
-  const filteredSoftware = extendedMockSoftware.filter((software) => {
+  const filteredSoftware = extendedsoftwares.filter((software) => {
     if (companySize) {
       const sizeRange = companySize.split("-").map(Number)
       const size = parseInt(software.id % 1000) // Simulate company size
@@ -240,7 +190,7 @@ export default function SoftwareListings() {
   }, [paginatedSoftware])
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="softwareDetailContainer min-h-screen overflow-x-hidden">
       {/* Header Section */}
       <div className="relative h-[300px] flex items-center justify-center mb-8 mt-8 mx-auto max-w-[1240px] px-4">
         <div className="absolute inset-0">

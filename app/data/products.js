@@ -1,0 +1,217 @@
+export const courses = [
+    {
+      image: "/images/servicesPictures/service1.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service2.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service3.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service1.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service2.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service3.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service1.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+    {
+        image: "/images/servicesPictures/service2.png",
+        sellerName: "kahmiri",
+      location: "pakistan",
+      title: "Learn AI and Machine Learning with Python in 30 days",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+      hours: "30 hrs"
+    },
+  ];
+
+  export const services = [
+    {
+      id: 1,
+      image: "/images/servicesPictures/service1.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI  Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 2,
+      image: "/images/servicesPictures/service3.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 3,
+      image: "/images/servicesPictures/service2.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 4,
+      image: "/images/servicesPictures/service3.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 5,
+      image: "/images/servicesPictures/service2.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 6,
+      image: "/images/servicesPictures/service3.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 7,
+      image: "/images/servicesPictures/service1.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+    {
+      id: 8,
+      image: "/images/servicesPictures/service2.png",
+      sellerName: "kahmiri",
+      location: "pakistan",
+      title: "AI and Machine Learning Using Python Programming Language",
+      rating: "4.2",
+      reviews: "273",
+      price: "1,141",
+    },
+  ];
+
+
+  export const softwares = [
+  {
+    id: 1,
+    logo: "/api/placeholder/70/70",
+    companyName: "Venhash Solutions",
+    country: "Pakistan",
+    title: "Duality CRM System With Admin Functionalities",
+    rating: 4.2,
+    reviewCount: 273,
+    price: 123,
+    level: "Gold",
+    description: "A Powerful And Efficient CRM System Designed To Manage Customer Relationships, Track Sales, And Streamline Business Operations With Robust Admin Controls.",
+    updated: "Feb 2025",
+    features: [
+      "Lead & Contact Management",
+      "Task & Activity Management",
+      "Sales Pipeline Tracking",
+      "Reports & Analytics",
+      "Lead & Contact Management",
+      "Lead & Contact Management",
+      "Lead & Contact Management",
+      "Lead & Contact Management",
+      "Lead & Contact Management"
+    ]
+  },
+  {
+    id: 2,
+    logo: "/api/placeholder/70/70",
+    companyName: "TechCorp",
+    country: "USA",
+    title: "Enterprise ERP Solution",
+    rating: 4.5,
+    reviewCount: 150,
+    price: 200,
+    level: "Platinum",
+    description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently.",
+    updated: "Jan 2025",
+    features: [
+      "Inventory Management",
+      "HR Management",
+      "Financial Reporting",
+      "Supply Chain Management",
+      "Inventory Management",
+      "Inventory Management",
+      "Inventory Management",
+      "Inventory Management",
+      "Inventory Management"
+    ]
+  }
+]

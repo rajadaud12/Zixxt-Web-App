@@ -1,12 +1,10 @@
 'use client';
 import React, { useState, useRef,useEffect } from 'react';
-import { Heart, Clock, Check, Star, Share2, FileText, List, Video } from 'lucide-react';
+import { Heart, Star, Share2, FileText, List, Video } from 'lucide-react';
 import { Dropdown } from '@/components/utils/dropdown';
-import ServiceCard from '@/components/buyer/serviceCard';
 import ReviewTestimonial from '@/components/buyer/reviewTestimonial'
-import { ChevronRight, ChevronLeft, Send, ArrowRight } from "lucide-react";
+import { ChevronRight, ChevronLeft, } from "lucide-react";
 import CourseCard from '@/components/buyer/courseCard';
-
 
 
 
@@ -492,7 +490,7 @@ export default function CourseDetail({ params }) {
     const currentChapter = course.programDetails.find(ch => ch.chapter === selectedChapter);
 
     return (
-        <div className="bg-white">
+        <div className="courseDetailContainer bg-white">
             {/* Hero Section */}
             <div className="mx-auto px-4 py-8 max-w-[1240px]">
                 <div className="flex flex-col lg:flex-row gap-12">

@@ -455,7 +455,7 @@ export default function ServiceDetail({ params }) {
     });
 
     return (
-        <div className="bg-white">
+        <div className="serviceDetailContainer bg-white">
             {/* Hero Section */}
             <div className="mx-auto px-4 py-8 max-w-[1240px]">
                 <div className="flex flex-col lg:flex-row gap-12">

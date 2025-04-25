@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 
 export const Main = () => {
@@ -225,157 +224,171 @@ export const Main = () => {
 
 
 export const HeroSection = ({ userName = "Shahab Hassan" }) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    
-    return (
-      <div className="bg-white">
-        {/* Welcome banner */}
-        <div className="bg-secondary py-2 px-4 rounded-full inline-flex items-center gap-2 ml-6 mt-6">
-          <span className="text-yellow-400">👋</span>
-          <span className="text-primary text-sm">welcome back to Zixxt</span>
-        </div>
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState('Services');
   
-        {/* Main hero content */}
-        <div className="container mx-auto px-6  flex flex-col md:flex-row mt-12">
-          <div className="flex-1">
-            <h1 className="text-5xl font-semiBold mb-2 text-primary">
-              Hi,<br />
-              <span className="text-black">{userName}</span>
-            </h1>
-            <p className="text-gray-500 text-base mb-6">
-              Ready to explore the best and most diverse range of Listings
-            </p>
-  
-            <div className="flex space-x-4 mt-10">
-            <div className=" flex px-3 py-3 bg-secondary rounded-full w-[500px] justify-between items-center">
+  // Function to generate random service ID (1-3) for redirect
+  const getRandomServiceId = () => {
+      return Math.floor(Math.random() * 3) + 1;
+  };
 
-                <div className="bg-primary text-white px-6 py-2 rounded-full flex justify-center items-center space-x-2 w-[330px] h-[60px]">
+  const handleServiceSelect = (service) => {
+      setSelectedService(service);
+      setIsDropdownOpen(false);
+  };
+
+  return (
+    <div className="bg-white">
+      {/* Welcome banner */}
+      <div className="bg-secondary py-2 px-4 rounded-full inline-flex items-center gap-2 ml-6 mt-6">
+        <span className="text-yellow-400">👋</span>
+        <span className="text-primary text-sm">welcome back to Zixxt</span>
+      </div>
+
+      {/* Main hero content */}
+      <div className="container mx-auto px-6 flex flex-col md:flex-row mt-12">
+        <div className="flex-1">
+          <h1 className="text-5xl font-semiBold mb-2 text-primary">
+            Hi,<br />
+            <span className="text-black">{userName}</span>
+          </h1>
+          <p className="text-gray-500 text-base mb-6">
+            Ready to explore the best and most diverse range of Listings
+          </p>
+
+          <div className="flex space-x-4 mt-10">
+          <div className=" flex px-3 py-3 bg-secondary rounded-full w-[500px] justify-between items-center">
+              <a href={`/serviceListings/${getRandomServiceId()}`}>
+                  <div className="bg-primary text-white px-6 py-2 rounded-full flex justify-center items-center space-x-2 w-[330px] h-[60px]">
                   <span>Explore Now</span>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
-                </div>
-  
-              <div className="relative">
-                <button 
-                  className="bg-secondary text-gray-700 px-6 py-2 rounded-full flex items-center space-x-2"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                >
-                  <span>Services</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transform transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-  
-                {isDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white z-10 py-1">
-                    <Link href="/service/1" className="block px-4 py-2 text-sm text-gray-700 hover:bg-secondary">
-                      Listing Service
-                    </Link>
-                    <Link href="/service/2" className="block px-4 py-2 text-sm text-gray-700 hover:bg-secondary">
-                      Marketplace
-                    </Link>
-                    <Link href="/service/3" className="block px-4 py-2 text-sm text-gray-700 hover:bg-secondary">
-                      Business Solutions
-                    </Link>
                   </div>
-                )}
-              </div>
-            </div>
+              </a>
+
+            <div className="relative">
+              <button 
+                className="bg-secondary text-gray-700 px-6 py-2 rounded-full flex items-center space-x-2"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <span>{selectedService}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transform transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+
+              {isDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white z-10 py-1">
+                  <button 
+                    onClick={() => handleServiceSelect('Services')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-secondary"
+                  >
+                    Services
+                  </button>
+                  <button 
+                    onClick={() => handleServiceSelect('Education')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-secondary"
+                  >
+                    Education
+                  </button>
+                  <button 
+                    onClick={() => handleServiceSelect('Softwares')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-secondary"
+                  >
+                    Softwares
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-  
-          {/* Image section - Fixed to match the design exactly */}
-          <div className="flex-1 flex ml-2">
-            <div className="flex-1 mr-2">
-              <div className="rounded-[30px] overflow-hidden shadow-md h-[390px]">
-                <Image
-                  src="/images/pos-system.jpg" 
-                  alt="POS System"
-                  width={325}
-                  height={390}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          </div>
+        </div>
+
+        {/* Image section - Fixed to match the design exactly */}
+        <div className="flex-1 flex ml-2">
+          <div className="flex-1 mr-2">
+            <div className="rounded-[30px] overflow-hidden shadow-md h-[390px]">
+              <img
+                src="/images/heroSection/image1.png" 
+                alt="POS System"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="w-1/3 flex flex-col space-y-2">
-              <div className="rounded-[30px] overflow-hidden shadow-md h-2/3">
-                <Image
-                  src="/images/developer.jpg" 
-                  alt="Developer working"
-                  width={200}
-                  height={250}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="rounded-[30px] overflow-hidden shadow-md h-1/3">
-                <Image
-                  src="/images/code.jpg" 
-                  alt="Code snippet"
-                  width={200}
-                  height={130}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          </div>
+          <div className="w-1/3 flex flex-col space-y-2">
+            <div className="rounded-[30px] overflow-hidden shadow-md h-2/3">
+              <img
+                src="/images/heroSection/image2.png" 
+                alt="Developer working"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="rounded-[30px] overflow-hidden shadow-md h-1/3">
+              <img
+                src="/images/heroSection/image3.png" 
+                alt="Code snippet"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
-  
-        {/* Action cards section */}
-        <div className="container mx-auto px-6 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex items-start space-x-4">
-                <div className="bg-primary p-3 rounded-full text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-semibold mb-1">Have Something Specific In Mind</h3>
-                  <p className="text-gray-600 text-xs mb-3">Post a Request and unlock exclusive offers from top-rated sellers!</p>
+      </div>
 
-                  <Link href="/post-request">
-                    <button className="bg-primary text-white px-5 py-2 rounded-full inline-flex items-center space-x-2 text-sm hover:primary transition-all duration-300">
-                      <span>Post a Request</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </Link>
-                </div>
+      {/* Action cards section */}
+      <div className="container mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-xl border border-border">
+            <div className="flex items-start space-x-4">
+              <div className="bg-primary p-3 rounded-full text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold mb-1">Have Something Specific In Mind</h3>
+                <p className="text-gray-600 text-xs mb-3">Post a Request and unlock exclusive offers from top-rated sellers!</p>
+                <a href="/post-request">
+                  <button className="bg-primary text-white px-5 py-2 rounded-full inline-flex items-center space-x-2 text-sm hover:primary transition-all duration-300">
+                    <span>Post a Request</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </a>
               </div>
             </div>
-  
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex items-start space-x-4">
-                <div className="bg-primary p-3 rounded-full text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-semibold mb-1">To Do's</h3>
-                  <p className="text-gray-600 text-xs mb-3">Post a Request and unlock exclusive offers from top-rated sellers!</p>
-                  <div className="flex justify-around items-center px-2 py-2 bg-gray-100 rounded-full w-[400px]">
-                    <span className="inline-flex items-center text-green-500 text-xs">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Post a Request
-                    </span>
-                    <Link href="/complete-profile" className="text-gray-700 text-xs hover:text-primary transition-colors">
-                      Complete Profile
-                    </Link>
-                    <Link href="/view-post" className="text-gray-700 text-xs hover:text-primary transition-colors">
-                      View a Post
-                    </Link>
-                  </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl border border-border">
+            <div className="flex items-start space-x-4">
+              <div className="bg-primary p-3 rounded-full text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold mb-1">To Do's</h3>
+                <p className="text-gray-600 text-xs mb-3">Post a Request and unlock exclusive offers from top-rated sellers!</p>
+                <div className="flex justify-around items-center px-2 py-2 bg-gray-100 rounded-full w-[400px]">
+                  <span className="inline-flex items-center text-green-500 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Post a Request
+                  </span>
+                  <a href="/complete-profile" className="text-gray-700 text-xs hover:text-primary transition-colors">
+                    Complete Profile
+                  </a>
+                  <a href="/view-post" className="text-gray-700 text-xs hover:text-primary transition-colors">
+                    View a Post
+                  </a>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};

@@ -5,164 +5,13 @@ import { Dropdown } from "@/components/utils/Dropdown"
 import { SearchInput } from "@/components/utils/input"
 import CourseCard from "@/components/buyer/CourseCard"
 import { Star, ChevronRight, ChevronLeft } from "lucide-react"
+import { courses } from "@/app/data/products";
 
-// Updated mockCourses with online, sellerLevel, and type fields
-const mockCourses = [
-  {
-    id: 1,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "kashmiri",
-    title: "AI and Machine Learning Using Python Programming Language",
-    rating: 4.2,
-    reviews: 273,
-    price: 1141,
-    location: "Pakistan",
-    duration: "6 weeks",
-    online: true,
-    sellerLevel: "Premium",
-    type: "Freelancer",
-  },
-  {
-    id: 2,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "john",
-    title: "Web Development with React",
-    rating: 4.8,
-    reviews: 150,
-    price: 1824,
-    location: "USA",
-    duration: "8 weeks",
-    online: false,
-    sellerLevel: "Elite",
-    type: "Agency",
-  },
-  {
-    id: 3,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "alice",
-    title: "Graphic Design Masterclass",
-    rating: 3.5,
-    reviews: 50,
-    price: 570,
-    location: "India",
-    duration: "4 weeks",
-    online: true,
-    sellerLevel: "Regular",
-    type: "Freelancer",
-  },
-  {
-    id: 4,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "bob",
-    title: "Mobile App Development with Flutter",
-    rating: 4.0,
-    reviews: 100,
-    price: 2280,
-    location: "Pakistan",
-    duration: "10 weeks",
-    online: true,
-    sellerLevel: "Premium",
-    type: "Agency",
-  },
-  {
-    id: 5,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "charlie",
-    title: "SEO Optimization Techniques",
-    rating: 4.5,
-    reviews: 200,
-    price: 912,
-    location: "USA",
-    duration: "5 weeks",
-    online: false,
-    sellerLevel: "Elite",
-    type: "Freelancer",
-  },
-  {
-    id: 6,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "emma",
-    title: "Content Writing Essentials",
-    rating: 4.0,
-    reviews: 80,
-    price: 456,
-    location: "India",
-    duration: "3 weeks",
-    online: true,
-    sellerLevel: "Regular",
-    type: "Freelancer",
-  },
-  {
-    id: 7,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "david",
-    title: "UI/UX Design Fundamentals",
-    rating: 4.7,
-    reviews: 120,
-    price: 2052,
-    location: "USA",
-    duration: "7 weeks",
-    online: true,
-    sellerLevel: "Elite",
-    type: "Agency",
-  },
-  {
-    id: 8,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "sophia",
-    title: "Digital Marketing Strategies",
-    rating: 3.8,
-    reviews: 60,
-    price: 798,
-    location: "Pakistan",
-    duration: "6 weeks",
-    online: false,
-    sellerLevel: "Premium",
-    type: "Freelancer",
-  },
-  {
-    id: 9,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "liam",
-    title: "Blockchain Development Basics",
-    rating: 4.9,
-    reviews: 300,
-    price: 3420,
-    location: "India",
-    duration: "12 weeks",
-    online: true,
-    sellerLevel: "Elite",
-    type: "Agency",
-  },
-  {
-    id: 10,
-    image: "/images/servicesPictures/service1.png",
-    avatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "olivia",
-    title: "Video Editing with Premiere Pro",
-    rating: 4.3,
-    reviews: 90,
-    price: 1026,
-    location: "USA",
-    duration: "5 weeks",
-    online: true,
-    sellerLevel: "Regular",
-    type: "Freelancer",
-  },
-]
 
-// Extend mockCourses to have enough data for pagination (at least 48 courses for 2 pages)
-const extendedMockCourses = Array.from({ length: 48 }, (_, index) => {
-  const baseCourse = mockCourses[index % mockCourses.length]
+
+// Extend courses to have enough data for pagination (at least 48 courses for 2 pages)
+const extendedcourses = Array.from({ length: 48 }, (_, index) => {
+  const baseCourse = courses[index % courses.length]
   return {
     ...baseCourse,
     id: index + 1,
@@ -303,7 +152,7 @@ export default function CourseListings() {
   const coursesPerRow = 3
 
   // Filter logic
-  const filteredCourses = extendedMockCourses.filter((course) => {
+  const filteredCourses = extendedcourses.filter((course) => {
     if (sellerStatus === "Online" && !course.online) return false
     if (sellerLevel === "Premium" && !["Premium", "Elite"].includes(course.sellerLevel)) return false
     if (sellerLevel === "Elite" && course.sellerLevel !== "Elite") return false
@@ -361,7 +210,7 @@ export default function CourseListings() {
   }, [courseRows])
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="educationListingsContainer min-h-screen overflow-x-hidden">
       {/* Header Section */}
       <div className="relative h-[300px] flex items-center justify-center mb-8 mt-8 mx-auto max-w-[1240px] px-4">
         <div className="absolute inset-0">

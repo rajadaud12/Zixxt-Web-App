@@ -5,152 +5,12 @@ import { Dropdown } from "@/components/utils/Dropdown"
 import { SearchInput } from "@/components/utils/input"
 import ServiceCard from "@/components/buyer/ServiceCard"
 import { Star, ChevronRight, ChevronLeft } from "lucide-react"
-const mockServices = [
-  {
-    id: 1,
-    image: "/images/servicesPictures/service1.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "kashmiri",
-    title: "AI and Machine Learning Using Python Programming Language",
-    rating: 4.2,
-    reviewCount: 273,
-    price: 50,
-    sellerLevel: "Premium",
-    type: "Freelancer",
-    country: "Pakistan",
-    online: true,
-  },
-  {
-    id: 2,
-    image: "/images/servicesPictures/service2.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "john",
-    title: "Web Development with React",
-    rating: 4.8,
-    reviewCount: 150,
-    price: 80,
-    sellerLevel: "Elite",
-    type: "Agency",
-    country: "USA",
-    online: false,
-  },
-  {
-    id: 3,
-    image: "/images/servicesPictures/service3.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "alice",
-    title: "Graphic Design Services",
-    rating: 3.5,
-    reviewCount: 50,
-    price: 25,
-    sellerLevel: "Regular",
-    type: "Freelancer",
-    country: "India",
-    online: true,
-  },
-  {
-    id: 4,
-    image: "/images/servicesPictures/service1.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "bob",
-    title: "Mobile App Development",
-    rating: 4.0,
-    reviewCount: 100,
-    price: 100,
-    sellerLevel: "Premium",
-    type: "Agency",
-    country: "Pakistan",
-    online: true,
-  },
-  {
-    id: 5,
-    image: "/images/servicesPictures/service2.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "charlie",
-    title: "SEO Optimization",
-    rating: 4.5,
-    reviewCount: 200,
-    price: 40,
-    sellerLevel: "Elite",
-    type: "Freelancer",
-    country: "USA",
-    online: false,
-  },
-  {
-    id: 6,
-    image: "/images/servicesPictures/service3.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "emma",
-    title: "Content Writing",
-    rating: 4.0,
-    reviewCount: 80,
-    price: 20,
-    sellerLevel: "Regular",
-    type: "Freelancer",
-    country: "India",
-    online: true,
-  },
-  {
-    id: 7,
-    image: "/images/servicesPictures/service1.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "david",
-    title: "UI/UX Design",
-    rating: 4.7,
-    reviewCount: 120,
-    price: 90,
-    sellerLevel: "Elite",
-    type: "Agency",
-    country: "USA",
-    online: true,
-  },
-  {
-    id: 8,
-    image: "/images/servicesPictures/service2.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "sophia",
-    title: "Digital Marketing",
-    rating: 3.8,
-    reviewCount: 60,
-    price: 35,
-    sellerLevel: "Premium",
-    type: "Freelancer",
-    country: "Pakistan",
-    online: false,
-  },
-  {
-    id: 9,
-    image: "/images/servicesPictures/service3.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "liam",
-    title: "Blockchain Development",
-    rating: 4.9,
-    reviewCount: 300,
-    price: 150,
-    sellerLevel: "Elite",
-    type: "Agency",
-    country: "India",
-    online: true,
-  },
-  {
-    id: 10,
-    image: "/images/servicesPictures/service2.png",
-    sellerAvatar: "/placeholder.svg?height=24&width=24",
-    sellerName: "olivia",
-    title: "Video Editing",
-    rating: 4.3,
-    reviewCount: 90,
-    price: 45,
-    sellerLevel: "Regular",
-    type: "Freelancer",
-    country: "USA",
-    online: true,
-  },
-]
+import { services } from "@/app/data/products";
 
-// Extend mockServices to have enough data for pagination (at least 48 services for 2 pages)
-const extendedMockServices = Array.from({ length: 48 }, (_, index) => {
-  const baseService = mockServices[index % mockServices.length]
+
+// Extend services to have enough data for pagination (at least 48 services for 2 pages)
+const extendedservices = Array.from({ length: 48 }, (_, index) => {
+  const baseService = services[index % services.length]
   return {
     ...baseService,
     id: index + 1,
@@ -293,7 +153,7 @@ export default function ServiceListings() {
   const servicesPerRow = 3
 
   // Filter logic
-  const filteredServices = extendedMockServices.filter((service) => {
+  const filteredServices = extendedservices.filter((service) => {
     if (sellerStatus === "Online" && !service.online) return false
     if (sellerLevel === "Premium" && !["Premium", "Elite"].includes(service.sellerLevel)) return false
     if (sellerLevel === "Elite" && service.sellerLevel !== "Elite") return false
@@ -351,7 +211,7 @@ export default function ServiceListings() {
   }, [serviceRows])
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="serviceListingsContainer min-h-screen overflow-x-hidden">
       {/* Header Section */}
       <div className="relative h-[300px] flex items-center justify-center mb-8 mt-8 mx-auto max-w-[1240px] px-4">
         <div className="absolute inset-0">

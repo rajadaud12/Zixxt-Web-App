@@ -1,15 +1,14 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
 import SectionCard from "@/components/buyer/sectionCard"
 import CourseCard from "@/components/buyer/courseCard"
 import SoftwareCard from "@/components/buyer/softwareCard"
 import ServiceCard from "@/components/buyer/serviceCard"
 import { Main } from "@/components/buyer/heroComponents"
+import { courses,services,softwares } from "@/app/data/products";
 
-import { ChevronRight, ChevronLeft, Send, ArrowRight } from "lucide-react";
+import { ChevronRight, ChevronLeft, Send} from "lucide-react";
 
 
 import '@/styles/utils.css'
@@ -157,26 +156,6 @@ export default function Home() {
     // Here you would typically send the data to your backend
   };
 
-  const categories = [
-    {
-      title: "Services",
-      description: "Discover a range of expert solutions designed to meet your needs.",
-      link: "/services",
-      icon: "/services-icon.svg", // Placeholder for the icon
-    },
-    {
-      title: "Education",
-      description: "Explore courses to learn top skills from industry experts.",
-      link: "/education",
-      icon: "/education-icon.svg", // Placeholder for the icon
-    },
-    {
-      title: "Softwares",
-      description: "Explore top software for seamless performance.",
-      link: "/softwares",
-      icon: "/software-icon.svg", // Placeholder for the icon
-    },
-  ];
 
   const faqs = [
     {
@@ -205,224 +184,6 @@ export default function Home() {
     },
   ];
 
-  const courses = [
-    {
-      image: "/course1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course3.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course4.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-  ];
-
-  const services = [
-    {
-      id: 1,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 2,
-      image: "/service2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 3,
-      image: "/service3.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 4,
-      image: "/service4.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 5,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 6,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 7,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 8,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-  ];
-
-  // Software data to match your image
-  const softwares = [
-    {
-      id: 1,
-      logo: "/api/placeholder/70/70",
-      companyName: "Venhash Solutions",
-      country: "Pakistan",
-      title: "Duality CRM System With Admin Functionalities",
-      rating: 4.2,
-      reviewCount: 273,
-      price: 123,
-      level: "Gold",
-      description: "A Powerful And Efficient CRM System Designed To Manage Customer Relationships, Track Sales, And Streamline Business Operations With Robust Admin Controls.",
-      updated: "Feb 2025",
-      features: [
-        "Lead & Contact Management",
-        "Task & Activity Management",
-        "Sales Pipeline Tracking",
-        "Reports & Analytics",
-        "Lead & Contact Management",
-        "Lead & Contact Management",
-        "Lead & Contact Management",
-        "Lead & Contact Management",
-        "Lead & Contact Management"
-      ]
-    },
-    {
-      id: 2,
-      logo: "/api/placeholder/70/70",
-      companyName: "TechCorp",
-      country: "USA",
-      title: "Enterprise ERP Solution",
-      rating: 4.5,
-      reviewCount: 150,
-      price: 200,
-      level: "Platinum",
-      description: "Comprehensive ERP system for large enterprises to manage all business operations efficiently. Large enterprises to manage all business operations efficiently.",
-      updated: "Jan 2025",
-      features: [
-        "Inventory Management",
-        "HR Management",
-        "Financial Reporting",
-        "Supply Chain Management",
-        "Inventory Management",
-        "Inventory Management",
-        "Inventory Management",
-        "Inventory Management",
-        "Inventory Management"
-      ]
-    }
-  ];
-
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
@@ -448,7 +209,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="bg-white">
+    <main className="homeContainer bg-white">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-blue-16 to-white py-30">
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center mt-[50px]">
