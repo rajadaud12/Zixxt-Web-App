@@ -12,7 +12,7 @@ import { categoriesData } from "@/app/data/categories";
 export default function Navbar() {
   const { isLoggedIn, user } = useContext(AuthContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null); // Track which dropdown is open
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [showSecondaryNav, setShowSecondaryNav] = useState(true);
   const [isScrolling, setIsScrolling] = useState(false);
 
@@ -112,7 +112,7 @@ export default function Navbar() {
   const handleMouseLeave = () => {
     closeTimeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
-    }, 200); // Increased delay for better UX
+    }, 200);
   };
 
   return (
@@ -268,7 +268,7 @@ export default function Navbar() {
                       onClose={() => setActiveDropdown(null)}
                     />
                   </div>
-                  <Link href="/post-request" className="text-text hover:text-primary text-sm font-medium">
+                  <Link href="/tradeleads" className="text-text hover:text-primary text-sm font-medium">
                     Post Request
                   </Link>
                   <Link href="/about" className="text-text hover:text-primary text-sm font-medium">
@@ -356,7 +356,7 @@ export default function Navbar() {
                               <Link
                                 key={subIndex}
                                 href={subItem.link}
-                                className="block px-3 py-1 text-sm WAIT text-gray-700 hover:text-primary"
+                                className="block px-3 py-1 text-sm text-gray-700 hover:text-primary"
                                 onClick={() => setActiveDropdown(null)}
                               >
                                 {subItem.name}
@@ -466,7 +466,7 @@ export default function Navbar() {
                     Sign In
                   </Link>
                   <Link
-                    href D href="/signup"
+                    href="/signup"
                     className="flex items-center justify-center rounded-full bg-primary text-white hover:bg-primary font-semibold px-6 py-2"
                   >
                     Sign Up

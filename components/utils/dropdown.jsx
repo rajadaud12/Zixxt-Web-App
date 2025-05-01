@@ -21,7 +21,7 @@ export function Dropdown({
 
   // Styles based on variant
   const variantStyles = {
-    default: "bg-white border border-border text-text hover:bg-btnbg",
+    default: "bg-white border border-inputBorder text-text hover:bg-btnbg",
     small: "bg-btnbg text-text hover:bg-btnbg/80",
   }
 
@@ -38,7 +38,7 @@ export function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg border border-border">
+        <div className="absolute z-10 mt-1 w-full rounded-lg bg-white shadow-lg border border-inputBorder">
           <ul className="py-1">
             {options.map((option) => (
               <li key={option}>

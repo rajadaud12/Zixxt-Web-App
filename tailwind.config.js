@@ -52,7 +52,8 @@ module.exports = {
          inputBorder: '#CCCCCC',
          software: '#FFB400',
          course: '#03AA64',
-         levelGold:'#7E5600'
+         levelGold:'#7E5600',
+         background:'F5F5F6'
       },
       borderRadius: {
         lg: "var(--radius)",

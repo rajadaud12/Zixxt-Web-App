@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Tabs } from "@/components/utils/tabs";
 import { useState, useRef, useEffect } from "react";
@@ -148,28 +148,23 @@ export default function CategoriesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      {/* Title Section */}
-      <div className="relative text-center z-10 mb-8">
-        <div className="inline-block relative">
-          <div className="absolute inset-0 bg-white bg-opacity-100 scale-125 rounded-full shadow-[0_0_30px_20px_rgba(255,255,255,0.3)]"></div>
-          <div className="relative px-6 py-3">
-            <h1 className="typoH1 text-black">Categories</h1>
-            <p className="typoS2 text-textLight mt-2">Change the tabs to see respective categories</p>
-          </div>
+    <div className="bg-white min-h-screen">
+      <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        {/* Title Section */}
+        <div className="text-center mb-10">
+          <h1 className="typoH1 text-black mb-2">Categories</h1>
+          <p className="typoB1 text-textLight">Change the tabs to see respective categories</p>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <Tabs
-        tabs={tabs}
-        defaultTab="services"
-        className="max-w-2xl mx-auto mb-8"
-        onTabChange={(id) => setActiveTab(id)}
-      />
+        {/* Tabs */}
+        <Tabs
+          tabs={tabs}
+          defaultTab="services"
+          className="max-w-2xl mx-auto mb-8"
+          onTabChange={(id) => setActiveTab(id)}
+        />
 
-      {/* Category Cards Container */}
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Category Cards Container */}
         <CategoryList categories={categoriesData[activeTab]} />
       </div>
     </div>
@@ -203,7 +198,7 @@ function CategoryCard({ category }) {
 
   // Group subcategories into columns of 7
   const columns = groupIntoColumns(category.subcategories, 7);
-  const columnsPerView = 4; // Show 5 columns at once
+  const columnsPerView = 4; // Show 4 columns at once
   const canScrollLeft = startIndex > 0;
   const canScrollRight = startIndex < columns.length - columnsPerView;
 
@@ -255,7 +250,7 @@ function CategoryCard({ category }) {
         {/* Right Side - Content */}
         <div className="flex-1 flex flex-col">
           {/* Category Title */}
-          <div className="border-b border-border py-5 px-4">
+          <div className="border-b border-border py-5 px-6">
             <h3 className="text-black font-medium text-[20px] leading-[20px] font-sans uppercase">
               {category.name}
             </h3>
@@ -264,9 +259,9 @@ function CategoryCard({ category }) {
           {/* Subcategories Container */}
           <div 
             ref={containerRef}
-            className="relative overflow-hidden py-10 px-4 flex-1"
+            className="relative overflow-hidden py-10 px-6 flex-1"
           >
-            {/* Visual mask to show only 5 columns */}
+            {/* Visual mask to show only 4 columns */}
             <div className="relative overflow-hidden">
               <div
                 ref={subcategoriesRef}
@@ -299,7 +294,7 @@ function CategoryCard({ category }) {
 
           {/* Navigation Arrows and Scroll Indicator */}
           {columns.length > columnsPerView && (
-            <div className="flex justify-left py-3 px-3">
+            <div className="flex justify-left py-3 px-6">
               <div className="flex items-center gap-2 bg-white rounded-full shadow-[0_0_10px_rgba(0,0,0,0.1)] px-4 py-2">
                 <button
                   onClick={scrollLeft}
