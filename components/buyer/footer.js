@@ -4,10 +4,11 @@ import { Facebook, Twitter, Instagram } from "lucide-react"
 
 export default function Footer() {
   return (
+    
     <footer className="bg-black text-white pt-12 pb-6">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div>
+          <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
             <Link href="/" className="inline-block mb-6">
               <Image
                 src="/placeholder.svg?height=40&width=120"
@@ -59,7 +60,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/information-center" className="text-gray-300 hover:text-white">
+                <Link href="/informationCenter" className="text-gray-300 hover:text-white">
                   Information Center
                 </Link>
               </li>

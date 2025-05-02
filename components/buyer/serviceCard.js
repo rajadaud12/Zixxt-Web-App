@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { Star } from "lucide-react"
 
+
 export default function ServiceCard({ service }) {
   const router = useRouter()
 

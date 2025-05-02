@@ -268,7 +268,7 @@ export default function Signup() {
               alt="Platform features"
               width={500}
               height={320}
-              style={{ width: '100%', height: '30rem', objectFit: 'contain' }}
+              style={{ width: '100%', height: '25rem', objectFit: 'contain' }}
               onClick={nextSlide}
             />
           </div>

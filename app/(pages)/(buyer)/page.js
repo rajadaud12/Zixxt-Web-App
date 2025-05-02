@@ -1,16 +1,20 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import CategoryCard from "@/components/buyer/categoryCard"
+import SectionCard from "@/components/buyer/sectionCard"
 import CourseCard from "@/components/buyer/courseCard"
 import SoftwareCard from "@/components/buyer/softwareCard"
 import ServiceCard from "@/components/buyer/serviceCard"
+import { Main } from "@/components/buyer/heroComponents"
+import { courses,services,softwares } from "@/app/data/products";
 
-import { ChevronRight, ChevronLeft, Send } from "lucide-react"
+import { ChevronRight, ChevronLeft, Send} from "lucide-react";
+
+
 import '@/styles/utils.css'
 // Enhanced CardSlider component to match the design in images
+
+
 const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardType }) => {
   const sliderRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -82,7 +86,7 @@ const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardT
     <div className="w-full">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-black">{title}</h2>
+          <h2 className="text-5xl font-semiBold text-black">{title}</h2>
           <p className="text-sm text-gray-500">{subtitle}</p>
         </div>
         <div className="flex space-x-2">
@@ -130,8 +134,65 @@ const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardT
   );
 };
 
+
+const FaqAnswer = ({ question, answer }) => {
+  return (
+    <article className="flex flex-col px-20 py-14 w-full leading-7 bg-secondary rounded-2xl max-md:px-5 max-md:max-w-full">
+      <div className="max-md:max-w-full">
+        <h2 className="text-lg font-bold text-zinc-900 text-left">
+          {question}
+        </h2>
+        <p className="mt-10 text-sm text-black max-md:max-w-full text-left">
+          {answer}
+        </p>
+      </div>
+    </article>
+  );
+};
+
+// FaqItem Component
+const FaqItem = ({
+  question,
+  isActive,
+  onClick,
+  isFirst = false,
+}) => {
+  return (
+    <article
+      className={`flex flex-col justify-center ${
+        isActive
+          ? "px-8 py-6 mt-4 w-full leading-6 bg-secondary min-h-24 rounded-[100px] max-md:px-5 max-md:max-w-full"
+          : "px-4 py-6 mt-4 w-full bg-white border border-solid border-neutral-200 min-h-[72px] rounded-[100px] max-md:max-w-full"
+      } ${isFirst && !isActive ? "mt-0" : ""}`}
+      onClick={onClick}
+    >
+      <div className="flex justify-between items-center w-full">
+        <div className="flex gap-4 items-center">
+          <span
+            className={`flex shrink-0 w-2.5 h-2.5 rounded-full ${
+              isActive ? "bg-black" : "bg-neutral-200"
+            }`}
+          />
+          <p className="text-left">
+            {question}
+          </p>
+        </div>
+        {!isActive && (
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/70b67c9298b5e9c7109364b66acbe2a5ee3f81e1?placeholderIfAbsent=true&apiKey=fd53637cc6c641ad946d3c2bb56284bd"
+            className="w-6 aspect-square"
+            alt="Expand"
+          />
+        )}
+      </div>
+    </article>
+  );
+};
+
+
+
 export default function Home() {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeFaqIndex, setActiveFaqIndex] = useState(0);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -146,243 +207,47 @@ export default function Home() {
     }));
   };
 
+  const handleFaqClick = (index) => {
+    setActiveFaqIndex(index);
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
     // Here you would typically send the data to your backend
   };
 
-  const categories = [
-    {
-      title: "Services",
-      description: "Discover a range of expert solutions designed to meet your needs.",
-      link: "/services",
-      icon: "/services-icon.svg", // Placeholder for the icon
-    },
-    {
-      title: "Education",
-      description: "Explore courses to learn top skills from industry experts.",
-      link: "/education",
-      icon: "/education-icon.svg", // Placeholder for the icon
-    },
-    {
-      title: "Softwares",
-      description: "Explore top software for seamless performance.",
-      link: "/softwares",
-      icon: "/software-icon.svg", // Placeholder for the icon
-    },
-  ];
 
   const faqs = [
     {
-      id: 0,
-      question: "What is a Payment Gateway?",
+      question:
+        "Do I need to pay to Instapay even when there is no transaction going on in my business?",
       answer:
-        "A payment gateway is a service that authorizes and processes payments for online transactions. It securely transfers payment information between the customer, merchant, and bank, ensuring smooth and safe transactions.",
+        "No, you do not need to pay Instapay where there is no transaction happening. With one of the lowest transaction charges in the industry, pay only when you get paid!No, you do not need to pay Instapay where there is no transaction happening. With one of the lowest transaction charges in the industry, pay only when you get paid!, you do not need to pay Instapay where there is no transaction happening. With one of the lowest transaction charges in the industry, pay only when you get paid!No, you do not need to pay Instapay where there is no transaction happening. With one of the lowest transaction charges",
     },
     {
-      id: 1,
-      question: "Do I need to pay to Instapay even when there is no transaction going on in my business?",
+      question: "What is Zixxt?",
       answer:
-        "No, you do not need to pay Instapay where there is no transaction happening. With one of the lowest transaction charges in the industry, pay only when you get paid!",
+        "Zixxt is a comprehensive platform that provides various services to help businesses manage their operations efficiently. It offers tools for payment processing, customer management, and more.",
     },
     {
-      id: 2,
-      question: "What platforms does ACME payment gateway support?",
+      question: "What services zixxt offers?",
       answer:
-        "ACME payment gateway supports a wide range of platforms, including web, mobile apps (iOS and Android), and various e-commerce platforms like Shopify, WooCommerce, and Magento.",
+        "Zixxt offers a wide range of services including payment processing, customer relationship management, inventory tracking, analytics, and reporting tools to help businesses streamline their operations.",
     },
     {
-      id: 3,
+      question:
+        "How privacy is handled in zixxt? what type of data is gathered",
+      answer:
+        "Zixxt takes privacy seriously. We only collect essential data needed to provide our services. This includes transaction information, account details, and usage patterns. All data is encrypted and stored securely following industry best practices.",
+    },
+    {
       question: "Does ACME provide international payments support?",
       answer:
-        "Yes, ACME offers international payment support, allowing you to accept payments from customers worldwide with multi-currency support and the lowest transaction charges.",
+        "Yes, ACME provides comprehensive international payment support. Our platform enables businesses to receive payments from customers worldwide in multiple currencies with competitive exchange rates.",
     },
   ];
-
-  const courses = [
-    {
-      image: "/course1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course3.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course4.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-    {
-      image: "/course2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "Learn AI and Machine Learning with Python in 30 days",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-      hours: "30 hrs"
-    },
-  ];
-
-  const services = [
-    {
-      id: 1,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 2,
-      image: "/service2.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 3,
-      image: "/service3.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 4,
-      image: "/service4.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 5,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 6,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 7,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-    {
-      id: 8,
-      image: "/service1.jpg",
-      sellerName: "kahmiri",
-      location: "pakistan",
-      title: "AI and Machine Learning Using Python Programming Language",
-      rating: "4.2",
-      reviews: "273",
-      price: "1,141",
-    },
-  ];
-
-  // Software data to match your image
-  const softwares = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id:3,
-    },
-  ];
-
-  const toggleFAQ = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
-
+ 
   // CSS for hiding scrollbars
   useEffect(() => {
     // Create style element
@@ -404,50 +269,18 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="bg-white">
+    <main className="homeContainer bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-16">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-            Your All In One Platform For Services, Education, And Software
-          </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            A Unified Hub Offering Endless Possibilities In Services, Education, And Software
-          </p>
-          <div className="flex justify-center space-x-4 mb-12">
-            <Link
-              href="/signup"
-              className="px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition-all"
-            >
-              Join Now
-            </Link>
-            <Link
-              href="/signin"
-              className="px-6 py-3 bg-white text-black border border-gray-300 rounded-full font-semibold hover:bg-gray-100 transition-all"
-            >
-              Sign In
-            </Link>
-          </div>
-          <div className="flex justify-center">
-            <Image
-              src="/hero-illustration.png" // Placeholder for the hero illustration
-              alt="Services, Education, Software Flow"
-              width={800}
-              height={400}
-              className="w-full max-w-4xl"
-            />
-          </div>
+      <section className="bg-gradient-to-b from-blue-16 to-white py-30">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center mt-[50px]">
+          <Main />
         </div>
       </section>
 
       {/* Categories Section */}
       <section className="py-16">
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[14px]">
-            {categories.map((category, index) => (
-              <CategoryCard key={index} category={category} />
-            ))}
-          </div>
+          <SectionCard />
         </div>
       </section>
 
@@ -475,7 +308,7 @@ export default function Home() {
             items={softwares}
             cardType="software"
             renderItem={(software, index) => (
-             <SoftwareCard/>
+             <SoftwareCard software={software}/>
             )}
           />
         </div>
@@ -593,61 +426,41 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-[100px]">
-          <h2 className="text-4xl font-bold text-black mb-12">Frequently Asked Questions</h2>
-          
-          <div className="flex flex-col md:flex-row">
-            {/* Questions Column */}
-            <div className="md:w-1/2 space-y-4">
-              {faqs.map((faq) => (
-                <button
-                  key={faq.id}
-                  onClick={() => toggleFAQ(faq.id)}
-                  className={`w-full text-left p-6 rounded-xl flex items-center justify-between transition-all duration-300 
-                    ${activeIndex === faq.id ? "bg-blue-50" : "bg-white border border-gray-200 hover:border-gray-300"}`}
-                >
-                  <div className="flex items-center">
-                    <div 
-                      className={`w-4 h-4 rounded-full mr-4 transition-colors duration-300 
-                        ${activeIndex === faq.id ? "bg-blue-600" : "bg-gray-200"}`} 
-                    />
-                    <h3 className="text-base font-semibold text-black">{faq.question}</h3>
-                  </div>
-                  <ChevronRight 
-                    className={`w-5 h-5 text-gray-400 transition-transform duration-300 
-                      ${activeIndex === faq.id ? "rotate-90" : ""}`} 
+      <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center mt-[50px] mb-[50px]">
+
+    <section className="flex flex-col">
+      <header className="flex flex-col text-left w-full bg-white mx-auto mb-8 max-md:max-w-full">
+        <h1 className="text-4xl font-medium text-zinc-900">
+          Frequently Asked Questions
+        </h1>
+      </header>
+      <div className="w-full max-md:max-w-full">
+        <div className="flex gap-5 items-start max-md:flex-col">
+          <div className="w-6/12 max-md:ml-0 max-md:w-full">
+            <div className="text-base text-black max-md:max-w-full">
+              <div className="flex flex-col max-w-full w-full">
+                {faqs.map((faq, index) => (
+                  <FaqItem
+                    key={index}
+                    question={faq.question}
+                    isActive={index === activeFaqIndex}
+                    onClick={() => handleFaqClick(index)}
+                    isFirst={index === 0}
                   />
-                </button>
-              ))}
-            </div>
-            
-            {/* Answer Column */}
-            <div className="md:w-1/2 md:pl-8 mt-8 md:mt-0">
-              <div className="bg-blue-50 p-8 rounded-xl h-full relative overflow-hidden">
-                {faqs.map((faq) => (
-                  <div 
-                    key={faq.id}
-                    className={`absolute inset-0 p-8 transition-all duration-500 ease-in-out transform 
-                      ${activeIndex === faq.id 
-                        ? "translate-x-0 opacity-100" 
-                        : "translate-x-full opacity-0 pointer-events-none"}`}
-                  >
-                    <h3 className="text-xl font-semibold text-black mb-4">{faq.question}</h3>
-                    <p className="text-gray-600">{faq.answer}</p>
-                  </div>
                 ))}
-                
-                {activeIndex === null && (
-                  <div className="text-center text-gray-500 h-full flex items-center justify-center">
-                    <p>Select a question to view the answer</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
+          <div className="w-6/12 max-md:ml-0 max-md:w-full">
+            <FaqAnswer
+              question={faqs[activeFaqIndex].question}
+              answer={faqs[activeFaqIndex].answer}
+            />
+          </div>
         </div>
-      </section>
+      </div>
+    </section>
+    </div>
     </main>
   )
 }

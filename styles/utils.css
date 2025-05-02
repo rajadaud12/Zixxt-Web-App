@@ -5,7 +5,7 @@
 
 
 .btn2 {
-  @apply inline-flex items-center justify-center rounded-full font-semibold transition-colors focus:outline-none w-full min-w-[110px];
+  @apply inline-flex items-center justify-center rounded-full font-semibold transition-colors focus:outline-none w-full min-w-[110px] h-[35px];
 }
   
 
@@ -54,7 +54,7 @@
 
 /* Typography classes */
 .typoH1 {
-  @apply text-[28px] leading-[34px] font-semibold font-sans;
+  @apply text-[40px] leading-[34px] font-semibold font-sans;
 }
 
 .typoH2 {
