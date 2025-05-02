@@ -172,10 +172,13 @@ export default function Navbar() {
                   </div>
                 )}
                 <div className="flex items-center space-x-6">
-                  <button className="text-textLight hover:text-primary relative">
+                <Link href="/wishList">
+
+                  <button className="text-textLight hover:text-primary relative" >
                     <Heart className="h-5 w-5 stroke-[1.5] transition-colors" />
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
                   </button>
+                  </Link>
                   <button className="text-textLight hover:text-primary relative">
                     <MessageCircle className="h-5 w-5 stroke-[1.5] transition-colors" />
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
@@ -268,13 +271,13 @@ export default function Navbar() {
                       onClose={() => setActiveDropdown(null)}
                     />
                   </div>
-                  <Link href="/tradeleads" className="text-text hover:text-primary text-sm font-medium">
+                  <Link href="/postRequest" className="text-text hover:text-primary text-sm font-medium">
                     Post Request
                   </Link>
                   <Link href="/about" className="text-text hover:text-primary text-sm font-medium">
                     About
                   </Link>
-                  <Link href="/contact" className="text-text hover:text-primary text-sm font-medium">
+                  <Link href="/contactUs" className="text-text hover:text-primary text-sm font-medium">
                     Contact
                   </Link>
                 </nav>
@@ -421,7 +424,7 @@ export default function Navbar() {
                     Orders
                   </Link>
                   <div className="flex space-x-6 px-3 py-2">
-                    <button className="text-textLight hover:text-primary relative">
+                    <button className="text-textLight hover:text-primary relative" href="/wishList">
                       <Heart className="h-5 w-5 stroke-[1.5] transition-colors" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
                     </button>

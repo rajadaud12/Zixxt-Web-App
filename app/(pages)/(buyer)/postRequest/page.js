@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { Dropdown } from "@/components/utils/Dropdown"
+import { Dropdown } from "@/components/utils/dropdown"
 
 export default function PostRequest() {
   const [category, setCategory] = useState('Service');
@@ -18,7 +18,7 @@ export default function PostRequest() {
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+      <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8 pt-10 pb-12 mb-[100px]">
         {/* Header section - matching TradeLeads */}
         <div className="text-center mb-10">
           <h1 className="typoH1 text-black mb-2">Post A Request</h1>
