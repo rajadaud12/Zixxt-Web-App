@@ -1,3 +1,4 @@
+
 import Link from "next/link"
 import Image from "next/image"
 import { Facebook, Twitter, Instagram } from "lucide-react"
@@ -97,7 +98,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Account</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/become-a-seller" className="text-gray-300 hover:text-white">
+                <Link href="/checkout" className="text-gray-300 hover:text-white">
                   Become a Seller
                 </Link>
               </li>

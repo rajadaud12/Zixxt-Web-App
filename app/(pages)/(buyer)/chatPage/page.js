@@ -13,10 +13,10 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 md:px-[100px]">
+    <div className="max-w-[1440px] mx-auto px-6 mt-[50px] md:px-[100px]">
     <div className="flex max-h-screen bg-whiteGrey font-sans">
       {/* Left sidebar - chat list */}
-      <div className="w-80 border-r border-border bg-white">
+      <div className="w-100 border-r border-border bg-white">
         {/* Search bar */}
         <div className="p-4">
           <div className="relative">
@@ -24,7 +24,7 @@ export default function ChatInterface() {
             <input 
               type="text" 
               placeholder="Search" 
-              className="w-full bg-whiteGrey rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none"
+              className="w-full bg-white border rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none"
             />
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function ChatInterface() {
           
           {/* Receiver message */}
           <div className="flex justify-start mb-4">
-            <div className="bg-secondary rounded-lg p-3 max-w-xs md:max-w-md">
+            <div className="bg-secondary rounded-tl-[30px] rounded-tr-[30px] rounded-br-[30px] p-4 max-w-xs md:max-w-md">
               <p className="text-sm text-text">thats great tell me about your requirements</p>
               <span className="text-xs text-textLight block text-right mt-1">11:31 AM</span>
             </div>
@@ -127,7 +127,7 @@ export default function ChatInterface() {
           
           {/* Sender message */}
           <div className="flex justify-end mb-4">
-            <div className="bg-primary rounded-lg p-3 max-w-xs md:max-w-md">
+            <div className="bg-primary rounded-tl-[30px] rounded-tr-[30px] rounded-bl-[30px] p-4 max-w-xs md:max-w-md">
               <p className="text-sm text-white">Hello!!! 👋</p>
               <div className="flex justify-end items-center gap-1 mt-1">
                 <span className="text-xs text-white/80">11:31 AM</span>
@@ -138,7 +138,7 @@ export default function ChatInterface() {
           
           {/* Receiver message */}
           <div className="flex justify-start mb-4">
-            <div className="bg-secondary rounded-lg p-3 max-w-xs md:max-w-md">
+            <div className="bg-secondary rounded-tl-[30px] rounded-tr-[30px] rounded-br-[30px] p-4 max-w-xs md:max-w-md">
               <p className="text-sm text-text">thats great tell me about your requirements</p>
               <span className="text-xs text-textLight block text-right mt-1">11:31 AM</span>
             </div>
@@ -146,7 +146,7 @@ export default function ChatInterface() {
           
           {/* Sender message */}
           <div className="flex justify-end mb-4">
-            <div className="bg-primary rounded-lg p-3 max-w-xs md:max-w-md">
+            <div className="bg-primary rounded-tl-[30px] rounded-tr-[30px] rounded-bl-[30px] p-4 max-w-xs md:max-w-md">
               <p className="text-sm text-white">So I want a Logo design that just fits properly wit my brands voice it should depict it in a good way</p>
               <div className="flex justify-end items-center gap-1 mt-1">
                 <span className="text-xs text-white/80">11:31 AM</span>
@@ -158,7 +158,7 @@ export default function ChatInterface() {
           {/* Conditional offer block */}
           {!showOffer ? (
             <div className="flex justify-start mb-4">
-              <div className="bg-secondary rounded-lg p-3 max-w-xs md:max-w-md">
+              <div className="bg-secondary rounded-tl-[30px] rounded-tr-[30px] rounded-br-[30px] p-4 max-w-xs md:max-w-md">
                 <p className="text-sm text-text">thats great tell me about your requirements</p>
                 <span className="text-xs text-textLight block text-right mt-1">11:31 AM</span>
               </div>
@@ -219,11 +219,15 @@ export default function ChatInterface() {
               className="w-20 h-20 rounded-full object-cover"
             />
           </div>
+          <div className="flex max-w-[200px] items-center mb-2">
+            <div className='flex-1 justify-start pr-5'>
           <h3 className="font-medium text-black">kahmiri</h3>
           <p className="text-sm text-textLight mb-2">pakistan</p>
-          <span className="bg-software text-levelGold text-xs font-medium px-2 py-1 rounded-md mb-4">Gold</span>
-          
-          <button className="w-full py-2 border border-border rounded-md text-black hover:bg-gray-50 transition-colors mb-6">
+          </div>
+          <span className="flex text-center justify-center bg-software bg-opacity-20 text-levelGold text-sm font-medium rounded-[50px] w-[80px] h-[30px] mb-4 pt-1">Gold</span>
+          </div>
+
+          <button className="w-full py-2 border border-border rounded-[50px] text-black hover:bg-gray-50 transition-colors mb-6">
             View Profile
           </button>
           

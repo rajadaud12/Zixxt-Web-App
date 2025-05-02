@@ -179,10 +179,12 @@ export default function Navbar() {
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
                   </button>
                   </Link>
+                  <Link href="/chatPage">
                   <button className="text-textLight hover:text-primary relative">
                     <MessageCircle className="h-5 w-5 stroke-[1.5] transition-colors" />
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
                   </button>
+                  </Link>
                   <button className="text-textLight hover:text-primary relative">
                     <Bell className="h-5 w-5 stroke-[1.5] transition-colors" />
                     <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
