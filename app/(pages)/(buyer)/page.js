@@ -6,9 +6,9 @@ import CourseCard from "@/components/buyer/courseCard"
 import SoftwareCard from "@/components/buyer/softwareCard"
 import ServiceCard from "@/components/buyer/serviceCard"
 import { Main } from "@/components/buyer/heroComponents"
-import { courses,services,softwares } from "@/app/data/products";
+import { courses, services, softwares } from "@/app/data/products";
 
-import { ChevronRight, ChevronLeft, Send} from "lucide-react";
+import { ChevronRight, ChevronLeft, Send } from "lucide-react";
 
 
 import '@/styles/utils.css'
@@ -26,13 +26,13 @@ const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardT
   // Check if we need to show navigation arrows
   useEffect(() => {
     if (!sliderRef.current) return;
-    
+
     const checkArrows = () => {
       const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
       setShowLeftArrow(scrollLeft > 0);
       setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5); // 5px buffer
     };
-    
+
     checkArrows();
     sliderRef.current.addEventListener('scroll', checkArrows);
     return () => {
@@ -106,11 +106,11 @@ const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardT
           </button>
         </div>
       </div>
-      
-      <div 
+
+      <div
         className="w-full overflow-hidden"
       >
-        <div 
+        <div
           ref={sliderRef}
           className={`flex overflow-x-auto scrollbar-hide scroll-smooth`}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -119,15 +119,15 @@ const CardSlider = ({ title, subtitle, items, renderItem, cardWidth = 280, cardT
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
-{items.map((item, index) => (
-  <div 
-    key={index} 
-    className="flex-none mr-[14px] first:pl-0"
-    style={{ width: cardType === 'software' ? 'auto' : `${cardWidth}px` }} 
-  >
-    {renderItem(item, index)}
-  </div>
-))}
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="flex-none mr-[14px] first:pl-0"
+              style={{ width: cardType === 'software' ? 'auto' : `${cardWidth}px` }}
+            >
+              {renderItem(item, index)}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -159,19 +159,17 @@ const FaqItem = ({
 }) => {
   return (
     <article
-      className={`flex flex-col justify-center ${
-        isActive
+      className={`flex flex-col justify-center ${isActive
           ? "px-8 py-6 mt-4 w-full leading-6 bg-secondary min-h-24 rounded-[100px] max-md:px-5 max-md:max-w-full"
           : "px-4 py-6 mt-4 w-full bg-white border border-solid border-neutral-200 min-h-[72px] rounded-[100px] max-md:max-w-full"
-      } ${isFirst && !isActive ? "mt-0" : ""}`}
+        } ${isFirst && !isActive ? "mt-0" : ""}`}
       onClick={onClick}
     >
       <div className="flex justify-between items-center w-full">
         <div className="flex gap-4 items-center">
           <span
-            className={`flex shrink-0 w-2.5 h-2.5 rounded-full ${
-              isActive ? "bg-black" : "bg-neutral-200"
-            }`}
+            className={`flex shrink-0 w-2.5 h-2.5 rounded-full ${isActive ? "bg-black" : "bg-neutral-200"
+              }`}
           />
           <p className="text-left">
             {question}
@@ -210,7 +208,7 @@ export default function Home() {
   const handleFaqClick = (index) => {
     setActiveFaqIndex(index);
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
@@ -247,7 +245,7 @@ export default function Home() {
         "Yes, ACME provides comprehensive international payment support. Our platform enables businesses to receive payments from customers worldwide in multiple currencies with competitive exchange rates.",
     },
   ];
- 
+
   // CSS for hiding scrollbars
   useEffect(() => {
     // Create style element
@@ -262,7 +260,7 @@ export default function Home() {
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
       document.head.removeChild(style);
     };
@@ -287,7 +285,7 @@ export default function Home() {
       {/* Courses Section */}
       <section className="py-16">
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
-          <CardSlider 
+          <CardSlider
             title="Courses"
             subtitle="Learn top skills from industry experts."
             items={courses}
@@ -296,19 +294,19 @@ export default function Home() {
               <CourseCard key={index} course={course} />
             )}
           />
-          </div>
+        </div>
       </section>
 
       {/* Software Section */}
       <section className="py-16">
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
-          <CardSlider 
+          <CardSlider
             title="Software"
             subtitle="Explore Smart software for seamless performance."
             items={softwares}
             cardType="software"
             renderItem={(software, index) => (
-             <SoftwareCard software={software}/>
+              <SoftwareCard software={software} />
             )}
           />
         </div>
@@ -317,7 +315,7 @@ export default function Home() {
       {/* Services Section */}
       <section className="py-16">
         <div className="max-w-[1440px] mx-auto px-4 md:px-[100px]">
-          <CardSlider 
+          <CardSlider
             title="Services"
             subtitle="Expert solutions for your business growth."
             items={services}
@@ -337,7 +335,7 @@ export default function Home() {
             <div className="bg-black text-white p-12 md:w-1/3 relative overflow-hidden m-[8px] rounded-[20px]">
               <h2 className="text-3xl font-bold mb-2">Contact Us</h2>
               <p className="text-gray-300 mb-12">your voice matters to us</p>
-              
+
               {/* Social Media Icons */}
               <div className="flex space-x-4 mt-auto">
                 <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors">
@@ -358,12 +356,12 @@ export default function Home() {
                   </svg>
                 </a>
               </div>
-              
+
               {/* Background Circles */}
               <div className="absolute right-0 bottom-0 w-64 h-64 rounded-full bg-gray-300 opacity-70 -mr-20 -mb-20"></div>
               <div className="absolute left-12 bottom-32 w-24 h-24 rounded-full bg-gray-200 opacity-70"></div>
             </div>
-            
+
             {/* Right Column - Form */}
             <div className="bg-white p-8 md:p-12 md:w-2/3">
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -395,7 +393,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label htmlFor="message" className="block text-gray-700 mb-2">Message</label>
                   <textarea
@@ -409,7 +407,7 @@ export default function Home() {
                     required
                   ></textarea>
                 </div>
-                
+
                 <div className="pt-4">
                   <button
                     type="submit"
@@ -428,39 +426,39 @@ export default function Home() {
       {/* FAQ Section */}
       <div className="max-w-[1440px] mx-auto px-4 md:px-[100px] text-center mt-[50px] mb-[50px]">
 
-    <section className="flex flex-col">
-      <header className="flex flex-col text-left w-full bg-white mx-auto mb-8 max-md:max-w-full">
-        <h1 className="text-4xl font-medium text-zinc-900">
-          Frequently Asked Questions
-        </h1>
-      </header>
-      <div className="w-full max-md:max-w-full">
-        <div className="flex gap-5 items-start max-md:flex-col">
-          <div className="w-6/12 max-md:ml-0 max-md:w-full">
-            <div className="text-base text-black max-md:max-w-full">
-              <div className="flex flex-col max-w-full w-full">
-                {faqs.map((faq, index) => (
-                  <FaqItem
-                    key={index}
-                    question={faq.question}
-                    isActive={index === activeFaqIndex}
-                    onClick={() => handleFaqClick(index)}
-                    isFirst={index === 0}
-                  />
-                ))}
+        <section className="flex flex-col">
+          <header className="flex flex-col text-left w-full bg-white mx-auto mb-8 max-md:max-w-full">
+            <h1 className="text-4xl font-medium text-zinc-900">
+              Frequently Asked Questions
+            </h1>
+          </header>
+          <div className="w-full max-md:max-w-full">
+            <div className="flex gap-5 items-start max-md:flex-col">
+              <div className="w-6/12 max-md:ml-0 max-md:w-full">
+                <div className="text-base text-black max-md:max-w-full">
+                  <div className="flex flex-col max-w-full w-full">
+                    {faqs.map((faq, index) => (
+                      <FaqItem
+                        key={index}
+                        question={faq.question}
+                        isActive={index === activeFaqIndex}
+                        onClick={() => handleFaqClick(index)}
+                        isFirst={index === 0}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="w-6/12 max-md:ml-0 max-md:w-full">
+                <FaqAnswer
+                  question={faqs[activeFaqIndex].question}
+                  answer={faqs[activeFaqIndex].answer}
+                />
               </div>
             </div>
           </div>
-          <div className="w-6/12 max-md:ml-0 max-md:w-full">
-            <FaqAnswer
-              question={faqs[activeFaqIndex].question}
-              answer={faqs[activeFaqIndex].answer}
-            />
-          </div>
-        </div>
+        </section>
       </div>
-    </section>
-    </div>
     </main>
   )
 }

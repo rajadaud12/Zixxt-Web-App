@@ -2,8 +2,15 @@
 
 import { useState } from "react"
 
-export function Tabs({ tabs, defaultTab, className = "" }) {
+export function Tabs({ tabs, defaultTab, className = "", onTabChange }) {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id)
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId)
+    if (onTabChange) {
+      onTabChange(tabId)
+    }
+  }
 
   return (
     <div className={className}>
@@ -11,7 +18,7 @@ export function Tabs({ tabs, defaultTab, className = "" }) {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`flex-1 px-4 py-3 text-sm font-medium rounded-full transition-all ${
               activeTab === tab.id ? "bg-btnbg text-text" : "bg-transparent text-textLight hover:text-text"
             }`}

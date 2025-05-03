@@ -273,7 +273,7 @@ export default function Navbar() {
                       onClose={() => setActiveDropdown(null)}
                     />
                   </div>
-                  <Link href="/postRequest" className="text-text hover:text-primary text-sm font-medium">
+                  <Link href="/tradeleads" className="text-text hover:text-primary text-sm font-medium">
                     Post Request
                   </Link>
                   <Link href="/about" className="text-text hover:text-primary text-sm font-medium">
