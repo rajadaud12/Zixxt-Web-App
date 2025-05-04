@@ -52,7 +52,7 @@ export default function SectionCard() {
       {categories.map((category, index) => (
         <div 
           key={index} 
-          className={`${category.gradientClass} rounded-[40px] p-6 flex-1 flex flex-col hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300`}
+          className={`${category.gradientClass} rounded-[40px] p-6 flex-1 flex flex-col hover:shadow-md hover:scale-10 hover:-translate-y-1 transition-all duration-300`}
         >
           <div className={`${category.iconColor} rounded-full w-14 h-14 flex items-center justify-center mb-4`}>
             {category.icon}
