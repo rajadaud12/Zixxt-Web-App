@@ -134,14 +134,6 @@ export default function OrderDetail() {
   }
 
   const acceptDelivery = () => {
-    const newStartItem = {
-      id: "milestone3-start",
-      time: "Feb 17, 9:45 pm",
-      message: "The Milestone 3 has been started",
-      type: "started",
-      expanded: false,
-    }
-
     const newCompleteItem = {
       id: "milestone3-complete",
       time: "Feb 17, 9:45 pm",
@@ -159,11 +151,19 @@ export default function OrderDetail() {
       expanded: false,
     }
 
+    // Add new next milestone item
+    const newNextMilestoneItem = {
+      id: "milestone4-start",
+      time: "Feb 17, 9:45 pm",
+      message: "The Milestone 4 has been started",
+      type: "started",
+      expanded: false,
+    }
+
     const updatedItems = [
       activityItems[0], 
       newAcceptItem,
       newCompleteItem,
-      newStartItem,
       ...activityItems.slice(1).map((item) => {
         if (item.id === "milestone3-delivery") {
           return { ...item, showActions: false }
@@ -176,31 +176,64 @@ export default function OrderDetail() {
     setShowNextMilestone(true)
   }
 
+  const rejectDelivery = () => {
+    const newRevisionItem = {
+      id: "milestone3-revision-request",
+      time: "Feb 17, 9:45 pm",
+      message: "Buyer has asked for revision for milestone 3",
+      type: "buyer",
+      content: "I need the colors to be more vibrant and the font to be more modern.",
+      expanded: true,
+    }
+
+    const updatedItems = [
+      activityItems[0],
+      newRevisionItem,
+      ...activityItems.slice(1).map((item) => {
+        if (item.id === "milestone3-delivery") {
+          return { ...item, showActions: false }
+        }
+        return item
+      }),
+    ]
+
+    setActivityItems(updatedItems)
+  }
+
   const renderActivityTimeline = () => {
     return (
       <div className="relative">
         {/* Vertical line that runs through the entire timeline */}
         <div className="absolute left-5 top-6 bottom-0 w-px bg-border"></div>
 
-        {/* First item */}
-        <div className="bg-[#E6F4FF] rounded-lg p-4 mb-8 relative">
-          <div className="absolute left-5 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#E6F4FF] border-4 border-white">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M5 12H19M19 12L12 5M19 12L12 19"
-                  stroke="#007AFF"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+        {/* First item - Order Placed */}
+        <div className="relative mb-8">
+          <div className="flex">
+            {/* Left side - avatar */}
+            <div className="flex-shrink-0 relative">
+              <div className="absolute left-5 transform -translate-x-1/2">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#E6F4FF] border-4 border-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M5 12H19M19 12L12 5M19 12L12 19"
+                      stroke="#007AFF"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="pl-12">
-            <div className="flex items-center">
-              <span className="text-sm font-medium text-text mr-2">{activityItems[0].message}</span>
-              <span className="text-xs text-textLight">{activityItems[0].time}</span>
+
+            {/* Right side - content */}
+            <div className="flex-grow pl-10">
+              <div className="bg-[#E6F4FF] rounded-lg p-4">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium text-text mr-2">{activityItems[0].message}</span>
+                  <span className="text-xs text-textLight">{activityItems[0].time}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -308,12 +341,15 @@ export default function OrderDetail() {
                       {item.type === "seller" && item.showActions && (
                         <div className="flex gap-2 mt-4">
                           <button 
-                            className="inline-flex items-center justify-center rounded-full font-light transition-colors focus:outline-none min-w-[200px] text-success text-[12px] leading-[16px] px-6 py-2 border border-success"
+                            className="inline-flex items-center justify-center rounded-full font-medium transition-colors focus:outline-none min-w-[200px] text-success text-[12px] leading-[16px] px-6 py-2 border border-success"
                             onClick={acceptDelivery}
                           >
                             Accept Delivery
                           </button>
-                          <button className="inline-flex items-center justify-center rounded-full font-light transition-colors focus:outline-none min-w-[200px] text-failure border border-failure text-[12px] leading-[16px] px-6 py-2">
+                          <button 
+                            className="inline-flex items-center justify-center rounded-full font-medium transition-colors focus:outline-none min-w-[200px] text-failure border border-failure text-[12px] leading-[16px] px-6 py-2"
+                            onClick={rejectDelivery}
+                          >
                             Reject
                           </button>
                         </div>
@@ -501,8 +537,6 @@ export default function OrderDetail() {
                 </div>
               </div>
             </div>
-
-           
           </div>
 
           {/* Main content area */}
