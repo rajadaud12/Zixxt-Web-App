@@ -144,7 +144,7 @@ export default function ChatInterface() {
     <>
       <style>{styles}</style>
       <div className="max-w-[1440px] mx-auto px-6 mt-[50px] md:px-[100px]">
-        <div className="flex h-[700px] bg-whiteGrey font-sans">
+        <div className="flex h-[700px] bg-white border p-2 rounded-[30px] font-sans">
           {/* Left sidebar - chat list */}
           <ChatList 
             chats={chats} 
