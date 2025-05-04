@@ -1,20 +1,45 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { Star } from "lucide-react"
+import { useRouter } from "next/navigation";
+import { Star, Heart } from "lucide-react";
+import { useWishlist } from "../../context/wishListContext";
+import { useState } from "react";
 
 export default function CourseCard({ course }) {
-  const router = useRouter()
+  const router = useRouter();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleCardClick = () => {
-    router.push(`/courseDetail/${course.id}`)
-  }
+    router.push(`/courseDetail/${course.id}`);
+  };
+
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation(); // Prevent card click when clicking heart
+    if (isInWishlist(course.id, "courses")) {
+      removeFromWishlist(course.id, "courses");
+    } else {
+      addToWishlist(course, "courses");
+    }
+  };
 
   return (
     <div
-      className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF] cursor-pointer"
+      className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF] cursor-pointer relative"
       onClick={handleCardClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {isHovered && (
+        <button
+          className="absolute top-2 right-2 z-10 bg-white rounded-full p-1 shadow-sm transition-opacity"
+          onClick={handleWishlistToggle}
+        >
+          <Heart
+            className={`w-5 h-5 ${isInWishlist(course.id, "courses") ? "text-red-500 fill-current" : "text-gray-500"}`}
+          />
+        </button>
+      )}
       <div className="relative">
         <img
           src={course.image || "/api/placeholder/280/160"}
@@ -46,11 +71,9 @@ export default function CourseCard({ course }) {
             Gold
           </span>
         </div>
-
         <p className="text-paragraphText font-normal leading-tight mb-2 h-10 overflow-hidden text-light">
           {course.title || "AI and Machine Learning Using Python Programming Language"}
         </p>
-
         <div className="flex items-center mb-1">
           <div className="flex items-center">
             <Star className="w-4 h-4 fill-current text-software" />
@@ -59,11 +82,10 @@ export default function CourseCard({ course }) {
           </div>
           <span className="text-xs text-gray-500 ml-1">({course.reviews || "273"})</span>
         </div>
-
         <div className="font-semibold text-base font-medium text-black">
           From pkr {course.price || "1,141"}
         </div>
       </div>
     </div>
-  )
+  );
 }

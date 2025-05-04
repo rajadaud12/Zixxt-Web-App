@@ -1,25 +1,47 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
+import { useWishlist } from "../../context/wishListContext";
+import { useState } from "react";
 
 export default function SoftwareCard({ software }) {
   const router = useRouter();
-  
-  // Function to handle card click
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const [isHovered, setIsHovered] = useState(false);
+
   const handleCardClick = () => {
     router.push(`/softwareDetail/${software.id}`);
   };
 
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    if (isInWishlist(software.id, "software")) {
+      removeFromWishlist(software.id, "software");
+    } else {
+      addToWishlist(software, "software");
+    }
+  };
+
   return (
     <div
-      className="w-[900px] bg-white rounded-[30px] border border-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+      className="w-[900px] bg-white rounded-[30px] border border-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer relative"
       onClick={handleCardClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {isHovered && (
+        <button
+          className="absolute top-4 right-4 z-10 bg-white rounded-full p-1 shadow-sm transition-opacity"
+          onClick={handleWishlistToggle}
+        >
+          <Heart
+            className={`w-6 h-6 ${isInWishlist(software.id, "software") ? "text-red-500 fill-current" : "text-gray-500"}`}
+          />
+        </button>
+      )}
       <div className="p-6">
         <div className="flex mx-[30px] mb-[30px]">
-          {/* Left side with logo */}
           <div className="mr-8">
             <div className="w-[100px] h-[100px] bg-whiteGrey rounded-[16px] flex items-center justify-center overflow-hidden">
               <img
@@ -29,18 +51,13 @@ export default function SoftwareCard({ software }) {
               />
             </div>
           </div>
-
-          {/* Main content area */}
           <div className="flex-1">
-            {/* Header with company name and price on the same line */}
             <div className="flex justify-between items-start mb-1">
               <div className="flex">
-                {/* Small company logo */}
                 <div className="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center mr-2 text-white text-xs font-medium overflow-hidden">
                   <span>Sh</span>
                 </div>
                 <div>
-                  {/* Company name with Gold badge */}
                   <div className="flex items-center mb-1">
                     <div className="flex flex-col gap-[1px]">
                       <h3 className="text-base font-semibold text-black mr-2 leading-tight">
@@ -63,13 +80,9 @@ export default function SoftwareCard({ software }) {
                 </span>
               </div>
             </div>
-
-            {/* Product title */}
             <h2 className="text-lg font-regular text-light mb-1">
               {software.title || "Duality Crm System With Admin Functionalities"}
             </h2>
-
-            {/* Rating */}
             <div className="flex items-center">
               <Star className="w-5 h-5 fill-current text-software" />
               <span className="text-sm font-semibold text-black ml-1">
@@ -82,10 +95,7 @@ export default function SoftwareCard({ software }) {
             </div>
           </div>
         </div>
-
-        {/* Content below logo with equal margins */}
         <div className="mx-[30px]">
-          {/* Description */}
           <p className="text-paragraphText text-light mb-5">
             {software.description ||
               "A Powerful And Efficient CRM System Designed To Manage Customer Relationships, Track Sales, And Streamline Business Operations With Robust Admin Controls."}
@@ -93,21 +103,19 @@ export default function SoftwareCard({ software }) {
               {software.updated || "Updated Feb 2025"}
             </span>
           </p>
-
-          {/* Features */}
           <div className="mb-[30px]">
             <h4 className="font-semibold text-base text-black mb-3">Features:</h4>
             <div className="grid grid-cols-3 gap-y-3 gap-x-4">
               {(software.features || [
                 "Lead & Contact Management",
                 "Task & Activity Management",
-                "Lead & Contact Management",
                 "Sales Pipeline Tracking",
                 "Reports & Analytics",
-                "Lead & Contact Management",
-                "Lead & Contact Management",
-                "Lead & Contact Management",
-                "Lead & Contact Management",
+                "Email Integration",
+                "Customer Support",
+                "Mobile Access",
+                "Customizable Dashboard",
+                "Data Security",
               ]).map((feature, index) => (
                 <div key={index} className="flex items-center">
                   <span className="text-primary mr-2">✓</span>
@@ -116,8 +124,6 @@ export default function SoftwareCard({ software }) {
               ))}
             </div>
           </div>
-
-          {/* Action buttons aligned to the right */}
           <div className="flex justify-end space-x-4">
             <button className="btn btnPrimary btnMedium">Go to details</button>
             <button className="btn btnDefault btnMedium">View Website</button>

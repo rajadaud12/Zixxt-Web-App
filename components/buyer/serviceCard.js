@@ -1,22 +1,45 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { Star } from "lucide-react"
-
+import { useRouter } from "next/navigation";
+import { Star, Heart } from "lucide-react";
+import { useWishlist } from "../../context/wishListContext";
+import { useState } from "react";
 
 export default function ServiceCard({ service }) {
-  const router = useRouter()
+  const router = useRouter();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Function to handle card click
   const handleCardClick = () => {
-    router.push(`/serviceDetail/${service.id}`)
-  }
+    router.push(`/serviceDetail/${service.id}`);
+  };
+
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    if (isInWishlist(service.id, "services")) {
+      removeFromWishlist(service.id, "services");
+    } else {
+      addToWishlist(service, "services");
+    }
+  };
 
   return (
     <div
-      className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF] cursor-pointer"
+      className="w-[280px] bg-white rounded-[20px] overflow-hidden hover:shadow-md transition-shadow border-b border-l border-r border-[#E6ECEF] cursor-pointer relative"
       onClick={handleCardClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {isHovered && (
+        <button
+          className="absolute top-2 right-2 z-10 bg-white rounded-full p-1 shadow-sm transition-opacity"
+          onClick={handleWishlistToggle}
+        >
+          <Heart
+            className={`w-5 h-5 ${isInWishlist(service.id, "services") ? "text-red-500 fill-current" : "text-gray-500"}`}
+          />
+        </button>
+      )}
       <div className="relative">
         <img
           src={service.image || "/api/placeholder/280/160"}
@@ -33,17 +56,19 @@ export default function ServiceCard({ service }) {
                 alt={service.sellerName}
                 className="w-6 h-6 rounded-full mr-2"
               />
-              <span className="font-semibold text-base font-medium text-black">{service.sellerName || "kahmiri"}</span>
+              <span className="font-semibold text-base font-medium text-black">
+                {service.sellerName || "kahmiri"}
+              </span>
             </div>
             <span className="text-xs text-gray-500 ml-8">{service.location || "pakistan"}</span>
           </div>
-          <span className="flex items-center justify-center w-[72px] h-[28px] text-xs rounded-[12px] bg-software bg-opacity-20 text-levelGold font-medium">Gold</span>
+          <span className="flex items-center justify-center w-[72px] h-[28px] text-xs rounded-[12px] bg-software bg-opacity-20 text-levelGold font-medium">
+            Gold
+          </span>
         </div>
-        
         <p className="text-paragraphText font-normal leading-tight mb-2 h-10 overflow-hidden text-light">
           {service.title || "AI and Machine Learning Using Python Programming Language"}
         </p>
-        
         <div className="flex items-center mb-1">
           <div className="flex items-center">
             <Star className="w-4 h-4 fill-current text-software" />
@@ -52,9 +77,10 @@ export default function ServiceCard({ service }) {
           </div>
           <span className="text-xs text-gray-500 ml-1">({service.reviews || "273"})</span>
         </div>
-        
-        <div className="font-semibold text-base font-medium text-black">From pkr {service.price || "1,141"}</div>
+        <div className="font-semibold text-base font-medium text-black">
+          From pkr {service.price || "1,141"}
+        </div>
       </div>
     </div>
-  )
+  );
 }
