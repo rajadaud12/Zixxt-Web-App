@@ -943,7 +943,7 @@ export default function OrderDetail() {
       {/* Toast notification */}
       {toast.show && (
         <div
-          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+          className={`fixed top-4 right-4 z-[500] p-4 rounded-lg shadow-lg ${
             toast.type === "success"
               ? "bg-green-100 text-green-800"
               : toast.type === "error"
