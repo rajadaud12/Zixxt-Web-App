@@ -75,3 +75,18 @@
 .btn-primary-custom:hover {
   box-shadow: 0 4px 10px rgba(1, 140, 255, 0.3);
 }
+
+
+
+
+/********************* For Chatting Page *********************/
+
+
+.chat-container::-webkit-scrollbar {
+  display: none;
+}
+.chat-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

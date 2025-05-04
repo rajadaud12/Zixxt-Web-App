@@ -1,5 +1,6 @@
 export const courses = [
     {
+      id: 1,
       image: "/images/servicesPictures/service1.png",
       sellerName: "kahmiri",
       location: "pakistan",
@@ -10,6 +11,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 2,
         image: "/images/servicesPictures/service2.png",
         sellerName: "kahmiri",
       location: "pakistan",
@@ -20,6 +22,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 3,
         image: "/images/servicesPictures/service3.png",
         sellerName: "kahmiri",
       location: "pakistan",
@@ -30,6 +33,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 4,
         image: "/images/servicesPictures/service1.png",
         sellerName: "kahmiri",
       location: "pakistan",
@@ -40,6 +44,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 5,
         image: "/images/servicesPictures/service2.png",
         sellerName: "kahmiri",
       location: "pakistan",
@@ -50,6 +55,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 6,
         image: "/images/servicesPictures/service3.png",
         sellerName: "kahmiri",
       location: "pakistan",
@@ -60,6 +66,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 7,
         image: "/images/servicesPictures/service1.png",
         sellerName: "kahmiri",
       location: "pakistan",
@@ -70,6 +77,7 @@ export const courses = [
       hours: "30 hrs"
     },
     {
+      id: 8,
         image: "/images/servicesPictures/service2.png",
         sellerName: "kahmiri",
       location: "pakistan",

@@ -3,6 +3,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatHeader, SenderMessage, ReceiverMessage, ChatInput, ChatList, SellerDetails, Offer, DateDivider} from './components/chatComponents';
 
+// Add CSS to hide scrollbar in the chat section
+const styles = `
+  .chat-container::-webkit-scrollbar {
+    display: none;
+  }
+  .chat-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`;
+
 const chats = [
   {
     id: 1,
@@ -94,7 +105,6 @@ const offer = {
   amount: 195
 };
 
-
 export default function ChatInterface() {
   const [showOffer, setShowOffer] = useState(false);
   const [activeChat, setActiveChat] = useState(1); // Default to first chat
@@ -109,7 +119,6 @@ export default function ChatInterface() {
   
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      // Scroll the chat container instead of scrolling the element into view
       const scrollHeight = chatContainerRef.current.scrollHeight;
       chatContainerRef.current.scrollTop = scrollHeight;
     }
@@ -132,56 +141,59 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 mt-[50px] md:px-[100px]">
-      <div className="flex h-[700px] bg-whiteGrey font-sans"> {/* Fixed height container */}
-        {/* Left sidebar - chat list */}
-        <ChatList 
-          chats={chats} 
-          activeChat={activeChat} 
-          setActiveChat={setActiveChat} 
-        />
-        
-        {/* Main chat area */}
-        <div className="flex-grow flex flex-col relative">
-          {/* Chat header */}
-          <ChatHeader user={currentUser} />
+    <>
+      <style>{styles}</style>
+      <div className="max-w-[1440px] mx-auto px-6 mt-[50px] md:px-[100px]">
+        <div className="flex h-[700px] bg-whiteGrey font-sans">
+          {/* Left sidebar - chat list */}
+          <ChatList 
+            chats={chats} 
+            activeChat={activeChat} 
+            setActiveChat={setActiveChat} 
+          />
           
-          {/* Chat messages - fixed height with scrolling */}
-          <div 
-            ref={chatContainerRef}
-            className="flex-grow overflow-y-auto px-6 py-4 bg-white" 
-            style={{ height: 'calc(100% - 136px)' }}
-          > 
-            {/* Date divider */}
-            <DateDivider date={chatMessages[0].date} />
+          {/* Main chat area */}
+          <div className="flex-grow flex flex-col relative">
+            {/* Chat header */}
+            <ChatHeader user={currentUser} />
             
-            {/* Messages */}
-            {chatMessages.map((message) => (
-              message.senderId === "user1" ? (
-                <SenderMessage key={message.id} message={message} />
-              ) : (
-                <ReceiverMessage key={message.id} message={message} />
-              )
-            ))}
+            {/* Chat messages - fixed height with scrolling */}
+            <div 
+              ref={chatContainerRef}
+              className="flex-grow overflow-y-auto px-6 py-4 bg-white chat-container" 
+              style={{ height: 'calc(100% - 136px)' }}
+            > 
+              {/* Date divider */}
+              <DateDivider date={chatMessages[0].date} />
+              
+              {/* Messages */}
+              {chatMessages.map((message) => (
+                message.senderId === "user1" ? (
+                  <SenderMessage key={message.id} message={message} />
+                ) : (
+                  <ReceiverMessage key={message.id} message={message} />
+                )
+              ))}
+              
+              {/* Conditional offer block */}
+              {showOffer && <Offer amount={offer.amount} />}
+              
+              {/* We still keep this for accessibility and other purposes */}
+              <div ref={messagesEndRef} />
+            </div>
             
-            {/* Conditional offer block */}
-            {showOffer && <Offer amount={offer.amount} />}
-            
-            {/* We still keep this for accessibility and other purposes */}
-            <div ref={messagesEndRef} />
+            {/* Chat input - fixed at bottom */}
+            <ChatInput onSendMessage={handleSendMessage} />
           </div>
           
-          {/* Chat input - fixed at bottom */}
-          <ChatInput onSendMessage={handleSendMessage} />
+          {/* Right sidebar - Seller details */}
+          <SellerDetails 
+            seller={seller} 
+            toggleOffer={toggleOffer} 
+            showOffer={showOffer} 
+          />
         </div>
-        
-        {/* Right sidebar - Seller details */}
-        <SellerDetails 
-          seller={seller} 
-          toggleOffer={toggleOffer} 
-          showOffer={showOffer} 
-        />
       </div>
-    </div>
+    </>
   );
 }

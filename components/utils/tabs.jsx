@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
-export function Tabs({ tabs, defaultTab, className = "", onTabChange }) {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id)
+export default function Tabs({ tabs, defaultTab, className = "", onTabChange }) {
+  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id);
 
   const handleTabChange = (tabId) => {
-    setActiveTab(tabId)
+    setActiveTab(tabId);
     if (onTabChange) {
-      onTabChange(tabId)
+      onTabChange(tabId);
     }
-  }
+  };
 
   return (
     <div className={className}>
@@ -27,7 +27,6 @@ export function Tabs({ tabs, defaultTab, className = "", onTabChange }) {
           </button>
         ))}
       </div>
-      <div className="mt-4">{tabs.find((tab) => tab.id === activeTab)?.content}</div>
     </div>
-  )
+  );
 }

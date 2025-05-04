@@ -217,7 +217,7 @@ export const SellerDetails = ({ seller, toggleOffer, showOffer }) => {
       <div className="p-4 flex justify-center">
         <button 
           onClick={toggleOffer}
-          className="bg-primary text-white rounded-md px-4 py-2 text-sm hover:bg-blue-600 transition-colors"
+          className="bg-primary text-white rounded-full px-4 py-2 text-sm hover:bg-blue-600 transition-colors"
         >
           {showOffer ? "Hide Offer" : "Show Offer"}
         </button>
@@ -228,7 +228,7 @@ export const SellerDetails = ({ seller, toggleOffer, showOffer }) => {
 
 export const Offer = ({ amount }) => {
   return (
-    <div className="bg-green-50 rounded-lg p-4 mb-4 border border-green-100">
+    <div className="bg-green-50 rounded-[20px] p-5 mb-4 border border-green-100">
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center">
           <span className="text-sm text-black">Seller has sent the </span>
@@ -237,12 +237,12 @@ export const Offer = ({ amount }) => {
         <button className="text-sm text-primary">View Details</button>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <div className="font-medium">Total: <span className="text-primary font-semibold">${amount}</span></div>
+        <div className="font-normal text-black">Total: <span className="text-primary font-semibold">${amount}</span></div>
         <div className="flex gap-2">
-          <button className="bg-white text-success border border-success rounded-md px-6 py-2 text-sm hover:bg-green-50 transition-colors">
+          <button className="bg-white text-success border border-success rounded-full px-6 py-2 text-sm hover:bg-green-50 transition-colors">
             Start Order
           </button>
-          <button className="bg-white text-failure border border-failure rounded-md px-6 py-2 text-sm hover:bg-red-50 transition-colors">
+          <button className="bg-white text-failure border border-failure rounded-full px-6 py-2 text-sm hover:bg-red-50 transition-colors">
             Reject
           </button>
         </div>
