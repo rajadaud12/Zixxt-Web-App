@@ -333,7 +333,7 @@ export default function ProfilePage() {
         </div>
       </div>
        {/* Services Section */}
-       <section className="py-16">
+       <section className="flex py-16 justify-center items-center">
                     <div className="max-w-[1440px] md:px-[150px] mb-[50px]">
                       <CardSlider 
                         title="My Services"
