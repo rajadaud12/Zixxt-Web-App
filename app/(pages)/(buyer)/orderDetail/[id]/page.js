@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronUp, Clock } from "lucide-react"
-
+import Link from "next/link"
 import { Tabs } from "@/components/utils/tabs"
 
 
@@ -545,10 +545,12 @@ export default function OrderDetail() {
       </div>
 
       <div className="fixed bottom-20 right-20 z-50">
+        <Link href="/chatPage">
         <button className="inline-flex items-center justify-center rounded-full font-medium transition-colors bg-primary text-white hover:bg-primary/90 px-4 py-2 text-sm gap-2">
           <img src={`/api/placeholder/24/24`} alt="Chat" className="w-6 h-6 rounded-full object-cover" />
           Chat Now
         </button>
+        </Link>
       </div>
     </div>
   )

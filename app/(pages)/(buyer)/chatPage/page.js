@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChatHeader, SenderMessage, ReceiverMessage, ChatInput, ChatList, SellerDetails, Offer, DateDivider} from './components/chatComponents';
 
 const chats = [
@@ -33,14 +33,14 @@ const chats = [
   }
 ];
 
- const currentUser = {
+const currentUser = {
   id: "user1",
   name: "Shahab",
   avatar: "/api/placeholder/40/40",
   status: "last seen 45 minutes ago"
 };
 
- const seller = {
+const seller = {
   id: "seller1",
   username: "kahmiri",
   country: "pakistan",
@@ -52,7 +52,7 @@ const chats = [
   orders: 273
 };
 
- const messages = [
+const messages = [
   {
     id: 1,
     senderId: "seller1",
@@ -90,7 +90,7 @@ const chats = [
   }
 ];
 
- const offer = {
+const offer = {
   amount: 195
 };
 
@@ -99,6 +99,21 @@ export default function ChatInterface() {
   const [showOffer, setShowOffer] = useState(false);
   const [activeChat, setActiveChat] = useState(1); // Default to first chat
   const [chatMessages, setChatMessages] = useState(messages);
+  const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
+  
+  // This effect handles auto-scrolling to the bottom when messages are added
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
+  
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      // Scroll the chat container instead of scrolling the element into view
+      const scrollHeight = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = scrollHeight;
+    }
+  };
   
   const toggleOffer = () => {
     setShowOffer(!showOffer);
@@ -118,7 +133,7 @@ export default function ChatInterface() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 mt-[50px] md:px-[100px]">
-      <div className="flex max-h-screen bg-whiteGrey font-sans">
+      <div className="flex h-[700px] bg-whiteGrey font-sans"> {/* Fixed height container */}
         {/* Left sidebar - chat list */}
         <ChatList 
           chats={chats} 
@@ -131,8 +146,12 @@ export default function ChatInterface() {
           {/* Chat header */}
           <ChatHeader user={currentUser} />
           
-          {/* Chat messages */}
-          <div className="flex-grow overflow-y-auto px-6 py-4 bg-white">
+          {/* Chat messages - fixed height with scrolling */}
+          <div 
+            ref={chatContainerRef}
+            className="flex-grow overflow-y-auto px-6 py-4 bg-white" 
+            style={{ height: 'calc(100% - 136px)' }}
+          > 
             {/* Date divider */}
             <DateDivider date={chatMessages[0].date} />
             
@@ -147,9 +166,12 @@ export default function ChatInterface() {
             
             {/* Conditional offer block */}
             {showOffer && <Offer amount={offer.amount} />}
+            
+            {/* We still keep this for accessibility and other purposes */}
+            <div ref={messagesEndRef} />
           </div>
           
-          {/* Chat input */}
+          {/* Chat input - fixed at bottom */}
           <ChatInput onSendMessage={handleSendMessage} />
         </div>
         
