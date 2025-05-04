@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Tabs } from "@/components/utils/tabs"
+import  Tabs  from "@/components/utils/tabs"
 import { FileText, MessageSquare } from "lucide-react"
 import Link from "next/link"
 

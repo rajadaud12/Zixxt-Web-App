@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatHeader, SenderMessage, ReceiverMessage, ChatInput, ChatList, SellerDetails, Offer, DateDivider} from './components/chatComponents';
 
-// Add CSS to hide scrollbar in the chat section
 const styles = `
   .chat-container::-webkit-scrollbar {
     display: none;
@@ -144,7 +143,7 @@ export default function ChatInterface() {
     <>
       <style>{styles}</style>
       <div className="max-w-[1440px] mx-auto px-6 mt-[50px] md:px-[100px]">
-        <div className="flex h-[700px] bg-white border p-2 rounded-[30px] font-sans">
+        <div className="flex h-[700px] bg-white border px-4 rounded-[30px] font-sans">
           {/* Left sidebar - chat list */}
           <ChatList 
             chats={chats} 
