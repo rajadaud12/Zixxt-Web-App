@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const categoriesData = {
-  services: [
+  services: 
     {
       name: "ART & DESIGN",
       subcategories: [

@@ -358,10 +358,6 @@ export default function CreateSoftware() {
 
   const handleNext = () => {
     if (currentStep === 1) {
-      if (!selectedSubscription) {
-        toast.error("Please select a subscription plan")
-        return
-      }
       setIsLoading(true)
       setTimeout(() => {
         setIsLoading(false)
