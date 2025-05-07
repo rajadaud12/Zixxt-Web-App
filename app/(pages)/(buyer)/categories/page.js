@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs } from "@/components/utils/tabs";
+import  Tabs from "@/components/utils/tabs";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
