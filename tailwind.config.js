@@ -4,6 +4,30 @@ module.exports = {
   content: ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}", "*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
+      animation: {
+        'toast-in': 'toast-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+        'toast-out': 'toast-out 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards',
+        'scale-in': 'scale-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+      },
+      keyframes: {
+        'toast-in': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '60%': { transform: 'translateX(-5%)' },
+          '100%': { transform: 'translateX(0)', opacity: '1' }
+        },
+        'toast-out': {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(120%)', opacity: '0' }
+        },
+        'scale-in': {
+          '0%': { transform: 'scale(0)' },
+          '70%': { transform: 'scale(1.1)' },
+          '100%': { transform: 'scale(1)' }
+        }
+      },
+      transitionTimingFunction: {
+        'bounce': 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

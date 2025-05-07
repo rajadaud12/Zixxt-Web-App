@@ -4,10 +4,12 @@ import { Plus, X, ChevronDown, Settings, Check, Book, Loader2 } from "lucide-rea
 import { Dropdown, MultiSelectDropdown } from "@/components/utils/dropdown"
 import ImageGallery from "@/components/seller/imageGallery"
 import { useRouter } from "next/navigation"
-import Tabs from "@/components/utils/tabs";
+import Tabs from "@/components/utils/tabs"
+import { useToast } from "@/context/toastContext"
 
 export default function CreateSoftware() {
   const router = useRouter()
+  const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(1)
   const [currentPackage, setCurrentPackage] = useState("Monthly")
   const [showGallery, setShowGallery] = useState(false)
@@ -22,6 +24,7 @@ export default function CreateSoftware() {
   const [isPurchaseSuccess, setIsPurchaseSuccess] = useState(false)
   const fileInputRef = useRef(null)
   const videoInputRef = useRef(null)
+  const [errors, setErrors] = useState({})
   const [formData, setFormData] = useState({
     title: "",
     category: [],
@@ -85,8 +88,48 @@ export default function CreateSoftware() {
     Premium: { categories: 20, images: 20, videos: 3 }
   }
 
+  // Validation functions
+  const validateEmail = (url) => {
+    return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(url) || url === ""
+  }
+
+  const validateText = (text) => {
+    return /^[a-zA-Z\s]+$/.test(text) || text === ""
+  }
+
+  const validateNumber = (num) => {
+    return /^\d+(\.\d{1,2})?$/.test(num) || num === ""
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    switch (name) {
+      case "title":
+        if (!validateText(value)) {
+          newErrors.title = "Title should contain only letters and spaces"
+        } else {
+          delete newErrors.title
+        }
+        break
+      case "description":
+        if (value.length > 1000) {
+          newErrors.description = "Description cannot exceed 1000 characters"
+        } else {
+          delete newErrors.description
+        }
+        break
+      case "websiteUrl":
+        if (!validateEmail(value)) {
+          newErrors.websiteUrl = "Please enter a valid URL"
+        } else {
+          delete newErrors.websiteUrl
+        }
+        break
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       [name]: value,
@@ -95,6 +138,17 @@ export default function CreateSoftware() {
 
   const handlePackageInputChange = (e, packageType) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    if (name === "price") {
+      if (!validateNumber(value)) {
+        newErrors[`${packageType}.price`] = "Price must be a valid number"
+      } else {
+        delete newErrors[`${packageType}.price`]
+      }
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       packages: {
@@ -108,6 +162,14 @@ export default function CreateSoftware() {
   }
 
   const handleProvideChange = (index, value, packageType) => {
+    let newErrors = { ...errors }
+    if (!validateText(value)) {
+      newErrors[`${packageType}.provides.${index}`] = "Feature should contain only letters and spaces"
+    } else {
+      delete newErrors[`${packageType}.provides.${index}`]
+    }
+
+    setErrors(newErrors)
     const newProvides = [...formData.packages[packageType].provides]
     newProvides[index] = value
     setFormData({
@@ -134,6 +196,8 @@ export default function CreateSoftware() {
           },
         },
       })
+    } else {
+      toast.error("Maximum 8 features allowed per package")
     }
   }
 
@@ -158,6 +222,9 @@ export default function CreateSoftware() {
       category: values,
       subCategory: [],
     })
+    if (values.length > 0) {
+      setErrors({ ...errors, category: "" })
+    }
   }
 
   const handleSubCategoryChange = (values) => {
@@ -165,6 +232,9 @@ export default function CreateSoftware() {
       ...formData,
       subCategory: values,
     })
+    if (values.length > 0) {
+      setErrors({ ...errors, subCategory: "" })
+    }
   }
 
   const handleLanguagesChange = (values) => {
@@ -172,6 +242,9 @@ export default function CreateSoftware() {
       ...formData,
       languages: values,
     })
+    if (values.length > 0) {
+      setErrors({ ...errors, languages: "" })
+    }
   }
 
   const handleImageUpload = (e) => {
@@ -182,8 +255,9 @@ export default function CreateSoftware() {
         ...formData,
         images: [...formData.images, ...files],
       })
+      toast.success(`${files.length} image(s) uploaded successfully`)
     } else {
-      alert(`Maximum ${maxImages} images allowed for ${selectedSubscription} subscription`)
+      toast.error(`Maximum ${maxImages} images allowed for ${selectedSubscription} subscription`)
     }
   }
 
@@ -201,8 +275,9 @@ export default function CreateSoftware() {
         ...formData,
         videos: [...formData.videos, ...validVideos],
       })
+      toast.success(`${validVideos.length} video(s) uploaded successfully`)
     } else {
-      alert(`Maximum ${maxVideos} videos allowed for ${selectedSubscription} subscription. Ensure videos are MP4/WebM format and under 100MB.`)
+      toast.error(`Maximum ${maxVideos} videos allowed for ${selectedSubscription} subscription`)
     }
   }
 
@@ -213,6 +288,7 @@ export default function CreateSoftware() {
       ...formData,
       images: newImages,
     })
+    toast.success("Image removed successfully")
   }
 
   const removeVideo = (index) => {
@@ -222,6 +298,7 @@ export default function CreateSoftware() {
       ...formData,
       videos: newVideos,
     })
+    toast.success("Video removed successfully")
   }
 
   const togglePackage = (packageName) => {
@@ -238,6 +315,9 @@ export default function CreateSoftware() {
           setCurrentPackage(nextEnabledPackage)
         }
       }
+      toast.success(`${packageName} package ${newEnabledPackages[packageName] ? "enabled" : "disabled"}`)
+    } else {
+      toast.error("At least one package must remain enabled")
     }
   }
 
@@ -249,13 +329,44 @@ export default function CreateSoftware() {
     )
   }
 
+  const validateStep = () => {
+    let newErrors = {}
+    
+    if (currentStep === 2) {
+      if (!formData.title.trim()) newErrors.title = "Title is required"
+      if (formData.category.length === 0) newErrors.category = "At least one category is required"
+      if (formData.subCategory.length === 0) newErrors.subCategory = "At least one sub-category is required"
+      if (!formData.description.trim()) newErrors.description = "Description is required"
+      if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
+    } else if (currentStep === 3) {
+      Object.keys(enabledPackages).forEach((pkg) => {
+        if (enabledPackages[pkg]) {
+          const packageData = formData.packages[pkg.toLowerCase().replace(" ", "")]
+          if (!packageData.price.trim()) {
+            newErrors[`${pkg.toLowerCase().replace(" ", "")}.price`] = "Price is required"
+          }
+          if (!packageData.provides.some((item) => item.trim())) {
+            newErrors[`${pkg.toLowerCase().replace(" ", "")}.provides`] = "At least one feature is required"
+          }
+        }
+      })
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleNext = () => {
     if (currentStep === 1) {
-      console.log("Selected Subscription:", selectedSubscription)
+      if (!selectedSubscription) {
+        toast.error("Please select a subscription plan")
+        return
+      }
       setIsLoading(true)
       setTimeout(() => {
         setIsLoading(false)
         setIsPurchaseSuccess(true)
+        toast.success("Subscription purchased successfully!")
         setTimeout(() => {
           setIsPurchaseSuccess(false)
           setCurrentStep(2)
@@ -263,37 +374,22 @@ export default function CreateSoftware() {
         }, 2000)
       }, 2000)
     } else if (currentStep === 2) {
-      if (!formData.title.trim()) {
-        alert("Please enter a title for your software")
-        return
+      if (validateStep()) {
+        setCurrentStep(3)
+        window.scrollTo(0, 0)
+      } else {
+        toast.error("Please fill all required fields correctly")
       }
-      if (formData.category.length === 0) {
-        alert("Please select at least one category")
-        return
-      }
-      if (formData.subCategory.length === 0) {
-        alert("Please select at least one sub-category")
-        return
-      }
-      if (!formData.description.trim()) {
-        alert("Please provide a description")
-        return
-      }
-      setCurrentStep(3)
-      window.scrollTo(0, 0)
     } else if (currentStep === 3) {
-      const allEnabledPackagesValid = Object.keys(enabledPackages)
-        .filter((pkg) => enabledPackages[pkg])
-        .every((pkg) => validatePackageData(formData.packages[pkg.toLowerCase().replace(" ", "")]))
-      if (!allEnabledPackagesValid) {
-        alert("Please complete all required fields for all enabled packages")
-        return
+      if (validateStep()) {
+        setCurrentStep(4)
+        window.scrollTo(0, 0)
+      } else {
+        toast.error("Please complete all required fields for enabled packages")
       }
-      setCurrentStep(4)
-      window.scrollTo(0, 0)
     } else {
       console.log("Form submitted:", formData)
-      alert("Software posted successfully!")
+      toast.success("Software posted successfully!")
       router.back()
       window.scrollTo(0, 0)
     }
@@ -303,6 +399,7 @@ export default function CreateSoftware() {
     if (currentStep === 2) setCurrentStep(1)
     else if (currentStep === 3) setCurrentStep(2)
     else if (currentStep === 4) setCurrentStep(3)
+    setErrors({})
     window.scrollTo(0, 0)
   }
 
@@ -571,21 +668,23 @@ export default function CreateSoftware() {
         <h2 className="typoH2 text-center text-text">Software Information</h2>
         <div>
           <label htmlFor="title" className="formLabel block mb-3">
-            Title
+            Title <span className="text-failure">*</span>
           </label>
           <input
             type="text"
             id="title"
             name="title"
             placeholder="What is the title of your service"
-            className="formInput"
+            className={`formInput ${errors.title ? "border-red-500" : ""}`}
             value={formData.title}
             onChange={handleInputChange}
+            required
           />
+          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
         </div>
         <div>
           <label htmlFor="category" className="formLabel block mb-3">
-            Category
+            Category <span className="text-failure">*</span>
           </label>
           <MultiSelectDropdown
             options={categories}
@@ -593,11 +692,13 @@ export default function CreateSoftware() {
             onChange={handleCategoryChange}
             placeholder="Select categories"
             maxSelections={packageLimits[selectedSubscription].categories}
+            className={errors.category ? "border-red-500" : ""}
           />
+          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
         </div>
         <div>
           <label htmlFor="subCategory" className="formLabel block mb-3">
-            Sub Category
+            Sub Category <span className="text-failure">*</span>
           </label>
           <MultiSelectDropdown
             options={formData.category.length > 0 ? subCategories[formData.category[0]] : []}
@@ -605,20 +706,24 @@ export default function CreateSoftware() {
             onChange={handleSubCategoryChange}
             placeholder="Select sub-categories"
             maxSelections={packageLimits[selectedSubscription].categories}
+            className={errors.subCategory ? "border-red-500" : ""}
           />
+          {errors.subCategory && <p className="text-red-500 text-sm mt-1">{errors.subCategory}</p>}
         </div>
         <div>
           <label htmlFor="description" className="formLabel block mb-3">
-            Description
+            Description <span className="text-failure">*</span>
           </label>
           <textarea
             id="description"
             name="description"
             placeholder="Write the details of your requirement"
-            className="formTextarea h-32"
+            className={`formTextarea h-32 ${errors.description ? "border-red-500" : ""}`}
             value={formData.description}
             onChange={handleInputChange}
+            required
           />
+          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
         </div>
         <div>
           <label htmlFor="websiteUrl" className="formLabel block mb-3">
@@ -629,10 +734,11 @@ export default function CreateSoftware() {
             id="websiteUrl"
             name="websiteUrl"
             placeholder="Enter the website URL (e.g., https://example.com)"
-            className="formInput"
+            className={`formInput ${errors.websiteUrl ? "border-red-500" : ""}`}
             value={formData.websiteUrl}
             onChange={handleInputChange}
           />
+          {errors.websiteUrl && <p className="text-red-500 text-sm mt-1">{errors.websiteUrl}</p>}
         </div>
         <div className="grid grid-cols-2 gap-6">
           <div>
@@ -671,13 +777,17 @@ export default function CreateSoftware() {
           </div>
         </div>
         <div>
-          <label className="formLabel block mb-3">Available in Languages</label>
+          <label className="formLabel block mb-3">
+            Available in Languages <span className="text-failure">*</span>
+          </label>
           <MultiSelectDropdown
             options={languages}
             selectedValues={formData.languages}
             onChange={handleLanguagesChange}
             placeholder="Select languages"
+            className={errors.languages ? "border-red-500" : ""}
           />
+          {errors.languages && <p className="text-red-500 text-sm mt-1">{errors.languages}</p>}
         </div>
         <div>
           <label className="formLabel block mb-3">Upload Pictures</label>
@@ -867,15 +977,19 @@ export default function CreateSoftware() {
                   <input
                     type="text"
                     name="price"
-                    placeholder="What is the title of your service"
-                    className="formInput pr-16"
+                    placeholder="Enter price in USD"
+                    className={`formInput pr-16 ${errors[`${packageKeys[currentPackage]}.price`] ? "border-red-500" : ""}`}
                     value={formData.packages[packageKeys[currentPackage]]?.price || ""}
                     onChange={(e) => handlePackageInputChange(e, packageKeys[currentPackage])}
+                    required
                   />
                   <div className="absolute right-0 top-0 bottom-0 flex items-center px-6 text-textLight typoB3">
                     USD
                   </div>
                 </div>
+                {errors[`${packageKeys[currentPackage]}.price`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${packageKeys[currentPackage]}.price`]}</p>
+                )}
               </div>
               <div>
                 <label className="formLabel block mb-3">
@@ -895,7 +1009,7 @@ export default function CreateSoftware() {
                           ? "e.g. High resolution PNGs"
                           : "e.g. Editable SVGs"
                       }
-                      className="formInput flex-1"
+                      className={`formInput flex-1 ${errors[`${packageKeys[currentPackage]}.provides.${index}`] ? "border-red-500" : ""}`}
                       value={item}
                       onChange={(e) => handleProvideChange(index, e.target.value, packageKeys[currentPackage])}
                     />
@@ -908,8 +1022,14 @@ export default function CreateSoftware() {
                         <X size={18} />
                       </button>
                     )}
+                    {errors[`${packageKeys[currentPackage]}.provides.${index}`] && (
+                      <p className="text-red-500 text-sm mt-1">{errors[`${packageKeys[currentPackage]}.provides.${index}`]}</p>
+                    )}
                   </div>
                 ))}
+                {errors[`${packageKeys[currentPackage]}.provides`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${packageKeys[currentPackage]}.provides`]}</p>
+                )}
                 {formData.packages[packageKeys[currentPackage]]?.provides.length < 8 && (
                   <button
                     type="button"

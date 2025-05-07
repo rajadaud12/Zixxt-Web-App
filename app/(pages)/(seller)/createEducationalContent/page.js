@@ -4,9 +4,11 @@ import { Plus, X, ChevronDown, Edit, Trash2, Check, Book, Settings, FileText, La
 import { Dropdown, MultiSelectDropdown } from "@/components/utils/dropdown"
 import ImageGallery from "@/components/seller/imageGallery"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/context/toastContext"
 
 export default function CreateEducationalContent() {
   const router = useRouter()
+  const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(1)
   const [contentType, setContentType] = useState("courses")
   const [currentPackage, setCurrentPackage] = useState("Simple")
@@ -28,6 +30,7 @@ export default function CreateEducationalContent() {
     "Test Questions": false,
     "Multiple Choices": false,
   })
+  const [errors, setErrors] = useState({})
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -116,8 +119,55 @@ export default function CreateEducationalContent() {
 
   const levels = ["Beginner", "Intermediate", "Advanced", "All Levels"]
 
+  // Validation functions
+  const validateText = (text) => {
+    return /^[a-zA-Z\s]+$/.test(text) || text === ""
+  }
+
+  const validateInteger = (num) => {
+    return /^\d+$/.test(num) || num === ""
+  }
+
+  const validateDecimal = (num) => {
+    return /^\d+(\.\d{1,2})?$/.test(num) || num === ""
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    switch (name) {
+      case "title":
+        if (!validateText(value)) {
+          newErrors.title = "Title should contain only letters and spaces"
+        } else {
+          delete newErrors.title
+        }
+        break
+      case "description":
+        if (value.length > 1000) {
+          newErrors.description = "Description cannot exceed 1000 characters"
+        } else {
+          delete newErrors.description
+        }
+        break
+      case "price":
+        if (!validateDecimal(value)) {
+          newErrors.price = "Price must be a valid number (e.g., 99.99)"
+        } else {
+          delete newErrors.price
+        }
+        break
+      case "duration":
+        if (!value.trim()) {
+          newErrors.duration = "Duration is required"
+        } else {
+          delete newErrors.duration
+        }
+        break
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       [name]: value,
@@ -126,6 +176,35 @@ export default function CreateEducationalContent() {
 
   const handlePackageInputChange = (e, packageType) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    switch (name) {
+      case "name":
+        if (!validateText(value)) {
+          newErrors[`${packageType}.name`] = "Package name should contain only letters and spaces"
+        } else {
+          delete newErrors[`${packageType}.name`]
+        }
+        break
+      case "revisions":
+      case "deliveryDays":
+      case "maxExtension":
+        if (!validateInteger(value)) {
+          newErrors[`${packageType}.${name}`] = "Please enter a valid number"
+        } else {
+          delete newErrors[`${packageType}.${name}`]
+        }
+        break
+      case "price":
+        if (!validateDecimal(value)) {
+          newErrors[`${packageType}.price`] = "Price must be a valid number (e.g., 99.99)"
+        } else {
+          delete newErrors[`${packageType}.price`]
+        }
+        break
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       packages: {
@@ -139,6 +218,14 @@ export default function CreateEducationalContent() {
   }
 
   const handleProvideChange = (index, value, packageType) => {
+    let newErrors = { ...errors }
+    if (!validateText(value)) {
+      newErrors[`${packageType}.provides.${index}`] = "Feature should contain only letters and spaces"
+    } else {
+      delete newErrors[`${packageType}.provides.${index}`]
+    }
+
+    setErrors(newErrors)
     const newProvides = [...formData.packages[packageType].provides]
     newProvides[index] = value
     setFormData({
@@ -165,6 +252,9 @@ export default function CreateEducationalContent() {
           },
         },
       })
+      toast.success("Added new feature field")
+    } else {
+      toast.error("Maximum 8 features allowed per package")
     }
   }
 
@@ -181,6 +271,7 @@ export default function CreateEducationalContent() {
         },
       },
     })
+    toast.success("Feature removed successfully")
   }
 
   const handleCategoryChange = (value) => {
@@ -189,6 +280,9 @@ export default function CreateEducationalContent() {
       category: value,
       subCategory: "",
     })
+    if (value) {
+      setErrors({ ...errors, category: "" })
+    }
   }
 
   const handleSubCategoryChange = (value) => {
@@ -196,6 +290,9 @@ export default function CreateEducationalContent() {
       ...formData,
       subCategory: value,
     })
+    if (value) {
+      setErrors({ ...errors, subCategory: "" })
+    }
   }
 
   const handleContentTypeChange = (value) => {
@@ -204,6 +301,7 @@ export default function CreateEducationalContent() {
       contentType: value,
     })
     setContentType(value)
+    toast.success(`Switched to ${value === "courses" ? "Courses" : "Educational Support"}`)
   }
 
   const handleLanguagesChange = (values) => {
@@ -211,6 +309,9 @@ export default function CreateEducationalContent() {
       ...formData,
       languages: values,
     })
+    if (values.length > 0) {
+      setErrors({ ...errors, languages: "" })
+    }
   }
 
   const handleSkillsChange = (values) => {
@@ -221,6 +322,14 @@ export default function CreateEducationalContent() {
   }
 
   const handleLearningOutcomeChange = (index, value) => {
+    let newErrors = { ...errors }
+    if (!validateText(value)) {
+      newErrors[`learningOutcomes.${index}`] = "Outcome should contain only letters and spaces"
+    } else {
+      delete newErrors[`learningOutcomes.${index}`]
+    }
+
+    setErrors(newErrors)
     const newOutcomes = [...formData.learningOutcomes]
     newOutcomes[index] = value
     setFormData({
@@ -235,6 +344,9 @@ export default function CreateEducationalContent() {
         ...formData,
         learningOutcomes: [...formData.learningOutcomes, ""],
       })
+      toast.success("Added new learning outcome field")
+    } else {
+      toast.error("Maximum 8 learning outcomes allowed")
     }
   }
 
@@ -245,9 +357,18 @@ export default function CreateEducationalContent() {
       ...formData,
       learningOutcomes: newOutcomes,
     })
+    toast.success("Learning outcome removed successfully")
   }
 
   const handleChapterTitleChange = (index, value) => {
+    let newErrors = { ...errors }
+    if (!validateText(value)) {
+      newErrors[`curriculum.${index}.title`] = "Chapter title should contain only letters and spaces"
+    } else {
+      delete newErrors[`curriculum.${index}.title`]
+    }
+
+    setErrors(newErrors)
     const newCurriculum = [...formData.curriculum]
     newCurriculum[index].title = value
     setFormData({
@@ -266,6 +387,14 @@ export default function CreateEducationalContent() {
   }
 
   const handleTopicChange = (chapterIndex, topicIndex, value) => {
+    let newErrors = { ...errors }
+    if (!validateText(value)) {
+      newErrors[`curriculum.${chapterIndex}.topics.${topicIndex}`] = "Topic should contain only letters and spaces"
+    } else {
+      delete newErrors[`curriculum.${chapterIndex}.topics.${topicIndex}`]
+    }
+
+    setErrors(newErrors)
     const newCurriculum = [...formData.curriculum]
     newCurriculum[chapterIndex].topics[topicIndex] = value
     setFormData({
@@ -282,6 +411,7 @@ export default function CreateEducationalContent() {
         { title: `Chapter ${formData.curriculum.length + 1}`, description: "", topics: ["", ""] },
       ],
     })
+    toast.success("New chapter added")
   }
 
   const removeChapter = (index) => {
@@ -291,6 +421,7 @@ export default function CreateEducationalContent() {
       ...formData,
       curriculum: newCurriculum,
     })
+    toast.success("Chapter removed successfully")
   }
 
   const addTopic = (chapterIndex) => {
@@ -300,6 +431,7 @@ export default function CreateEducationalContent() {
       ...formData,
       curriculum: newCurriculum,
     })
+    toast.success("New topic added")
   }
 
   const removeTopic = (chapterIndex, topicIndex) => {
@@ -309,6 +441,7 @@ export default function CreateEducationalContent() {
       ...formData,
       curriculum: newCurriculum,
     })
+    toast.success("Topic removed successfully")
   }
 
   const handleImageUpload = (e) => {
@@ -318,6 +451,7 @@ export default function CreateEducationalContent() {
         ...formData,
         images: [...formData.images, ...files],
       })
+      toast.success(`${files.length} image(s) uploaded successfully`)
     }
   }
 
@@ -328,6 +462,7 @@ export default function CreateEducationalContent() {
         ...formData,
         courseFiles: [...formData.courseFiles, ...files],
       })
+      toast.success(`${files.length} file(s) uploaded successfully`)
     }
   }
 
@@ -338,6 +473,7 @@ export default function CreateEducationalContent() {
       ...formData,
       images: newImages,
     })
+    toast.success("Image removed successfully")
   }
 
   const removeCourseFile = (index) => {
@@ -347,12 +483,16 @@ export default function CreateEducationalContent() {
       ...formData,
       courseFiles: newFiles,
     })
+    toast.success("File removed successfully")
   }
 
   const addQuestion = () => {
     if (newQuestion.trim()) {
       setQuestions([...questions, { question: newQuestion }])
       setNewQuestion("")
+      toast.success("Question added successfully")
+    } else {
+      toast.error("Please enter a valid question")
     }
   }
 
@@ -368,6 +508,9 @@ export default function CreateEducationalContent() {
       setQuestions(newQuestions)
       setEditingQuestionIndex(null)
       setNewQuestion("")
+      toast.success("Question updated successfully")
+    } else {
+      toast.error("Please enter a valid question")
     }
   }
 
@@ -375,6 +518,7 @@ export default function CreateEducationalContent() {
     const newQuestions = [...questions]
     newQuestions.splice(index, 1)
     setQuestions(newQuestions)
+    toast.success("Question deleted successfully")
   }
 
   const toggleCourseContains = (option) => {
@@ -382,31 +526,33 @@ export default function CreateEducationalContent() {
       ...courseContains,
       [option]: !courseContains[option],
     })
+    toast.success(`${option} ${courseContains[option] ? "removed from" : "added to"} course content`)
   }
 
   const togglePackage = (packageName) => {
-    // Don't allow disabling all packages
     if (!enabledPackages[packageName] || Object.values(enabledPackages).filter((value) => value).length > 1) {
       const newEnabledPackages = {
         ...enabledPackages,
         [packageName]: !enabledPackages[packageName],
       }
       setEnabledPackages(newEnabledPackages)
-
-      // If current package is being disabled, switch to first enabled package
       if (packageName === currentPackage && enabledPackages[packageName]) {
         const nextEnabledPackage = Object.keys(newEnabledPackages).find((pkg) => newEnabledPackages[pkg])
         if (nextEnabledPackage) {
           setCurrentPackage(nextEnabledPackage)
         }
       }
+      toast.success(`${packageName} package ${newEnabledPackages[packageName] ? "enabled" : "disabled"}`)
+    } else {
+      toast.error("At least one package must remain enabled")
     }
   }
 
   const validatePackageData = (packageData) => {
     const requiredFields = ["name", "revisions", "deliveryDays", "price"]
     return (
-      requiredFields.every((field) => packageData[field]?.trim()) && packageData.provides.some((item) => item.trim())
+      requiredFields.every((field) => packageData[field]?.trim()) &&
+      packageData.provides.some((item) => item.trim())
     )
   }
 
@@ -425,96 +571,91 @@ export default function CreateEducationalContent() {
     )
   }
 
-  const handleNext = () => {
+  const validateStep = () => {
+    let newErrors = {}
+
     if (currentStep === 1) {
-      // Validate first step
-      if (!formData.title.trim()) {
-        alert("Please enter a title for your educational content")
-        return
-      }
-      if (!formData.category) {
-        alert("Please select a category")
-        return
-      }
-      if (!formData.subCategory) {
-        alert("Please select a sub-category")
-        return
-      }
-      if (!formData.description.trim()) {
-        alert("Please provide a description")
-        return
-      }
-
-      if (contentType === "courses" && !formData.price.trim()) {
-        alert("Please enter a price for your course")
-        return
-      }
-
-      setCurrentStep(2)
-      window.scrollTo(0, 0)
-    } else if (currentStep === 2) {
+      if (!formData.title.trim()) newErrors.title = "Title is required"
+      if (!formData.category) newErrors.category = "Category is required"
+      if (!formData.subCategory) newErrors.subCategory = "Sub-category is required"
+      if (!formData.description.trim()) newErrors.description = "Description is required"
       if (contentType === "courses") {
-        // Validate course summary
-        if (!validateCourseSummary()) {
-          alert("Please complete all required fields in the course summary")
-          return
-        }
-        setCurrentStep(3)
-      } else {
-        // Check if all enabled packages have complete data
-        const allEnabledPackagesValid = Object.keys(enabledPackages)
-          .filter((pkg) => enabledPackages[pkg])
-          .every((pkg) => validatePackageData(formData.packages[pkg]))
-
-        if (!allEnabledPackagesValid) {
-          alert("Please complete all required fields for all enabled packages")
-          return
-        }
-        setCurrentStep(3)
+        if (!formData.price.trim()) newErrors.price = "Price is required"
+        if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
       }
-      window.scrollTo(0, 0)
-    } else if (currentStep === 3) {
-      if (contentType === "courses") {
-        // Validate curriculum
-        if (!validateCurriculum()) {
-          alert("Please complete the curriculum with at least one chapter and topic")
-          return
-        }
-
-        // For courses, go to questionnaire
-        if (questions.length > 0) {
-          setCurrentStep(4)
-          window.scrollTo(0, 0)
-        } else {
-          alert("Please add at least one question")
-        }
-      } else {
-        // For educational support, go to questionnaire
-        if (questions.length > 0) {
-          setCurrentStep(4)
-          window.scrollTo(0, 0)
-        } else {
-          alert("Please add at least one question")
-        }
+    } else if (currentStep === 2 && contentType === "courses") {
+      if (!formData.duration.trim()) newErrors.duration = "Duration is required"
+      if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
+      if (!formData.learningOutcomes.some((outcome) => outcome.trim())) {
+        newErrors.learningOutcomes = "At least one learning outcome is required"
       }
-    } else if (currentStep === 4) {
-      // For courses, go to confirmation page
-      if (contentType === "courses") {
-        setCurrentStep(5)
+    } else if (currentStep === 2 && contentType === "educational_support") {
+      Object.keys(enabledPackages).forEach((pkg) => {
+        if (enabledPackages[pkg]) {
+          const packageData = formData.packages[pkg]
+          if (!packageData.name.trim()) newErrors[`${pkg}.name`] = "Package name is required"
+          if (!packageData.revisions.trim()) newErrors[`${pkg}.revisions`] = "Revisions are required"
+          if (!packageData.deliveryDays.trim()) newErrors[`${pkg}.deliveryDays`] = "Delivery days are required"
+          if (!packageData.price.trim()) newErrors[`${pkg}.price`] = "Price is required"
+          if (!packageData.provides.some((item) => item.trim())) {
+            newErrors[`${pkg}.provides`] = "At least one feature is required"
+          }
+        }
+      })
+    } else if (currentStep === 3 && contentType === "courses") {
+      formData.curriculum.forEach((chapter, index) => {
+        if (!chapter.title.trim()) newErrors[`curriculum.${index}.title`] = "Chapter title is required"
+        if (!chapter.topics.some((topic) => topic.trim())) {
+          newErrors[`curriculum.${index}.topics`] = "At least one topic is required"
+        }
+      })
+    } else if ((currentStep === 3 && contentType === "educational_support") || 
+               (currentStep === 4 && contentType === "courses")) {
+      if (questions.length === 0) {
+        newErrors.questions = "At least one question is required"
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleNext = () => {
+    if (validateStep()) {
+      if (currentStep === 1) {
+        setCurrentStep(2)
         window.scrollTo(0, 0)
+      } else if (currentStep === 2) {
+        if (contentType === "courses") {
+          setCurrentStep(3)
+        } else {
+          setCurrentStep(3)
+        }
+        window.scrollTo(0, 0)
+      } else if (currentStep === 3) {
+        if (contentType === "courses") {
+          setCurrentStep(4)
+        } else {
+          setCurrentStep(4)
+        }
+        window.scrollTo(0, 0)
+      } else if (currentStep === 4) {
+        if (contentType === "courses") {
+          setCurrentStep(5)
+        } else {
+          console.log("Form submitted:", formData, questions, enabledPackages, courseContains)
+          toast.success("Educational content posted successfully!")
+          router.back()
+          window.scrollTo(0, 0)
+        }
       } else {
-        // For educational support, submit form
         console.log("Form submitted:", formData, questions, enabledPackages, courseContains)
-        alert("Educational content posted successfully!")
+        toast.success("Educational content posted successfully!")
         router.back()
         window.scrollTo(0, 0)
       }
     } else {
-      // Submit form for courses
-      console.log("Form submitted:", formData, questions, enabledPackages, courseContains)
-      alert("Educational content posted successfully!")
-      router.back()
-      window.scrollTo(0, 0)
+      toast.error("Please fill all required fields correctly")
     }
   }
 
@@ -528,14 +669,15 @@ export default function CreateEducationalContent() {
     } else if (currentStep === 5) {
       setCurrentStep(4)
     }
+    setErrors({})
     window.scrollTo(0, 0)
   }
 
   const getTotalSteps = () => {
     if (contentType === "courses") {
-      return 4 // Info, Course Summary, Program Details, Questionnaire
+      return 5 // Info, Course Summary, Program Details, Questionnaire, Confirm
     } else {
-      return 3 // Info, Package Configuration, Questionnaire
+      return 4 // Info, Package Configuration, Questionnaire, Confirm
     }
   }
 
@@ -634,50 +776,58 @@ export default function CreateEducationalContent() {
 
         <div>
           <label htmlFor="title" className="block mb-3 text-[15px] font-medium text-text">
-            Title
+            Title <span className="text-failure">*</span>
           </label>
           <input
             type="text"
             id="title"
             name="title"
             placeholder="What is the title of your educational content"
-            className="formInput"
+            className={`formInput ${errors.title ? "border-red-500" : ""}`}
             value={formData.title}
             onChange={handleInputChange}
+            required
           />
+          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
         </div>
         <div>
           <label htmlFor="category" className="block mb-3 text-[15px] font-medium text-text">
-            Category
+            Category <span className="text-failure">*</span>
           </label>
           <Dropdown
             options={categories}
             defaultValue={formData.category || "Select Category"}
             onChange={handleCategoryChange}
+            className={errors.category ? "border-red-500" : ""}
           />
+          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
         </div>
         <div>
           <label htmlFor="subCategory" className="block mb-3 text-[15px] font-medium text-text">
-            Sub Category
+            Sub Category <span className="text-failure">*</span>
           </label>
           <Dropdown
             options={formData.category ? subCategories[formData.category] : []}
             defaultValue={formData.subCategory || "Select Sub Category"}
             onChange={handleSubCategoryChange}
+            className={errors.subCategory ? "border-red-500" : ""}
           />
+          {errors.subCategory && <p className="text-red-500 text-sm mt-1">{errors.subCategory}</p>}
         </div>
         <div>
           <label htmlFor="description" className="block mb-3 text-[15px] font-medium text-text">
-            Description
+            Description <span className="text-failure">*</span>
           </label>
           <textarea
             id="description"
             name="description"
             placeholder="Write the details of your educational content"
-            className="formTextarea h-32"
+            className={`formTextarea h-32 ${errors.description ? "border-red-500" : ""}`}
             value={formData.description}
             onChange={handleInputChange}
+            required
           />
+          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
         </div>
         <div>
           <label className="block mb-3 text-[15px] font-medium text-text">Upload Pictures</label>
@@ -724,13 +874,17 @@ export default function CreateEducationalContent() {
         {contentType === "courses" && (
           <>
             <div>
-              <label className="block mb-3 text-[15px] font-medium text-text">Available in Languages</label>
+              <label className="block mb-3 text-[15px] font-medium text-text">
+                Available in Languages <span className="text-failure">*</span>
+              </label>
               <MultiSelectDropdown
                 options={languages}
                 selectedValues={formData.languages}
                 onChange={handleLanguagesChange}
                 placeholder="Select languages"
+                className={errors.languages ? "border-red-500" : ""}
               />
+              {errors.languages && <p className="text-red-500 text-sm mt-1">{errors.languages}</p>}
             </div>
 
             <div>
@@ -744,18 +898,22 @@ export default function CreateEducationalContent() {
             </div>
 
             <div>
-              <label className="block mb-3 text-[15px] font-medium text-text">Price</label>
+              <label className="block mb-3 text-[15px] font-medium text-text">
+                Price <span className="text-failure">*</span>
+              </label>
               <div className="relative">
                 <input
                   type="text"
                   name="price"
                   placeholder="What is the price of your course"
-                  className="formInput pr-16"
+                  className={`formInput pr-16 ${errors.price ? "border-red-500" : ""}`}
                   value={formData.price}
                   onChange={handleInputChange}
+                  required
                 />
                 <div className="absolute right-0 top-0 bottom-0 flex items-center px-6 text-textLight typoB3">USD</div>
               </div>
+              {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
             </div>
           </>
         )}
@@ -808,7 +966,7 @@ export default function CreateEducationalContent() {
             <label className="block mb-3 text-[15px] font-medium text-text">Total Video Duration</label>
             <Dropdown
               options={["1-2 hours", "3-5 hours", "6-10 hours", "10+ hours"]}
-              defaultValue={formData.totalVideoDuration || "e.g Business"}
+              defaultValue={formData.totalVideoDuration || "Select duration"}
               onChange={(value) => setFormData({ ...formData, totalVideoDuration: value })}
             />
           </div>
@@ -816,7 +974,7 @@ export default function CreateEducationalContent() {
             <label className="block mb-3 text-[15px] font-medium text-text">Chapters</label>
             <Dropdown
               options={["1-3 chapters", "4-6 chapters", "7-10 chapters", "10+ chapters"]}
-              defaultValue={formData.chapters || "e.g Cloud, SAAS"}
+              defaultValue={formData.chapters || "Select chapters"}
               onChange={(value) => setFormData({ ...formData, chapters: value })}
             />
           </div>
@@ -827,7 +985,7 @@ export default function CreateEducationalContent() {
             <label className="block mb-3 text-[15px] font-medium text-text">Documents</label>
             <Dropdown
               options={["PDF Guides", "Worksheets", "Code Samples", "Documentation", "None"]}
-              defaultValue={formData.documents || "e.g Documentation"}
+              defaultValue={formData.documents || "Select documents"}
               onChange={(value) => setFormData({ ...formData, documents: value })}
             />
           </div>
@@ -835,7 +993,7 @@ export default function CreateEducationalContent() {
             <label className="block mb-3 text-[15px] font-medium text-text">Articles</label>
             <Dropdown
               options={["Blog Posts", "Case Studies", "Research Papers", "Tutorials", "None"]}
-              defaultValue={formData.articles || "e.g 24/7 Online"}
+              defaultValue={formData.articles || "Select articles"}
               onChange={(value) => setFormData({ ...formData, articles: value })}
             />
           </div>
@@ -877,10 +1035,12 @@ export default function CreateEducationalContent() {
             type="text"
             name="duration"
             placeholder="e.g. 6 weeks, 10 hours"
-            className="formInput"
+            className={`formInput ${errors.duration ? "border-red-500" : ""}`}
             value={formData.duration}
             onChange={handleInputChange}
+            required
           />
+          {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
         </div>
 
         <div>
@@ -901,7 +1061,7 @@ export default function CreateEducationalContent() {
                       ? "Create interactive user interfaces with React"
                       : "Deploy web applications to production environments"
                 }`}
-                className="formInput flex-1"
+                className={`formInput flex-1 ${errors[`learningOutcomes.${index}`] ? "border-red-500" : ""}`}
                 value={outcome}
                 onChange={(e) => handleLearningOutcomeChange(index, e.target.value)}
               />
@@ -914,8 +1074,14 @@ export default function CreateEducationalContent() {
                   <X size={18} />
                 </button>
               )}
+              {errors[`learningOutcomes.${index}`] && (
+                <p className="text-red-500 text-sm mt-1">{errors[`learningOutcomes.${index}`]}</p>
+              )}
             </div>
           ))}
+          {errors.learningOutcomes && (
+            <p className="text-red-500 text-sm mt-1">{errors.learningOutcomes}</p>
+          )}
           {formData.learningOutcomes.length < 8 && (
             <button
               type="button"
@@ -957,10 +1123,11 @@ export default function CreateEducationalContent() {
                   </div>
                   <input
                     type="text"
-                    className="formInput max-w-[300px]"
+                    className={`formInput max-w-[300px] ${errors[`curriculum.${chapterIndex}.title`] ? "border-red-500" : ""}`}
                     value={chapter.title}
                     onChange={(e) => handleChapterTitleChange(chapterIndex, e.target.value)}
                     placeholder="Chapter Title"
+                    required
                   />
                 </div>
                 {formData.curriculum.length > 1 && (
@@ -973,6 +1140,9 @@ export default function CreateEducationalContent() {
                   </button>
                 )}
               </div>
+              {errors[`curriculum.${chapterIndex}.title`] && (
+                <p className="text-red-500 text-sm mt-1">{errors[`curriculum.${chapterIndex}.title`]}</p>
+              )}
 
               <div className="mb-4">
                 <textarea
@@ -984,7 +1154,7 @@ export default function CreateEducationalContent() {
               </div>
 
               <div className="space-y-3 ml-6 mt-6">
-                <h4 className="typoB2 text-text mb-3">Topics</h4>
+                <h4 className="typoB2 text-text mb-3">Topics <span className="text-failure">*</span></h4>
                 {chapter.topics.map((topic, topicIndex) => (
                   <div key={topicIndex} className="flex items-center">
                     <div className="w-6 h-6 rounded-full bg-btnbg flex items-center justify-center mr-2 typoC2 text-textLight">
@@ -992,10 +1162,11 @@ export default function CreateEducationalContent() {
                     </div>
                     <input
                       type="text"
-                      className="formInput flex-1"
+                      className={`formInput flex-1 ${errors[`curriculum.${chapterIndex}.topics.${topicIndex}`] ? "border-red-500" : ""}`}
                       value={topic}
                       onChange={(e) => handleTopicChange(chapterIndex, topicIndex, e.target.value)}
                       placeholder={`Topic ${topicIndex + 1}`}
+                      required
                     />
                     {chapter.topics.length > 1 && (
                       <button
@@ -1006,9 +1177,14 @@ export default function CreateEducationalContent() {
                         <X size={18} />
                       </button>
                     )}
+                    {errors[`curriculum.${chapterIndex}.topics.${topicIndex}`] && (
+                      <p className="text-red-500 text-sm mt-1">{errors[`curriculum.${chapterIndex}.topics.${topicIndex}`]}</p>
+                    )}
                   </div>
                 ))}
-
+                {errors[`curriculum.${chapterIndex}.topics`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`curriculum.${chapterIndex}.topics`]}</p>
+                )}
                 <button
                   type="button"
                   onClick={() => addTopic(chapterIndex)}
@@ -1056,7 +1232,6 @@ export default function CreateEducationalContent() {
       <div className="space-y-8">
         <h2 className="typoH2 text-center text-text">Package Configuration</h2>
 
-        {/* Package Cards */}
         <div className="grid grid-cols-3 gap-6">
           {Object.keys(enabledPackages).map((packageName) => (
             <div
@@ -1065,20 +1240,16 @@ export default function CreateEducationalContent() {
                 enabledPackages[packageName] ? "shadow-sm" : "bg-whiteGrey opacity-70"
               } ${currentPackage === packageName && enabledPackages[packageName] ? "ring-2 ring-primary/20" : ""}`}
             >
-              {/* Toggle Switch */}
               <div className="absolute top-4 right-4">
                 <PackageToggle packageName={packageName} />
               </div>
 
-              {/* Package Icon */}
               <div className={`mb-4 ${enabledPackages[packageName] ? "text-primary" : "text-textLight"}`}>
                 <Book size={24} />
               </div>
 
-              {/* Package Name */}
               <h3 className={`typoS1 mb-3 ${!enabledPackages[packageName] && "text-textLight"}`}>{packageName}</h3>
 
-              {/* Package Brief Info */}
               <div className={`typoB3 ${!enabledPackages[packageName] && "text-textLight"}`}>
                 <p className="mb-2">
                   Price: {formData.packages[packageName].price ? `$${formData.packages[packageName].price}` : "Not set"}
@@ -1087,7 +1258,6 @@ export default function CreateEducationalContent() {
                 <p>Revisions: {formData.packages[packageName].revisions || "Not set"}</p>
               </div>
 
-              {/* Edit Button */}
               <button
                 onClick={() => enabledPackages[packageName] && setCurrentPackage(packageName)}
                 disabled={!enabledPackages[packageName]}
@@ -1106,7 +1276,6 @@ export default function CreateEducationalContent() {
           ))}
         </div>
 
-        {/* Package Editor */}
         <div className="bg-white rounded-[20px] border border-border p-8 shadow-sm">
           <h2 className="typoS1 mb-6 flex items-center text-text">
             <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mr-2">
@@ -1125,10 +1294,14 @@ export default function CreateEducationalContent() {
                   type="text"
                   name="name"
                   placeholder="What is the title of your package"
-                  className="formInput"
+                  className={`formInput ${errors[`${currentPackage}.name`] ? "border-red-500" : ""}`}
                   value={formData.packages[currentPackage].name}
                   onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                  required
                 />
+                {errors[`${currentPackage}.name`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.name`]}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -1140,10 +1313,14 @@ export default function CreateEducationalContent() {
                     type="text"
                     name="revisions"
                     placeholder="e.g. 1"
-                    className="formInput"
+                    className={`formInput ${errors[`${currentPackage}.revisions`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].revisions}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
+                  {errors[`${currentPackage}.revisions`] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.revisions`]}</p>
+                  )}
                 </div>
                 <div>
                   <label className="formLabel block mb-3">
@@ -1153,10 +1330,14 @@ export default function CreateEducationalContent() {
                     type="text"
                     name="deliveryDays"
                     placeholder="e.g. 1"
-                    className="formInput"
+                    className={`formInput ${errors[`${currentPackage}.deliveryDays`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].deliveryDays}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
+                  {errors[`${currentPackage}.deliveryDays`] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.deliveryDays`]}</p>
+                  )}
                 </div>
                 <div>
                   <label className="formLabel block mb-3">
@@ -1166,10 +1347,13 @@ export default function CreateEducationalContent() {
                     type="text"
                     name="maxExtension"
                     placeholder="e.g. 1"
-                    className="formInput"
+                    className={`formInput ${errors[`${currentPackage}.maxExtension`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].maxExtension}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
                   />
+                  {errors[`${currentPackage}.maxExtension`] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.maxExtension`]}</p>
+                  )}
                 </div>
               </div>
 
@@ -1182,14 +1366,18 @@ export default function CreateEducationalContent() {
                     type="text"
                     name="price"
                     placeholder="Enter price"
-                    className="formInput pr-16"
+                    className={`formInput pr-16 ${errors[`${currentPackage}.price`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].price}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
                   <div className="absolute right-0 top-0 bottom-0 flex items-center px-6 text-textLight typoB3">
                     USD
                   </div>
                 </div>
+                {errors[`${currentPackage}.price`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.price`]}</p>
+                )}
               </div>
 
               <div>
@@ -1210,7 +1398,7 @@ export default function CreateEducationalContent() {
                             ? "Detailed feedback on assignments"
                             : "Study materials and resources"
                       }`}
-                      className="formInput flex-1"
+                      className={`formInput flex-1 ${errors[`${currentPackage}.provides.${index}`] ? "border-red-500" : ""}`}
                       value={item}
                       onChange={(e) => handleProvideChange(index, e.target.value, currentPackage)}
                     />
@@ -1223,8 +1411,14 @@ export default function CreateEducationalContent() {
                         <X size={18} />
                       </button>
                     )}
+                    {errors[`${currentPackage}.provides.${index}`] && (
+                      <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.provides.${index}`]}</p>
+                    )}
                   </div>
                 ))}
+                {errors[`${currentPackage}.provides`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.provides`]}</p>
+                )}
                 {formData.packages[currentPackage].provides.length < 8 && (
                   <button
                     type="button"
@@ -1279,15 +1473,19 @@ export default function CreateEducationalContent() {
                   <div className="flex-grow">
                     <input
                       type="text"
-                      className="formInput"
+                      className={`formInput ${errors.newQuestion ? "border-red-500" : ""}`}
                       value={newQuestion}
                       onChange={(e) => setNewQuestion(e.target.value)}
                     />
+                    {errors.newQuestion && editingQuestionIndex === index && (
+                      <p className="text-red-500 text-sm mt-1">{errors.newQuestion}</p>
+                    )}
                     <div className="flex justify-end mt-2 space-x-2">
                       <button
                         onClick={() => {
                           setEditingQuestionIndex(null)
                           setNewQuestion("")
+                          setErrors({ ...errors, newQuestion: "" })
                         }}
                         className="btn btnSmall btnLink"
                       >
@@ -1324,12 +1522,15 @@ export default function CreateEducationalContent() {
         <div className="space-y-4">
           <input
             type="text"
-            className="formInput"
+            className={`formInput ${errors.newQuestion && editingQuestionIndex === null ? "border-red-500" : ""}`}
             placeholder="Add a new question"
             value={editingQuestionIndex === null ? newQuestion : ""}
             onChange={(e) => setNewQuestion(e.target.value)}
             disabled={editingQuestionIndex !== null}
           />
+          {errors.newQuestion && editingQuestionIndex === null && (
+            <p className="text-red-500 text-sm mt-1">{errors.newQuestion}</p>
+          )}
           {editingQuestionIndex === null && (
             <button
               type="button"
@@ -1341,6 +1542,7 @@ export default function CreateEducationalContent() {
             </button>
           )}
         </div>
+        {errors.questions && <p className="text-red-500 text-sm mt-1">{errors.questions}</p>}
         <div className="flex justify-between pt-6">
           <button type="button" onClick={handleBack} className="btn btnMedium btnDefault">
             Back
@@ -1491,7 +1693,6 @@ export default function CreateEducationalContent() {
               <h3 className="typoS1 mb-4 text-text">Packages</h3>
               <div className="space-y-4">
                 {Object.entries(formData.packages).map(([packageName, packageData]) => {
-                  // Skip disabled packages
                   if (!enabledPackages[packageName]) {
                     return null
                   }
@@ -1574,11 +1775,10 @@ export default function CreateEducationalContent() {
             {currentStep === 3 && contentType === "courses" && renderCurriculum()}
             {currentStep === 3 && contentType === "educational_support" && renderQuestionnaire()}
             {currentStep === 4 && contentType === "courses" && renderQuestionnaire()}
-            {currentStep === 4 && contentType === "educational_support" && renderConfirmPost()}
             {currentStep === 5 && contentType === "courses" && renderConfirmPost()}
+            {currentStep === 4 && contentType === "educational_support" && renderConfirmPost()}
           </div>
         </div>
-        {/* Image Gallery Modal */}
         {showGallery && (
           <ImageGallery images={formData.images} onClose={() => setShowGallery(false)} onRemove={removeImage} />
         )}

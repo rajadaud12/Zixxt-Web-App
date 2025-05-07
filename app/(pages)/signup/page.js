@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { EyeIcon } from "@/app/ui/eye-icon"
 import { AuthContext } from "@/context/authContext"
+import { useToast } from "@/context/toastContext"
 import "@/styles/utils.css"
 
 export default function Signup() {
@@ -16,17 +17,21 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [error, setError] = useState("")
+  const [errors, setErrors] = useState({})
   
   const router = useRouter()
   const { isLoggedIn, login, loading } = useContext(AuthContext)
+  const { toast } = useToast()
+  const hasRedirected = useRef(false)
 
   // Redirect if already logged in
   useEffect(() => {
-    if (!loading && isLoggedIn) {
-      router.push('/home')
+    if (!loading && isLoggedIn && !hasRedirected.current) {
+      hasRedirected.current = true
+      toast.success("You are already logged in")
+      router.replace('/home')
     }
-  }, [isLoggedIn, loading, router])
+  }, [isLoggedIn, loading, router, toast])
 
   // Slide data with images and text
   const slides = [
@@ -56,34 +61,118 @@ export default function Signup() {
     },
   ]
 
+  // Validation functions
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === ""
+  }
+
+  const validateText = (text) => {
+    return /^[a-zA-Z\s]*$/.test(text) || text === ""
+  }
+
+  const validateInteger = (num) => {
+    return /^\d+$/.test(num) || num === ""
+  }
+
+  const handleUsernameChange = (e) => {
+    const value = e.target.value
+    let newErrors = { ...errors }
+
+    if (!validateText(value)) {
+      newErrors.username = "Username can only contain letters and spaces"
+    } else {
+      delete newErrors.username
+    }
+
+    setUsername(value)
+    setErrors(newErrors)
+  }
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value
+    let newErrors = { ...errors }
+
+    if (!validateEmail(value)) {
+      newErrors.email = "Please enter a valid email address"
+    } else {
+      delete newErrors.email
+    }
+
+    setEmail(value)
+    setErrors(newErrors)
+  }
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value
+    setPassword(value)
+    if (value) {
+      setErrors({ ...errors, password: "" })
+    }
+  }
+
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value
+    setConfirmPassword(value)
+    if (value) {
+      setErrors({ ...errors, confirmPassword: "" })
+    }
+  }
+
+  const validateForm = () => {
+    let newErrors = {}
+
+    if (!username) {
+      newErrors.username = "Username is required"
+    } else if (!validateText(username)) {
+      newErrors.username = "Username can only contain letters and spaces"
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Confirm Password is required"
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSignup = (e) => {
     e.preventDefault()
-    setError("")
     
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      return
-    }
-    
-    try {
-      // Simulate successful signup
-      const userData = {
-        id: 1,
-        email: email,
-        name: username,
+    if (validateForm()) {
+      try {
+        const userData = {
+          id: 1,
+          email: email,
+          name: username,
+        }
+        const token = `token-${Math.random().toString(36).substring(2)}`
+        login(userData, token)
+        toast.success("Signed up successfully!")
+        hasRedirected.current = true
+        router.replace("/home")
+      } catch (err) {
+        toast.error("An error occurred during signup")
+        console.error(err)
       }
-      const token = `token-${Math.random().toString(36).substring(2)}`
-      
-      // Call login function from context
-      login(userData, token)
-      
-      // Redirect to home page
-      router.push("/home")
-    } catch (err) {
-      setError("An error occurred during signup.")
-      console.error(err)
+    } else {
+      toast.error("Please fill all required fields correctly")
     }
+  }
+
+  const handleGoogleSignup = () => {
+    toast.warning("Google Sign-Up is not implemented yet")
   }
 
   const nextSlide = () => {
@@ -122,55 +211,51 @@ export default function Signup() {
           <div className="w-full">
             <h1 className="typoH1 text-black mb-8 text-left">Sign Up</h1>
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
-
             <form onSubmit={handleSignup}>
               <div className="mb-6">
                 <label htmlFor="username" className="block formLabel mb-2">
-                  User Name
+                  User Name <span className="text-failure">*</span>
                 </label>
                 <input
                   id="username"
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={handleUsernameChange}
                   placeholder="Enter a unique username"
-                  className="formInput"
+                  className={`formInput ${errors.username ? "border-red-500" : ""}`}
                   required
                 />
+                {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
               </div>
 
               <div className="mb-6">
                 <label htmlFor="email" className="block formLabel mb-2">
-                  Email
+                  Email <span className="text-failure">*</span>
                 </label>
                 <input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   placeholder="Enter your email address"
-                  className="formInput"
+                  className={`formInput ${errors.email ? "border-red-500" : ""}`}
                   required
                 />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
 
               <div className="mb-6">
                 <label htmlFor="password" className="block formLabel mb-2">
-                  Password
+                  Password <span className="text-failure">*</span>
                 </label>
                 <div className="relative">
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     placeholder="Enter a unique password"
-                    className="formInput pr-10"
+                    className={`formInput pr-10 ${errors.password ? "border-red-500" : ""}`}
                     required
                   />
                   <button
@@ -182,20 +267,21 @@ export default function Signup() {
                     <EyeIcon open={showPassword} />
                   </button>
                 </div>
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
               </div>
 
               <div className="mb-6">
                 <label htmlFor="confirmPassword" className="block formLabel mb-2">
-                  Confirm Password
+                  Confirm Password <span className="text-failure">*</span>
                 </label>
                 <div className="relative">
                   <input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={handleConfirmPasswordChange}
                     placeholder="Confirm your password"
-                    className="formInput pr-10"
+                    className={`formInput pr-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
                     required
                   />
                   <button
@@ -207,6 +293,7 @@ export default function Signup() {
                     <EyeIcon open={showConfirmPassword} />
                   </button>
                 </div>
+                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
               </div>
 
               <div className="flex items-center gap-4 mt-10">
@@ -218,7 +305,11 @@ export default function Signup() {
                   <span className="typoB3 text-textLight">OR</span>
                 </div>
 
-                <button type="button" className="btn btnMedium btnDefault w-full flex justify-center items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignup}
+                  className="btn btnMedium btnDefault w-full flex justify-center items-center gap-2"
+                >
                   <svg
                     style={{ width: '1.25rem', height: '1.25rem' }}
                     viewBox="0 0 20 20"
