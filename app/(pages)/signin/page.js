@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { AuthContext } from "@/context/authContext"
+import { useToast } from "@/context/toastContext"
 import { EyeIcon } from "@/app/ui/eye-icon"
 import "@/styles/utils.css"
 
@@ -13,17 +14,21 @@ export default function SignIn() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [error, setError] = useState("")
+  const [errors, setErrors] = useState({})
   
   const router = useRouter()
   const { isLoggedIn, login, loading } = useContext(AuthContext)
+  const { toast } = useToast()
+  const hasRedirected = useRef(false)
 
   // Redirect if already logged in
   useEffect(() => {
-    if (!loading && isLoggedIn) {
-      router.push('/home')
+    if (!loading && isLoggedIn && !hasRedirected.current) {
+      hasRedirected.current = true
+      toast.success("You are already logged in")
+      router.replace('/home')
     }
-  }, [isLoggedIn, loading, router])
+  }, [isLoggedIn, loading, router, toast])
 
   // Slide data with images and text
   const slides = [
@@ -53,11 +58,62 @@ export default function SignIn() {
     },
   ]
 
+  // Validation functions
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === ""
+  }
+
+  const validateText = (text) => {
+    return /^[a-zA-Z\s]*$/.test(text) || text === ""
+  }
+
+  const validateInteger = (num) => {
+    return /^\d+$/.test(num) || num === ""
+  }
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value
+    let newErrors = { ...errors }
+
+    if (!validateEmail(value)) {
+      newErrors.email = "Please enter a valid email address"
+    } else {
+      delete newErrors.email
+    }
+
+    setEmail(value)
+    setErrors(newErrors)
+  }
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value
+    setPassword(value)
+    if (value) {
+      setErrors({ ...errors, password: "" })
+    }
+  }
+
+  const validateForm = () => {
+    let newErrors = {}
+
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSignIn = (e) => {
     e.preventDefault()
-    setError("")
     
-    if (email && password) {
+    if (validateForm()) {
       const userData = {
         id: 1,
         email: email,
@@ -65,10 +121,16 @@ export default function SignIn() {
       }
       const token = `token-${Math.random().toString(36).substring(2)}`
       login(userData, token)
-      router.push('/home')
+      toast.success("Signed in successfully!")
+      hasRedirected.current = true
+      router.replace('/home')
     } else {
-      setError("Please enter both email and password")
+      toast.error("Please fill all required fields correctly")
     }
+  }
+
+  const handleGoogleSignIn = () => {
+    toast.warning("Google Sign-In is not implemented yet")
   }
 
   const nextSlide = () => {
@@ -147,36 +209,35 @@ export default function SignIn() {
           <div className="w-full">
             <h1 className="typoH1 text-black mb-8 text-left">Sign In</h1>
 
-            {error && <div className="bg-red-50 text-red-600 p-3 rounded-md mb-4">{error}</div>}
-
             <form onSubmit={handleSignIn}>
               <div className="mb-6">
                 <label htmlFor="email" className="block formLabel mb-2">
-                  Email
+                  Email <span className="text-failure">*</span>
                 </label>
                 <input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   placeholder="Enter email address"
-                  className="formInput"
+                  className={`formInput ${errors.email ? "border-red-500" : ""}`}
                   required
                 />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
 
               <div className="mb-2">
                 <label htmlFor="password" className="block formLabel mb-2">
-                  Password
+                  Password <span className="text-failure">*</span>
                 </label>
                 <div className="relative">
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     placeholder="Enter your password"
-                    className="formInput pr-10"
+                    className={`formInput pr-10 ${errors.password ? "border-red-500" : ""}`}
                     required
                   />
                   <button
@@ -188,6 +249,7 @@ export default function SignIn() {
                     <EyeIcon open={showPassword} />
                   </button>
                 </div>
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
               </div>
 
               <div className="flex justify-end mb-10">
@@ -207,6 +269,7 @@ export default function SignIn() {
 
                 <button
                   type="button"
+                  onClick={handleGoogleSignIn}
                   className="btn btnMedium btnDefault w-full flex justify-center items-center gap-2"
                 >
                   <svg

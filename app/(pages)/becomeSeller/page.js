@@ -7,13 +7,15 @@ import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Dropdown, MultiSelectDropdown } from "@/components/utils/dropdown"
 import "@/styles/utils.css"
 import { useIsSeller } from "@/context/isSellerContext"
+import { useToast } from "@/context/toastContext"
 
 export default function BecomeSeller() {
-    
   const router = useRouter()
+  const { toast } = useToast()
   const [sellerType, setSellerType] = useState("")
-  const { setIsSeller } = useIsSeller(); // Add the hook to access the context
-  const [currentStep, setCurrentStep] = useState(0) // 0 = selection, 1-4 = actual steps
+  const { setIsSeller } = useIsSeller()
+  const [currentStep, setCurrentStep] = useState(0)
+  const [errors, setErrors] = useState({})
   const [individualFormData, setIndividualFormData] = useState({
     fullName: "",
     displayName: "",
@@ -38,15 +40,56 @@ export default function BecomeSeller() {
   })
   const [wordCount, setWordCount] = useState(0)
 
-  // Get the current form data based on seller type
   const formData = sellerType === "individual" ? individualFormData : companyFormData
   const setFormData = sellerType === "individual" ? setIndividualFormData : setCompanyFormData
 
-  // Calculate total steps based on seller type
   const totalSteps = sellerType === "individual" ? 3 : 4
+
+  // Validation functions
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  const validateText = (text) => {
+    return /^[a-zA-Z\s]+$/.test(text) || text === ""
+  }
+
+  const validatePostalCode = (code) => {
+    return /^\d{5}(-\d{4})?$/.test(code) || code === ""
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    // Input validation
+    switch (name) {
+      case "workEmail":
+        if (!validateEmail(value)) {
+          newErrors.workEmail = "Please enter a valid email"
+        } else {
+          delete newErrors.workEmail
+        }
+        break
+      case "fullName":
+      case "displayName":
+      case "companyName":
+        if (!validateText(value)) {
+          newErrors[name] = "Please use only letters and spaces"
+        } else {
+          delete newErrors[name]
+        }
+        break
+      case "postalCode":
+        if (!validatePostalCode(value)) {
+          newErrors.postalCode = "Please enter a valid postal code"
+        } else {
+          delete newErrors.postalCode
+        }
+        break
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       [name]: value,
@@ -62,6 +105,14 @@ export default function BecomeSeller() {
       ...formData,
       languages: selectedLanguages,
     })
+    // Clear language error when languages are selected
+    if (selectedLanguages.length > 0) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors }
+        delete newErrors.languages
+        return newErrors
+      })
+    }
   }
 
   const handleDropdownChange = (name) => (value) => {
@@ -69,18 +120,23 @@ export default function BecomeSeller() {
       ...formData,
       [name]: value,
     })
+    setErrors({ ...errors, [name]: "" })
   }
 
   const handleNext = () => {
-    setCurrentStep(currentStep + 1)
+    if (isStepValid()) {
+      setCurrentStep(currentStep + 1)
+    } else {
+      toast.error("Please fill all required fields correctly")
+    }
   }
 
   const handleBack = () => {
     setCurrentStep(currentStep - 1)
+    setErrors({})
   }
 
   const handleSellerTypeSelect = (type) => {
-    // If changing seller type, reset form data for that type
     if (sellerType !== type) {
       if (type === "individual") {
         setIndividualFormData({
@@ -109,17 +165,25 @@ export default function BecomeSeller() {
       }
     }
     setSellerType(type)
+    setErrors({})
   }
 
-  const handleCreateAccount = () => {
-    // Here you would typically submit the data to your backend
-    console.log("Submitting seller data:", formData);
-    // Set isSeller to true after successful account creation
-    setIsSeller(true);
-    // Redirect to dashboard or confirmation page
-    router.push("/dashboard");
-  };
-  // Reset word count when introduction changes
+  const handleCreateAccount = async () => {
+    if (isStepValid()) {
+      try {
+        // Simulate API call
+        console.log("Submitting seller data:", formData)
+        setIsSeller(true)
+        toast.success("Account created successfully!")
+        router.push("/dashboard")
+      } catch (error) {
+        toast.error("Failed to create account. Please try again.")
+      }
+    } else {
+      toast.error("Please fill all required fields correctly")
+    }
+  }
+
   useEffect(() => {
     if (formData.introduction) {
       setWordCount(formData.introduction.trim().split(/\s+/).filter(Boolean).length)
@@ -128,7 +192,6 @@ export default function BecomeSeller() {
     }
   }, [formData.introduction, sellerType])
 
-  // Available languages for the multi-select dropdown
   const languageOptions = [
     "English",
     "Spanish",
@@ -143,7 +206,6 @@ export default function BecomeSeller() {
     "Italian",
   ]
 
-  // Country options for dropdown
   const countryOptions = [
     "United States",
     "Canada",
@@ -157,7 +219,6 @@ export default function BecomeSeller() {
     "Brazil",
   ]
 
-  // City options - would typically be based on country/state selection
   const cityOptions = [
     "New York",
     "Los Angeles",
@@ -171,13 +232,9 @@ export default function BecomeSeller() {
     "Sydney",
   ]
 
-  // Year options for company established year
   const yearOptions = Array.from({ length: 74 }, (_, i) => (2024 - i).toString())
-
-  // Employee count options
   const employeeCountOptions = ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5000+"]
 
-  // Render the stepper only for steps 1-4 (not for the selection screen)
   const renderStepper = () => {
     if (currentStep === 0) return null
 
@@ -222,7 +279,6 @@ export default function BecomeSeller() {
     )
   }
 
-  // Get right side content based on step and seller type
   const getRightSideContent = () => {
     if (currentStep === 0) {
       return {
@@ -264,7 +320,6 @@ export default function BecomeSeller() {
           }
       }
     } else {
-      // Company content
       switch (currentStep) {
         case 1:
           return {
@@ -304,60 +359,66 @@ export default function BecomeSeller() {
     }
   }
 
-  // Check if current step is valid based on form data
   const isStepValid = () => {
+    let newErrors = {}
     if (currentStep === 0) return !!sellerType
 
     if (sellerType === "individual") {
       switch (currentStep) {
         case 1:
-          return !!formData.fullName && !!formData.displayName
+          if (!formData.fullName) newErrors.fullName = "Full name is required"
+          if (!formData.displayName) newErrors.displayName = "Display name is required"
+          break
         case 2:
-          return (
-            !!formData.country &&
-            !!formData.state &&
-            !!formData.city &&
-            !!formData.postalCode &&
-            formData.languages.length > 0
-          )
+          if (!formData.country) newErrors.country = "Country is required"
+          if (!formData.state) newErrors.state = "State is required"
+          if (!formData.city) newErrors.city = "City is required"
+          if (!formData.postalCode) newErrors.postalCode = "Postal code is required"
+          if (!formData.languages || formData.languages.length === 0) {
+            newErrors.languages = "At least one language is required"
+          }
+          break
         case 3:
-          return !!formData.introduction
-        default:
-          return false
+          if (!formData.introduction) newErrors.introduction = "Introduction is required"
+          break
       }
     } else {
-      // Company validation
       switch (currentStep) {
         case 1:
-          return (
-            !!formData.workEmail && !!formData.companyName && !!formData.yearEstablished && !!formData.employeesCount
-          )
+          if (!formData.workEmail) newErrors.workEmail = "Work email is required"
+          if (!formData.companyName) newErrors.companyName = "Company name is required"
+          if (!formData.yearEstablished) newErrors.yearEstablished = "Year established is required"
+          if (!formData.employeesCount) newErrors.employeesCount = "Employee count is required"
+          break
         case 2:
-          return !!formData.fullName && !!formData.displayName
+          if (!formData.fullName) newErrors.fullName = "Full name is required"
+          if (!formData.displayName) newErrors.displayName = "Display name is required"
+          break
         case 3:
-          return (
-            !!formData.country &&
-            !!formData.state &&
-            !!formData.city &&
-            !!formData.postalCode &&
-            formData.languages.length > 0
-          )
+          if (!formData.country) newErrors.country = "Country is required"
+          if (!formData.state) newErrors.state = "State is required"
+          if (!formData.city) newErrors.city = "City is required"
+          if (!formData.postalCode) newErrors.postalCode = "Postal code is required"
+          if (!formData.languages || formData.languages.length === 0) {
+            newErrors.languages = "At least one language is required"
+          }
+          break
         case 4:
-          return !!formData.introduction
-        default:
-          return false
+          if (!formData.introduction) newErrors.introduction = "Introduction is required"
+          break
       }
     }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const rightSideContent = getRightSideContent()
 
   return (
     <main className="flex min-h-screen">
-      {/* Left side - Form */}
       <div className="w-full md:w-1/2 p-8 flex flex-col justify-center items-center">
         <div className="w-full max-w-[580px]">
-          {/* Logo */}
           <div className="mb-8">
             <Image
               src="/images/logo.png"
@@ -368,16 +429,13 @@ export default function BecomeSeller() {
             />
           </div>
 
-          {/* Progress indicator */}
           {renderStepper()}
 
-          {/* Heading based on current step */}
           <h1 className="typoH1 text-black mb-8">
             {currentStep === 0 && "Start Selling"}
             {currentStep > 0 && "Create your seller account"}
           </h1>
 
-          {/* Step 0: Choose seller type */}
           {currentStep === 0 && (
             <div>
               <p className="typoB1 text-text mb-6">Are you an individual or Company?</p>
@@ -496,7 +554,6 @@ export default function BecomeSeller() {
             </div>
           )}
 
-          {/* Company Step 1: Company Information */}
           {currentStep === 1 && sellerType === "company" && (
             <div>
               <div className="space-y-6 mb-16">
@@ -511,9 +568,10 @@ export default function BecomeSeller() {
                     value={formData.workEmail}
                     onChange={handleInputChange}
                     placeholder="Enter your work email"
-                    className="formInput"
+                    className={`formInput ${errors.workEmail ? "border-red-500" : ""}`}
                     required
                   />
+                  {errors.workEmail && <p className="text-red-500 text-sm mt-1">{errors.workEmail}</p>}
                 </div>
 
                 <div>
@@ -527,9 +585,10 @@ export default function BecomeSeller() {
                     value={formData.companyName}
                     onChange={handleInputChange}
                     placeholder="Enter your company name"
-                    className="formInput"
+                    className={`formInput ${errors.companyName ? "border-red-500" : ""}`}
                     required
                   />
+                  {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -541,7 +600,9 @@ export default function BecomeSeller() {
                       options={yearOptions}
                       defaultValue={formData.yearEstablished || "Select Year"}
                       onChange={handleDropdownChange("yearEstablished")}
+                      className={errors.yearEstablished ? "border-red-500" : ""}
                     />
+                    {errors.yearEstablished && <p className="text-red-500 text-sm mt-1">{errors.yearEstablished}</p>}
                   </div>
 
                   <div>
@@ -552,7 +613,9 @@ export default function BecomeSeller() {
                       options={employeeCountOptions}
                       defaultValue={formData.employeesCount || "Select Range"}
                       onChange={handleDropdownChange("employeesCount")}
+                      className={errors.employeesCount ? "border-red-500" : ""}
                     />
+                    {errors.employeesCount && <p className="text-red-500 text-sm mt-1">{errors.employeesCount}</p>}
                   </div>
                 </div>
               </div>
@@ -568,9 +631,9 @@ export default function BecomeSeller() {
 
                 <button
                   onClick={handleNext}
-                  disabled={!isStepValid()}
+                  disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    isStepValid() ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   } flex items-center justify-center gap-2`}
                 >
                   Next
@@ -580,7 +643,6 @@ export default function BecomeSeller() {
             </div>
           )}
 
-          {/* Step 1 (Individual) or Step 2 (Company): Basic profile information */}
           {((currentStep === 1 && sellerType === "individual") || (currentStep === 2 && sellerType === "company")) && (
             <div>
               <div className="space-y-6 mb-16">
@@ -637,15 +699,16 @@ export default function BecomeSeller() {
                     Full Name
                   </label>
                   <input
-                   id="fullName"
-                   name="fullName"
-                   type="text"
-                   value={formData.fullName}
-                   onChange={handleInputChange}
-                   placeholder="Enter your full name"
-                   className="formInput"
-                   required
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    placeholder="Enter your full name"
+                    className={`formInput ${errors.fullName ? "border-red-500" : ""}`}
+                    required
                   />
+                  {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
                 </div>
 
                 <div>
@@ -659,9 +722,10 @@ export default function BecomeSeller() {
                     value={formData.displayName}
                     onChange={handleInputChange}
                     placeholder="Enter your display name"
-                    className="formInput"
+                    className={`formInput ${errors.displayName ? "border-red-500" : ""}`}
                     required
                   />
+                  {errors.displayName && <p className="text-red-500 text-sm mt-1">{errors.displayName}</p>}
                 </div>
               </div>
 
@@ -676,9 +740,9 @@ export default function BecomeSeller() {
 
                 <button
                   onClick={handleNext}
-                  disabled={!isStepValid()}
+                  disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    isStepValid() ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   } flex items-center justify-center gap-2`}
                 >
                   Next
@@ -688,7 +752,6 @@ export default function BecomeSeller() {
             </div>
           )}
 
-          {/* Step 2 (Individual) or Step 3 (Company): Location and languages */}
           {((currentStep === 2 && sellerType === "individual") || (currentStep === 3 && sellerType === "company")) && (
             <div>
               <div className="space-y-6 mb-16">
@@ -701,7 +764,9 @@ export default function BecomeSeller() {
                       options={countryOptions}
                       defaultValue={formData.country || "Select your Country"}
                       onChange={handleDropdownChange("country")}
+                      className={errors.country ? "border-red-500" : ""}
                     />
+                    {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
                   </div>
 
                   <div>
@@ -712,7 +777,9 @@ export default function BecomeSeller() {
                       options={["California", "New York", "Texas", "Florida"]}
                       defaultValue={formData.state || "Enter your State"}
                       onChange={handleDropdownChange("state")}
+                      className={errors.state ? "border-red-500" : ""}
                     />
+                    {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
                   </div>
                 </div>
 
@@ -725,7 +792,9 @@ export default function BecomeSeller() {
                       options={cityOptions}
                       defaultValue={formData.city || "Select your City"}
                       onChange={handleDropdownChange("city")}
+                      className={errors.city ? "border-red-500" : ""}
                     />
+                    {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
                   </div>
 
                   <div>
@@ -739,9 +808,10 @@ export default function BecomeSeller() {
                       value={formData.postalCode}
                       onChange={handleInputChange}
                       placeholder="Enter your Postal Code"
-                      className="formInput"
+                      className={`formInput ${errors.postalCode ? "border-red-500" : ""}`}
                       required
                     />
+                    {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>}
                   </div>
                 </div>
 
@@ -754,7 +824,9 @@ export default function BecomeSeller() {
                     selectedValues={formData.languages}
                     onChange={handleLanguagesChange}
                     placeholder="Select the languages you are able to speak"
+                    className={errors.languages ? "border-red-500" : ""}
                   />
+                  {errors.languages && <p className="text-red-500 text-sm mt-1">{errors.languages}</p>}
                 </div>
               </div>
 
@@ -769,9 +841,9 @@ export default function BecomeSeller() {
 
                 <button
                   onClick={handleNext}
-                  disabled={!isStepValid()}
+                  disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    isStepValid() ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   } flex items-center justify-center gap-2`}
                 >
                   Next
@@ -781,7 +853,6 @@ export default function BecomeSeller() {
             </div>
           )}
 
-          {/* Step 3 (Individual) or Step 4 (Company): Introduction */}
           {((currentStep === 3 && sellerType === "individual") || (currentStep === 4 && sellerType === "company")) && (
             <div>
               <div className="mb-16">
@@ -796,10 +867,11 @@ export default function BecomeSeller() {
                   placeholder={`Write a short description of the ${
                     sellerType === "individual" ? "seller's" : "company's"
                   } background, expertise, and offerings`}
-                  className="formTextarea h-64"
+                  className={`formTextarea h-64 ${errors.introduction ? "border-red-500" : ""}`}
                   maxLength={400}
                   required
                 ></textarea>
+                {errors.introduction && <p className="text-red-500 text-sm mt-1">{errors.introduction}</p>}
                 <div className="text-right text-textLight mt-2">{wordCount} / 400 words</div>
               </div>
 
@@ -814,9 +886,9 @@ export default function BecomeSeller() {
 
                 <button
                   onClick={handleCreateAccount}
-                  disabled={!isStepValid()}
+                  disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    isStepValid() ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   } flex items-center justify-center gap-2`}
                 >
                   Create Account
@@ -828,24 +900,23 @@ export default function BecomeSeller() {
         </div>
       </div>
 
- {/* Right side - Illustration */}
- <div className="hidden md:block md:w-1/2 bg-whiteGrey p-8 border-l border-border">
- <div className="max-w-md h-full flex flex-col justify-center items-start mx-auto">
-    <div className="mb-8">
-      <Image
-        src={rightSideContent.image || "/placeholder.svg"}
-        alt={rightSideContent.title}
-        width={500}
-        height={320}
-        style={{ width: '100%', height: '25rem', objectFit: 'contain' }}
-      />
-    </div>
-    <div className="mb-8">
-      <h2 className="typoH2 text-black mb-4">{rightSideContent.title}</h2>
-      <p className="typoB1 text-text">{rightSideContent.description}</p>
-    </div>
-  </div>
-</div>
+      <div className="hidden md:block md:w-1/2 bg-whiteGrey p-8 border-l border-border">
+        <div className="max-w-md h-full flex flex-col justify-center items-start mx-auto">
+          <div className="mb-8">
+            <Image
+              src={rightSideContent.image || "/placeholder.svg"}
+              alt={rightSideContent.title}
+              width={500}
+              height={320}
+              style={{ width: '100%', height: '25rem', objectFit: 'contain' }}
+            />
+          </div>
+          <div className="mb-8">
+            <h2 className="typoH2 text-black mb-4">{rightSideContent.title}</h2>
+            <p className="typoB1 text-text">{rightSideContent.description}</p>
+          </div>
+        </div>
+      </div>
     </main>
   )
 }

@@ -4,9 +4,11 @@ import { Plus, X, ChevronDown, Edit, Trash2, Check, Package, Settings } from "lu
 import { Dropdown } from "@/components/utils/dropdown"
 import ImageGallery from "./components/createServiceComponents"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/context/toastContext"
 
 export default function CreateService() {
-    const router = useRouter()
+  const router = useRouter()
+  const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(1)
   const [currentPackage, setCurrentPackage] = useState("Simple")
   const [showGallery, setShowGallery] = useState(false)
@@ -21,6 +23,7 @@ export default function CreateService() {
   ])
   const [newQuestion, setNewQuestion] = useState("")
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(null)
+  const [errors, setErrors] = useState({})
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -54,9 +57,9 @@ export default function CreateService() {
       },
     },
   })
-  
+
   const fileInputRef = useRef(null)
-  
+
   const categories = ["Design", "Development", "Marketing", "Writing", "Video & Animation", "Music & Audio"]
   const subCategories = {
     Design: ["Logo Design", "Web Design", "App Design", "UX/UI Design"],
@@ -66,17 +69,81 @@ export default function CreateService() {
     "Video & Animation": ["Video Editing", "Animation", "Motion Graphics", "Intros & Outros"],
     "Music & Audio": ["Voice Over", "Mixing & Mastering", "Sound Effects", "Music Composition"],
   }
-  
+
+  // Validation functions
+  const validateText = (text) => {
+    return /^[a-zA-Z\s]+$/.test(text) || text === ""
+  }
+
+  const validateInteger = (num) => {
+    return /^\d+$/.test(num) || num === ""
+  }
+
+  const validatePackageData = (packageData) => {
+    const requiredFields = ['name', 'revisions', 'deliveryDays', 'price']
+    return requiredFields.every(field => packageData[field]?.trim()) && 
+           packageData.provides.some(item => item.trim())
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    switch (name) {
+      case "title":
+        if (!validateText(value)) {
+          newErrors.title = "Title should contain only letters and spaces"
+        } else {
+          delete newErrors.title
+        }
+        break
+      case "description":
+        if (value.length > 1000) {
+          newErrors.description = "Description cannot exceed 1000 characters"
+        } else {
+          delete newErrors.description
+        }
+        break
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       [name]: value,
     })
   }
-  
+
   const handlePackageInputChange = (e, packageType) => {
     const { name, value } = e.target
+    let newErrors = { ...errors }
+
+    switch (name) {
+      case "name":
+        if (!validateText(value)) {
+          newErrors[`${packageType}.name`] = "Package name should contain only letters and spaces"
+        } else {
+          delete newErrors[`${packageType}.name`]
+        }
+        break
+      case "revisions":
+      case "deliveryDays":
+      case "maxExtension":
+        if (!validateInteger(value)) {
+          newErrors[`${packageType}.${name}`] = "Please enter a valid number"
+        } else {
+          delete newErrors[`${packageType}.${name}`]
+        }
+        break
+      case "price":
+        if (!/^\d+(\.\d{1,2})?$/.test(value) && value !== "") {
+          newErrors[`${packageType}.price`] = "Price must be a valid number"
+        } else {
+          delete newErrors[`${packageType}.price`]
+        }
+        break
+    }
+
+    setErrors(newErrors)
     setFormData({
       ...formData,
       packages: {
@@ -88,8 +155,16 @@ export default function CreateService() {
       },
     })
   }
-  
+
   const handleProvideChange = (index, value, packageType) => {
+    let newErrors = { ...errors }
+    if (!validateText(value)) {
+      newErrors[`${packageType}.provides.${index}`] = "Feature should contain only letters and spaces"
+    } else {
+      delete newErrors[`${packageType}.provides.${index}`]
+    }
+
+    setErrors(newErrors)
     const newProvides = [...formData.packages[packageType].provides]
     newProvides[index] = value
     setFormData({
@@ -103,7 +178,7 @@ export default function CreateService() {
       },
     })
   }
-  
+
   const addMoreProvide = (packageType) => {
     if (formData.packages[packageType].provides.length < 8) {
       setFormData({
@@ -116,9 +191,11 @@ export default function CreateService() {
           },
         },
       })
+    } else {
+      toast.error("Maximum 8 features allowed per package")
     }
   }
-  
+
   const removeProvide = (index, packageType) => {
     const newProvides = [...formData.packages[packageType].provides]
     newProvides.splice(index, 1)
@@ -132,23 +209,30 @@ export default function CreateService() {
         },
       },
     })
+    toast.success("Feature removed successfully")
   }
-  
+
   const handleCategoryChange = (value) => {
     setFormData({
       ...formData,
       category: value,
       subCategory: "",
     })
+    if (value) {
+      setErrors({ ...errors, category: "" })
+    }
   }
-  
+
   const handleSubCategoryChange = (value) => {
     setFormData({
       ...formData,
       subCategory: value,
     })
+    if (value) {
+      setErrors({ ...errors, subCategory: "" })
+    }
   }
-  
+
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files)
     if (files.length > 0) {
@@ -156,9 +240,10 @@ export default function CreateService() {
         ...formData,
         images: [...formData.images, ...files],
       })
+      toast.success(`${files.length} image(s) uploaded successfully`)
     }
   }
-  
+
   const removeImage = (index) => {
     const newImages = [...formData.images]
     newImages.splice(index, 1)
@@ -166,20 +251,24 @@ export default function CreateService() {
       ...formData,
       images: newImages,
     })
+    toast.success("Image removed successfully")
   }
-  
+
   const addQuestion = () => {
     if (newQuestion.trim()) {
       setQuestions([...questions, { question: newQuestion }])
       setNewQuestion("")
+      toast.success("Question added successfully")
+    } else {
+      toast.error("Please enter a valid question")
     }
   }
-  
+
   const startEditQuestion = (index) => {
     setEditingQuestionIndex(index)
     setNewQuestion(questions[index].question)
   }
-  
+
   const saveEditQuestion = () => {
     if (editingQuestionIndex !== null && newQuestion.trim()) {
       const newQuestions = [...questions]
@@ -187,17 +276,20 @@ export default function CreateService() {
       setQuestions(newQuestions)
       setEditingQuestionIndex(null)
       setNewQuestion("")
+      toast.success("Question updated successfully")
+    } else {
+      toast.error("Please enter a valid question")
     }
   }
-  
+
   const deleteQuestion = (index) => {
     const newQuestions = [...questions]
     newQuestions.splice(index, 1)
     setQuestions(newQuestions)
+    toast.success("Question deleted successfully")
   }
-  
+
   const togglePackage = (packageName) => {
-    // Don't allow disabling all packages
     if (!enabledPackages[packageName] || Object.values(enabledPackages).filter(value => value).length > 1) {
       const newEnabledPackages = {
         ...enabledPackages,
@@ -205,74 +297,71 @@ export default function CreateService() {
       }
       setEnabledPackages(newEnabledPackages)
       
-      // If current package is being disabled, switch to first enabled package
       if (packageName === currentPackage && enabledPackages[packageName]) {
         const nextEnabledPackage = Object.keys(newEnabledPackages).find(pkg => newEnabledPackages[pkg])
         if (nextEnabledPackage) {
           setCurrentPackage(nextEnabledPackage)
         }
       }
+      toast.success(`${packageName} package ${newEnabledPackages[packageName] ? "enabled" : "disabled"}`)
+    } else {
+      toast.error("At least one package must remain enabled")
     }
   }
-  
-  const validatePackageData = (packageData) => {
-    const requiredFields = ['name', 'revisions', 'deliveryDays', 'price']
-    return requiredFields.every(field => packageData[field]?.trim()) && 
-           packageData.provides.some(item => item.trim())
-  }
-  
-  const handleNext = () => {
+
+  const validateStep = () => {
+    let newErrors = {}
+
     if (currentStep === 1) {
-      // Validate first step
-      if (!formData.title.trim()) {
-        alert("Please enter a title for your service")
-        return
-      }
-      if (!formData.category) {
-        alert("Please select a category")
-        return
-      }
-      if (!formData.subCategory) {
-        alert("Please select a sub-category")
-        return
-      }
-      if (!formData.description.trim()) {
-        alert("Please provide a description")
-        return
-      }
-      setCurrentStep(2)
-      window.scrollTo(0, 0)
+      if (!formData.title.trim()) newErrors.title = "Title is required"
+      if (!formData.category) newErrors.category = "Category is required"
+      if (!formData.subCategory) newErrors.subCategory = "Sub-category is required"
+      if (!formData.description.trim()) newErrors.description = "Description is required"
     } else if (currentStep === 2) {
-      // Check if all enabled packages have complete data
-      const allEnabledPackagesValid = Object.keys(enabledPackages)
-        .filter(pkg => enabledPackages[pkg])
-        .every(pkg => validatePackageData(formData.packages[pkg]))
-      
-      if (!allEnabledPackagesValid) {
-        alert("Please complete all required fields for all enabled packages")
-        return
-      }
-      
-      setCurrentStep(3)
-      window.scrollTo(0, 0)
+      Object.keys(enabledPackages).forEach((pkg) => {
+        if (enabledPackages[pkg]) {
+          const packageData = formData.packages[pkg]
+          if (!packageData.name.trim()) newErrors[`${pkg}.name`] = "Package name is required"
+          if (!packageData.revisions.trim()) newErrors[`${pkg}.revisions`] = "Revisions are required"
+          if (!packageData.deliveryDays.trim()) newErrors[`${pkg}.deliveryDays`] = "Delivery days are required"
+          if (!packageData.price.trim()) newErrors[`${pkg}.price`] = "Price is required"
+          if (!packageData.provides.some(item => item.trim())) {
+            newErrors[`${pkg}.provides`] = "At least one feature is required"
+          }
+        }
+      })
     } else if (currentStep === 3) {
-      // Questionnaire is no longer skippable
-      if (questions.length > 0) {
+      if (questions.length === 0) {
+        newErrors.questions = "At least one question is required"
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleNext = () => {
+    if (validateStep()) {
+      if (currentStep === 1) {
+        setCurrentStep(2)
+        window.scrollTo(0, 0)
+      } else if (currentStep === 2) {
+        setCurrentStep(3)
+        window.scrollTo(0, 0)
+      } else if (currentStep === 3) {
         setCurrentStep(4)
         window.scrollTo(0, 0)
       } else {
-        alert("Please add at least one question")
+        console.log("Form submitted:", formData, questions, enabledPackages)
+        toast.success("Service posted successfully!")
+        router.back()
+        window.scrollTo(0, 0)
       }
     } else {
-      // Submit form
-      console.log("Form submitted:", formData, questions, enabledPackages)
-      alert("Service posted successfully!")
-      router.back()
-      
-      window.scrollTo(0, 0)
+      toast.error("Please fill all required fields correctly")
     }
   }
-  
+
   const handleBack = () => {
     if (currentStep === 2) {
       setCurrentStep(1)
@@ -281,61 +370,68 @@ export default function CreateService() {
     } else if (currentStep === 4) {
       setCurrentStep(3)
     }
+    setErrors({})
     window.scrollTo(0, 0)
   }
-  
+
   const renderServiceInfo = () => {
     return (
       <div className="space-y-8">
         <h2 className="typoH2 text-center text-text">Service Information</h2>
         <div>
           <label htmlFor="title" className="block mb-3 text-[15px] font-medium text-text">
-            Title
+            Title <span className="text-failure">*</span>
           </label>
           <input
             type="text"
             id="title"
             name="title"
             placeholder="What is the title of your service"
-            className="formInput"
+            className={`formInput ${errors.title ? "border-red-500" : ""}`}
             value={formData.title}
             onChange={handleInputChange}
+            required
           />
+          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
         </div>
         <div>
           <label htmlFor="category" className="block mb-3 text-[15px] font-medium text-text">
-            Category
+            Category <span className="text-failure">*</span>
           </label>
           <Dropdown
             options={categories}
             defaultValue={formData.category || "Select Category"}
             onChange={handleCategoryChange}
+            className={errors.category ? "border-red-500" : ""}
           />
+          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
         </div>
         <div>
-          <label htmlFor="subCategory" className="block mb-3 text-[15
-
-px] font-medium text-text">
-            Sub Category
+          <label htmlFor="subCategory" className="block mb-3 text-[15px] font-medium text-text">
+            Sub Category <span className="text-failure">*</span>
           </label>
           <Dropdown
             options={formData.category ? subCategories[formData.category] : []}
             defaultValue={formData.subCategory || "Select Sub Category"}
             onChange={handleSubCategoryChange}
+            className={errors.subCategory ? "border-red-500" : ""}
           />
+          {errors.subCategory && <p className="text-red-500 text-sm mt-1">{errors.subCategory}</p>}
         </div>
         <div>
           <label htmlFor="description" className="block mb-3 text-[15px] font-medium text-text">
-            Description
+            Description <span className="text-failure">*</span>
           </label>
           <textarea
             id="description"
             name="description"
             placeholder="Write the details of your requirement"
-            className="formTextarea h-32"
+            className={`formTextarea h-32 ${errors.description ? "border-red-500" : ""}`}
             value={formData.description}
             onChange={handleInputChange}
+            required
           />
+          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
         </div>
         <div>
           <label className="block mb-3 text-[15px] font-medium text-text">Upload Pictures</label>
@@ -346,7 +442,7 @@ px] font-medium text-text">
             <div className="w-16 h-16 bg-gray-200 rounded-[20px] flex items-center justify-center mb-2">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
-                  d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
+                  d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 4.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
                   stroke="#767B7F"
                   strokeWidth="2"
                   strokeLinecap="round"
@@ -386,54 +482,6 @@ px] font-medium text-text">
       </div>
     )
   }
-  
-  const renderSteppers = () => {
-    return (
-      <div className="flex justify-center mb-12">
-        <div className="flex items-center">
-          <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center ${
-              currentStep >= 1 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-            }`}
-          >
-            01
-          </div>
-          <div className="relative w-32">
-            <div className="absolute top-1/2 transform -translate-y-1/2 h-px w-full bg-gray-200"></div>
-            {currentStep >= 2 && (
-              <div 
-                className="absolute top-1/2 transform -translate-y-1/2 h-px bg-primary" 
-                style={{ width: '100%' }}
-              ></div>
-            )}
-          </div>
-          <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center ${
-              currentStep >= 2 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-            }`}
-          >
-            02
-          </div>
-          <div className="relative w-32">
-            <div className="absolute top-1/2 transform -translate-y-1/2 h-px w-full bg-gray-200"></div>
-            {currentStep >= 3 && (
-              <div 
-                className="absolute top-1/2 transform -translate-y-1/2 h-px bg-primary" 
-                style={{ width: '100%' }}
-              ></div>
-            )}
-          </div>
-          <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center ${
-              currentStep >= 3 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-            }`}
-          >
-            03
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   const PackageToggle = ({ packageName }) => (
     <div className="flex items-center">
@@ -446,13 +494,12 @@ px] font-medium text-text">
       <span className="ml-2 typoC2 text-textLight">{enabledPackages[packageName] ? 'Enabled' : 'Disabled'}</span>
     </div>
   )
-  
+
   const renderPackageSelector = () => {
     return (
       <div className="space-y-8">
         <h2 className="typoH2 text-center text-text">Package Configuration</h2>
         
-        {/* Package Cards */}
         <div className="grid grid-cols-3 gap-6">
           {Object.keys(enabledPackages).map(packageName => (
             <div 
@@ -467,22 +514,18 @@ px] font-medium text-text">
                   : ''
               }`}
             >
-              {/* Toggle Switch */}
               <div className="absolute top-4 right-4">
                 <PackageToggle packageName={packageName} />
               </div>
               
-              {/* Package Icon */}
               <div className={`mb-4 ${enabledPackages[packageName] ? 'text-primary' : 'text-textLight'}`}>
                 <Package size={24} />
               </div>
               
-              {/* Package Name */}
               <h3 className={`typoS1 mb-3 ${!enabledPackages[packageName] && 'text-textLight'}`}>
                 {packageName}
               </h3>
               
-              {/* Package Brief Info */}
               <div className={`typoB3 ${!enabledPackages[packageName] && 'text-textLight'}`}>
                 <p className="mb-2">
                   Price: {formData.packages[packageName].price ? `$${formData.packages[packageName].price}` : 'Not set'}
@@ -495,7 +538,6 @@ px] font-medium text-text">
                 </p>
               </div>
               
-              {/* Edit Button */}
               <button
                 onClick={() => enabledPackages[packageName] && setCurrentPackage(packageName)}
                 disabled={!enabledPackages[packageName]}
@@ -514,7 +556,6 @@ px] font-medium text-text">
           ))}
         </div>
       
-        {/* Package Editor */}
         <div className="bg-white rounded-[20px] border border-border p-8 shadow-sm">
           <h2 className="typoS1 mb-6 flex items-center text-text">
             <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mr-2">
@@ -533,10 +574,14 @@ px] font-medium text-text">
                   type="text"
                   name="name"
                   placeholder="What is the title of your service"
-                  className="formInput"
+                  className={`formInput ${errors[`${currentPackage}.name`] ? "border-red-500" : ""}`}
                   value={formData.packages[currentPackage].name}
                   onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                  required
                 />
+                {errors[`${currentPackage}.name`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.name`]}</p>
+                )}
               </div>
             
               <div className="grid grid-cols-3 gap-4">
@@ -548,10 +593,14 @@ px] font-medium text-text">
                     type="text"
                     name="revisions"
                     placeholder="e.g. 1"
-                    className="formInput"
+                    className={`formInput ${errors[`${currentPackage}.revisions`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].revisions}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
+                  {errors[`${currentPackage}.revisions`] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.revisions`]}</p>
+                  )}
                 </div>
                 <div>
                   <label className="formLabel block mb-3">
@@ -561,10 +610,14 @@ px] font-medium text-text">
                     type="text"
                     name="deliveryDays"
                     placeholder="e.g. 1"
-                    className="formInput"
+                    className={`formInput ${errors[`${currentPackage}.deliveryDays`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].deliveryDays}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
+                  {errors[`${currentPackage}.deliveryDays`] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.deliveryDays`]}</p>
+                  )}
                 </div>
                 <div>
                   <label className="formLabel block mb-3">
@@ -574,10 +627,13 @@ px] font-medium text-text">
                     type="text"
                     name="maxExtension"
                     placeholder="e.g. 1"
-                    className="formInput"
+                    className={`formInput ${errors[`${currentPackage}.maxExtension`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].maxExtension}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
                   />
+                  {errors[`${currentPackage}.maxExtension`] && (
+                    <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.maxExtension`]}</p>
+                  )}
                 </div>
               </div>
             
@@ -590,12 +646,16 @@ px] font-medium text-text">
                     type="text"
                     name="price"
                     placeholder="Enter price"
-                    className="formInput pr-16"
+                    className={`formInput pr-16 ${errors[`${currentPackage}.price`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].price}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
                   <div className="absolute right-0 top-0 bottom-0 flex items-center px-6 text-textLight typoB3">USD</div>
                 </div>
+                {errors[`${currentPackage}.price`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.price`]}</p>
+                )}
               </div>
             
               <div>
@@ -616,7 +676,7 @@ px] font-medium text-text">
                             ? "High resolution PNGs"
                             : "Editable SVGs"
                       }`}
-                      className="formInput flex-1"
+                      className={`formInput flex-1 ${errors[`${currentPackage}.provides.${index}`] ? "border-red-500" : ""}`}
                       value={item}
                       onChange={(e) => handleProvideChange(index, e.target.value, currentPackage)}
                     />
@@ -629,8 +689,14 @@ px] font-medium text-text">
                         <X size={18} />
                       </button>
                     )}
+                    {errors[`${currentPackage}.provides.${index}`] && (
+                      <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.provides.${index}`]}</p>
+                    )}
                   </div>
                 ))}
+                {errors[`${currentPackage}.provides`] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.provides`]}</p>
+                )}
                 {formData.packages[currentPackage].provides.length < 8 && (
                   <button
                     type="button"
@@ -680,7 +746,7 @@ px] font-medium text-text">
       </div>
     )
   }
-  
+
   const renderQuestionnaire = () => {
     return (
       <div className="space-y-8">
@@ -693,15 +759,19 @@ px] font-medium text-text">
                   <div className="flex-grow">
                     <input
                       type="text"
-                      className="formInput"
+                      className={`formInput ${errors.newQuestion ? "border-red-500" : ""}`}
                       value={newQuestion}
                       onChange={(e) => setNewQuestion(e.target.value)}
                     />
+                    {errors.newQuestion && editingQuestionIndex === index && (
+                      <p className="text-red-500 text-sm mt-1">{errors.newQuestion}</p>
+                    )}
                     <div className="flex justify-end mt-2 space-x-2">
                       <button
                         onClick={() => {
                           setEditingQuestionIndex(null)
                           setNewQuestion("")
+                          setErrors({ ...errors, newQuestion: "" })
                         }}
                         className="btn btnSmall btnLink"
                       >
@@ -746,12 +816,15 @@ px] font-medium text-text">
         <div className="space-y-4">
           <input
             type="text"
-            className="formInput"
+            className={`formInput ${errors.newQuestion && editingQuestionIndex === null ? "border-red-500" : ""}`}
             placeholder="Add a new question"
             value={editingQuestionIndex === null ? newQuestion : ""}
             onChange={(e) => setNewQuestion(e.target.value)}
             disabled={editingQuestionIndex !== null}
           />
+          {errors.newQuestion && editingQuestionIndex === null && (
+            <p className="text-red-500 text-sm mt-1">{errors.newQuestion}</p>
+          )}
           {editingQuestionIndex === null && (
             <button
               type="button"
@@ -782,7 +855,7 @@ px] font-medium text-text">
       </div>
     )
   }
-  
+
   const renderConfirmPost = () => {
     return (
       <div className="space-y-8">
@@ -817,10 +890,7 @@ px] font-medium text-text">
             <h3 className="typoS1 mb-4 text-text">Packages</h3>
             <div className="space-y-4">
               {Object.entries(formData.packages).map(([packageName, packageData]) => {
-                // Skip empty packages
-                if (!packageData.name && !packageData.price && !packageData.provides.some((item) => item)) {
-                  return null
-                }
+                if (!enabledPackages[packageName]) return null
                 return (
                   <div key={packageName} className="border-b border-border pb-4 last:border-0 last:pb-0">
                     <h4 className="typoB2 text-primary mb-2">{packageName}</h4>
@@ -840,6 +910,10 @@ px] font-medium text-text">
                       <div>
                         <span className="text-textLight">Delivery Days:</span>
                         <p>{packageData.deliveryDays || "Not provided"}</p>
+                      </div>
+                      <div>
+                        <span className="text-textLight">Max Extension:</span>
+                        <p>{packageData.maxExtension || "Not provided"} days</p>
                       </div>
                       <div className="col-span-2">
                         <span className="text-textLight">Provides:</span>
@@ -889,7 +963,38 @@ px] font-medium text-text">
       </div>
     )
   }
-  
+
+  const renderSteppers = () => {
+    return (
+      <div className="flex justify-center mb-12">
+        <div className="flex items-center">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="flex items-center">
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                  currentStep >= index + 1 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
+                }`}
+              >
+                {String(index + 1).padStart(2, "0")}
+              </div>
+              {index < 3 && (
+                <div className="relative w-32">
+                  <div className="absolute top-1/2 transform -translate-y-1/2 h-px w-full bg-gray-200"></div>
+                  {currentStep > index + 1 && (
+                    <div
+                      className="absolute top-1/2 transform -translate-y-1/2 h-px bg-primary"
+                      style={{ width: "100%" }}
+                    ></div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F5F6] py-10">
       <div className="max-w-[1240px] mx-auto px-4">
@@ -906,7 +1011,6 @@ px] font-medium text-text">
             {currentStep === 4 && renderConfirmPost()}
           </div>
         </div>
-        {/* Image Gallery Modal */}
         {showGallery && (
           <ImageGallery images={formData.images} onClose={() => setShowGallery(false)} onRemove={removeImage} />
         )}
