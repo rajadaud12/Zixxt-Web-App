@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronDown, ChevronUp, Clock, Calendar, CheckCircle } from "lucide-react"
-import  Tabs  from "@/components/utils/tabs"
+import { ChevronDown, ChevronUp, Clock, Calendar, CheckCircle, X, Send } from "lucide-react"
+import Tabs from "@/components/utils/tabs"
 
 export default function OrderDetail() {
   const [orderID, setOrderID] = useState(1)
@@ -14,6 +14,44 @@ export default function OrderDetail() {
   const [revisionCount, setRevisionCount] = useState(1) // Track revision count for unique IDs
   const [toast, setToast] = useState({ show: false, message: "", type: "" })
   const [expandedMilestone, setExpandedMilestone] = useState(3) // Only milestone 3 is expanded by default
+  const [showChat, setShowChat] = useState(false)
+  const [chatMessage, setChatMessage] = useState("")
+  const [chatMessages, setChatMessages] = useState([
+    {
+      id: 1,
+      date: "8/20/2020",
+      messages: [
+        {
+          id: 1,
+          text: "Hello!!! 👋",
+          time: "11:31 AM",
+          sender: "me",
+          read: true,
+        },
+        {
+          id: 2,
+          text: "thats great tell me about your requirements",
+          time: "11:31 AM",
+          sender: "other",
+          read: true,
+        },
+        {
+          id: 3,
+          text: "So I want a Logo design that just fits properly wit my brands voice it should depict it in a good way",
+          time: "11:31 AM",
+          sender: "me",
+          read: true,
+        },
+        {
+          id: 4,
+          text: "thats great tell me about your requirements",
+          time: "11:31 AM",
+          sender: "other",
+          read: true,
+        },
+      ],
+    },
+  ])
 
   // Milestone-based order data
   const [orders, setOrders] = useState({
@@ -202,9 +240,10 @@ export default function OrderDetail() {
     id: 1,
     title: "I will create a custom logo for your brand",
     seller: {
-      name: "kahmiri",
+      name: "Shahab",
       country: "pakistan",
       avatar: "/placeholder.svg?height=40&width=40",
+      lastSeen: "45 minutes ago",
     },
     status: "Active",
     package: {
@@ -938,6 +977,42 @@ export default function OrderDetail() {
     setExpandedMilestone(expandedMilestone === id ? null : id)
   }
 
+  const toggleChat = () => {
+    setShowChat(!showChat)
+  }
+
+  const handleSendMessage = (e) => {
+    e.preventDefault()
+    if (!chatMessage.trim()) return
+
+    // Add new message to chat
+    const newMessage = {
+      id: Date.now(),
+      text: chatMessage,
+      time: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+      sender: "me",
+      read: false,
+    }
+
+    // Update the latest date group or create a new one
+    const today = new Date().toLocaleDateString()
+    const updatedMessages = [...chatMessages]
+    const latestDateGroup = updatedMessages[updatedMessages.length - 1]
+
+    if (latestDateGroup.date === today) {
+      latestDateGroup.messages.push(newMessage)
+    } else {
+      updatedMessages.push({
+        id: Date.now(),
+        date: today,
+        messages: [newMessage],
+      })
+    }
+
+    setChatMessages(updatedMessages)
+    setChatMessage("")
+  }
+
   return (
     <div className="min-h-screen bg-white relative">
       {/* Toast notification */}
@@ -1466,11 +1541,80 @@ export default function OrderDetail() {
       </div>
 
       <div className="fixed bottom-20 right-20 z-50">
-        <button className="inline-flex items-center justify-center rounded-[20px] font-medium transition-colors bg-primary text-white hover:bg-primary/90 px-4 py-2 text-sm gap-2">
+        <button
+          className="inline-flex items-center justify-center rounded-[20px] font-medium transition-colors bg-primary text-white hover:bg-primary/90 px-4 py-2 text-sm gap-2"
+          onClick={toggleChat}
+        >
           <img src={`/placeholder.svg?height=24&width=24`} alt="Chat" className="w-6 h-6 rounded-full object-cover" />
           Chat Now
         </button>
       </div>
+
+      {/* Chat modal */}
+      {showChat && (
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center bg-black/20">
+          <div className="bg-white rounded-[20px] shadow-lg w-full max-w-md flex flex-col max-h-[80vh]">
+            {/* Chat header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <img
+                    src={orderData.seller.avatar || "/placeholder.svg"}
+                    alt={orderData.seller.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-success border border-white"></span>
+                </div>
+                <div>
+                  <p className="font-medium">{orderData.seller.name}</p>
+                  <p className="text-xs text-textLight">{orderData.seller.lastSeen}</p>
+                </div>
+              </div>
+              <button onClick={toggleChat} className="text-textLight">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Chat messages */}
+            <div className="p-4 overflow-y-auto flex-grow">
+              {chatMessages.map((dateGroup) => (
+                <div key={dateGroup.id} className="mb-4">
+                  <p className="text-center text-xs text-textLight mb-2">{dateGroup.date}</p>
+                  {dateGroup.messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex flex-col ${message.sender === "me" ? "items-end" : "items-start"}`}
+                    >
+                      <div
+                        className={`rounded-[20px] p-3 max-w-[70%] break-words ${message.sender === "me" ? "bg-primary text-white" : "bg-whiteGrey text-text"}`}
+                      >
+                        {message.text}
+                      </div>
+                      <span className="text-xs text-textLight mt-1">{message.time}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Chat input */}
+            <form onSubmit={handleSendMessage} className="p-4 border-t border-border">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  className="w-full rounded-[20px] border border-border px-4 py-2 text-sm focus:outline-none"
+                  value={chatMessage}
+                  onChange={(e) => setChatMessage(e.target.value)}
+                />
+                <button type="submit" className="text-primary">
+                  <Send size={20} />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

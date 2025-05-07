@@ -5,27 +5,35 @@ import Image from "next/image";
 import { useContext, useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { AuthContext } from "@/context/authContext";
+import { useIsSeller } from "@/context/isSellerContext";
 import { DropdownSearchBar } from "@/components/utils/input";
 import { Search, Bell, ChevronDown, Menu, X, Heart, MessageCircle, User, ArrowRight } from "lucide-react";
 import { categoriesData } from "@/app/data/categories";
 
 export default function Navbar() {
   const { isLoggedIn, user } = useContext(AuthContext);
+  const { isSeller } = useIsSeller();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showSecondaryNav, setShowSecondaryNav] = useState(true);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [showProfileOverlay, setShowProfileOverlay] = useState(false);
 
   const pathname = usePathname();
   const isHomeRoute = pathname === "/home";
   const servicesRef = useRef(null);
   const educationRef = useRef(null);
   const softwaresRef = useRef(null);
+  const profileRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const toggleProfileOverlay = () => {
+    setShowProfileOverlay((prev) => !prev); // Toggle the overlay on click
   };
 
   useEffect(() => {
@@ -55,11 +63,17 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        servicesRef.current && !servicesRef.current.contains(event.target) &&
-        educationRef.current && !educationRef.current.contains(event.target) &&
-        softwaresRef.current && !softwaresRef.current.contains(event.target)
+        servicesRef.current &&
+        !servicesRef.current.contains(event.target) &&
+        educationRef.current &&
+        !educationRef.current.contains(event.target) &&
+        softwaresRef.current &&
+        !softwaresRef.current.contains(event.target) &&
+        profileRef.current &&
+        !profileRef.current.contains(event.target)
       ) {
         setActiveDropdown(null);
+        setShowProfileOverlay(false); // Close overlay on click outside
       }
     };
 
@@ -102,6 +116,90 @@ export default function Navbar() {
       </div>
     );
 
+    const ProfileOverlay = ({ isOpen, onClose }) =>
+      isOpen && (
+        <div
+          className="absolute right-0 mt-2 w-72 bg-white rounded-[20px] shadow-lg z-50 border border-gray-200 overflow-hidden"
+          ref={profileRef}
+        >
+          <div className="p-4 pb-2">
+            <div className="flex items-center space-x-3">
+              <Image
+                src="/images/profile-placeholder.png"
+                alt="Profile"
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+              <div>
+                <p className="text-sm font-semibold text-gray-800">{user?.name || "User Name"}</p>
+                <p className="text-xs text-gray-500">{user?.location || "Location"}</p>
+              </div>
+            </div>
+          </div>
+    
+          <div className="border-t border-gray-200">
+            <ul className="py-2">
+              <li>
+                <Link
+                  href="/profile"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  My profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Settings
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/level-overview"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Level Overview
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/boost-posting"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Boost your Posting
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/logout"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Logout
+                </Link>
+              </li>
+            </ul>
+          </div>
+    
+          {/* Remove all padding/margin here */}
+          <Link
+            href={isSeller ? "/dashboard" : "/becomeSeller"}
+            className="block w-full text-center py-3 text-sm text-white bg-blue-500 rounded-b-[20px]"
+            onClick={onClose}
+          >
+            {isSeller ? "Switch to Selling" : "Become a Seller"}
+          </Link>
+        </div>
+      );
+    
+
   const handleMouseEnter = (dropdown) => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
@@ -112,7 +210,7 @@ export default function Navbar() {
   const handleMouseLeave = () => {
     closeTimeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
-    }, 200);
+    }, 300);
   };
 
   return (
@@ -172,18 +270,17 @@ export default function Navbar() {
                   </div>
                 )}
                 <div className="flex items-center space-x-6">
-                <Link href="/wishList">
-
-                  <button className="text-textLight hover:text-primary relative" >
-                    <Heart className="h-5 w-5 stroke-[1.5] transition-colors" />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
-                  </button>
+                  <Link href="/wishList">
+                    <button className="text-textLight hover:text-primary relative">
+                      <Heart className="h-5 w-5 stroke-[1.5] transition-colors" />
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+                    </button>
                   </Link>
                   <Link href="/chatPage">
-                  <button className="text-textLight hover:text-primary relative">
-                    <MessageCircle className="h-5 w-5 stroke-[1.5] transition-colors" />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
-                  </button>
+                    <button className="text-textLight hover:text-primary relative">
+                      <MessageCircle className="h-5 w-5 stroke-[1.5] transition-colors" />
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+                    </button>
                   </Link>
                   <button className="text-textLight hover:text-primary relative">
                     <Bell className="h-5 w-5 stroke-[1.5] transition-colors" />
@@ -192,9 +289,18 @@ export default function Navbar() {
                   <Link href="/orders" className="text-text hover:text-primary font-medium">
                     Orders
                   </Link>
-                  <Link href="/profile" className="text-textLight hover:text-primary">
-                    <User className="h-6 w-6 stroke-[1.5] transition-colors" />
-                  </Link>
+                  <div className="relative" ref={profileRef}>
+                    <button
+                      onClick={toggleProfileOverlay} // Toggle overlay on click
+                      className="text-textLight hover:text-primary"
+                    >
+                      <User className="h-6 w-6 stroke-[1.5] transition-colors" />
+                    </button>
+                    <ProfileOverlay
+                      isOpen={showProfileOverlay}
+                      onClose={() => setShowProfileOverlay(false)}
+                    />
+                  </div>
                 </div>
               </div>
             )}
