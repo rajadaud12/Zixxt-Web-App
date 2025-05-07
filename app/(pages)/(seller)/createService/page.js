@@ -135,7 +135,7 @@ export default function CreateService() {
         }
         break
       case "price":
-        if (!/^\d+(\.\d{1,2})?$/.test(value) && value !== "") {
+        if (!/^\d+(\.\d{1,2})?$/.test(value) && value !== "" || value === "0" || value === 0 || value === "0.0" || value === "0.00") {
           newErrors[`${packageType}.price`] = "Price must be a valid number"
         } else {
           delete newErrors[`${packageType}.price`]
@@ -159,7 +159,6 @@ export default function CreateService() {
   const handleProvideChange = (index, value, packageType) => {
     let newErrors = { ...errors }
     if (!validateText(value)) {
-      newErrors[`${packageType}.provides.${index}`] = "Feature should contain only letters and spaces"
     } else {
       delete newErrors[`${packageType}.provides.${index}`]
     }
@@ -325,13 +324,13 @@ export default function CreateService() {
           if (!packageData.revisions.trim()) newErrors[`${pkg}.revisions`] = "Revisions are required"
           if (!packageData.deliveryDays.trim()) newErrors[`${pkg}.deliveryDays`] = "Delivery days are required"
           if (!packageData.price.trim()) newErrors[`${pkg}.price`] = "Price is required"
-          if (!packageData.provides.some(item => item.trim())) {
-            newErrors[`${pkg}.provides`] = "At least one feature is required"
+          if (!packageData.provides.every(item => item.trim())) {
+            newErrors[`${pkg}.provides`] = "All features must be filled"
           }
         }
       })
     } else if (currentStep === 3) {
-      if (questions.length === 0) {
+      if (questions.length !== 0) {
         newErrors.questions = "At least one question is required"
       }
     }

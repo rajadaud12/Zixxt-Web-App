@@ -31,6 +31,8 @@ export default function BecomeSeller() {
     companyName: "",
     yearEstablished: "",
     employeesCount: "",
+    fullName: "",
+    displayName: "",
     country: "",
     state: "",
     city: "",
@@ -47,7 +49,7 @@ export default function BecomeSeller() {
 
   // Validation functions
   const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === ""
   }
 
   const validateText = (text) => {
@@ -120,12 +122,17 @@ export default function BecomeSeller() {
       ...formData,
       [name]: value,
     })
-    setErrors({ ...errors, [name]: "" })
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors }
+      delete newErrors[name]
+      return newErrors
+    })
   }
 
   const handleNext = () => {
     if (isStepValid()) {
       setCurrentStep(currentStep + 1)
+      setErrors({}) // Clear errors when moving to the next step
     } else {
       toast.error("Please fill all required fields correctly")
     }
@@ -133,7 +140,7 @@ export default function BecomeSeller() {
 
   const handleBack = () => {
     setCurrentStep(currentStep - 1)
-    setErrors({})
+    setErrors({}) // Clear errors when moving back
   }
 
   const handleSellerTypeSelect = (type) => {
@@ -155,6 +162,8 @@ export default function BecomeSeller() {
           companyName: "",
           yearEstablished: "",
           employeesCount: "",
+          fullName: "",
+          displayName: "",
           country: "",
           state: "",
           city: "",
@@ -234,6 +243,68 @@ export default function BecomeSeller() {
 
   const yearOptions = Array.from({ length: 74 }, (_, i) => (2024 - i).toString())
   const employeeCountOptions = ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5000+"]
+
+  const isStepValid = () => {
+    let newErrors = {}
+    if (currentStep === 0) return !!sellerType
+
+    if (sellerType === "individual") {
+      switch (currentStep) {
+        case 1:
+          if (!formData.fullName) newErrors.fullName = "Full name is required"
+          if (!validateText(formData.fullName)) newErrors.fullName = "Please use only letters and spaces"
+          if (!formData.displayName) newErrors.displayName = "Display name is required"
+          if (!validateText(formData.displayName)) newErrors.displayName = "Please use only letters and spaces"
+          break
+        case 2:
+          if (!formData.country) newErrors.country = "Country is required"
+          if (!formData.state) newErrors.state = "State is required"
+          if (!formData.city) newErrors.city = "City is required"
+          if (!formData.postalCode) newErrors.postalCode = "Postal code is required"
+          if (!validatePostalCode(formData.postalCode)) newErrors.postalCode = "Please enter a valid postal code"
+          if (!formData.languages || formData.languages.length === 0) {
+            newErrors.languages = "At least one language is required"
+          }
+          break
+        case 3:
+          if (!formData.introduction) newErrors.introduction = "Introduction is required"
+          break
+      }
+    } else {
+      switch (currentStep) {
+        case 1:
+          if (!formData.workEmail) newErrors.workEmail = "Work email is required"
+          if (!validateEmail(formData.workEmail)) newErrors.workEmail = "Please enter a valid email"
+          if (!formData.companyName) newErrors.companyName = "Company name is required"
+          if (!validateText(formData.companyName)) newErrors.companyName = "Please use only letters and spaces"
+          if (!formData.yearEstablished) newErrors.yearEstablished = "Year established is required"
+          if (!formData.employeesCount) newErrors.employeesCount = "Employee count is required"
+          break
+        case 2:
+          if (!formData.fullName) newErrors.fullName = "Full name is required"
+          if (!validateText(formData.fullName)) newErrors.fullName = "Please use only letters and spaces"
+          if (!formData.displayName) newErrors.displayName = "Display name is required"
+          if (!validateText(formData.displayName)) newErrors.displayName = "Please use only letters and spaces"
+          break
+        case 3:
+          if (!formData.country) newErrors.country = "Country is required"
+          if (!formData.state) newErrors.state = "State is required"
+          if (!formData.city) newErrors.city = "City is required"
+          if (!formData.postalCode) newErrors.postalCode = "Postal code is required"
+          if (!validatePostalCode(formData.postalCode)) newErrors.postalCode = "Please enter a valid postal code"
+          if (!formData.languages || formData.languages.length === 0) {
+            newErrors.languages = "At least one language is required"
+          }
+          break
+        case 4:
+          if (!formData.introduction) newErrors.introduction = "Introduction is required"
+          break
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const renderStepper = () => {
     if (currentStep === 0) return null
@@ -357,60 +428,6 @@ export default function BecomeSeller() {
           }
       }
     }
-  }
-
-  const isStepValid = () => {
-    let newErrors = {}
-    if (currentStep === 0) return !!sellerType
-
-    if (sellerType === "individual") {
-      switch (currentStep) {
-        case 1:
-          if (!formData.fullName) newErrors.fullName = "Full name is required"
-          if (!formData.displayName) newErrors.displayName = "Display name is required"
-          break
-        case 2:
-          if (!formData.country) newErrors.country = "Country is required"
-          if (!formData.state) newErrors.state = "State is required"
-          if (!formData.city) newErrors.city = "City is required"
-          if (!formData.postalCode) newErrors.postalCode = "Postal code is required"
-          if (!formData.languages || formData.languages.length === 0) {
-            newErrors.languages = "At least one language is required"
-          }
-          break
-        case 3:
-          if (!formData.introduction) newErrors.introduction = "Introduction is required"
-          break
-      }
-    } else {
-      switch (currentStep) {
-        case 1:
-          if (!formData.workEmail) newErrors.workEmail = "Work email is required"
-          if (!formData.companyName) newErrors.companyName = "Company name is required"
-          if (!formData.yearEstablished) newErrors.yearEstablished = "Year established is required"
-          if (!formData.employeesCount) newErrors.employeesCount = "Employee count is required"
-          break
-        case 2:
-          if (!formData.fullName) newErrors.fullName = "Full name is required"
-          if (!formData.displayName) newErrors.displayName = "Display name is required"
-          break
-        case 3:
-          if (!formData.country) newErrors.country = "Country is required"
-          if (!formData.state) newErrors.state = "State is required"
-          if (!formData.city) newErrors.city = "City is required"
-          if (!formData.postalCode) newErrors.postalCode = "Postal code is required"
-          if (!formData.languages || formData.languages.length === 0) {
-            newErrors.languages = "At least one language is required"
-          }
-          break
-        case 4:
-          if (!formData.introduction) newErrors.introduction = "Introduction is required"
-          break
-      }
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
   }
 
   const rightSideContent = getRightSideContent()
@@ -633,7 +650,7 @@ export default function BecomeSeller() {
                   onClick={handleNext}
                   disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length > 0 ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "btnDark"
                   } flex items-center justify-center gap-2`}
                 >
                   Next
@@ -742,7 +759,7 @@ export default function BecomeSeller() {
                   onClick={handleNext}
                   disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length > 0 ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "btnDark"
                   } flex items-center justify-center gap-2`}
                 >
                   Next
@@ -843,7 +860,7 @@ export default function BecomeSeller() {
                   onClick={handleNext}
                   disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length > 0 ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "btnDark"
                   } flex items-center justify-center gap-2`}
                 >
                   Next
@@ -888,7 +905,7 @@ export default function BecomeSeller() {
                   onClick={handleCreateAccount}
                   disabled={Object.keys(errors).length > 0}
                   className={`btn btnMedium ${
-                    Object.keys(errors).length === 0 ? "btnDark" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    Object.keys(errors).length > 0 ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "btnDark"
                   } flex items-center justify-center gap-2`}
                 >
                   Create Account

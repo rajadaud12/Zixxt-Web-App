@@ -141,7 +141,7 @@ export default function CreateSoftware() {
     let newErrors = { ...errors }
 
     if (name === "price") {
-      if (!validateNumber(value)) {
+      if (!validateNumber(value) || value === "" || value === "0" || value === "0.00" | value === "0.0" ) {
         newErrors[`${packageType}.price`] = "Price must be a valid number"
       } else {
         delete newErrors[`${packageType}.price`]
@@ -164,7 +164,6 @@ export default function CreateSoftware() {
   const handleProvideChange = (index, value, packageType) => {
     let newErrors = { ...errors }
     if (!validateText(value)) {
-      newErrors[`${packageType}.provides.${index}`] = "Feature should contain only letters and spaces"
     } else {
       delete newErrors[`${packageType}.provides.${index}`]
     }
@@ -330,31 +329,36 @@ export default function CreateSoftware() {
   }
 
   const validateStep = () => {
-    let newErrors = {}
-    
+    let newErrors = {};
+  
     if (currentStep === 2) {
-      if (!formData.title.trim()) newErrors.title = "Title is required"
-      if (formData.category.length === 0) newErrors.category = "At least one category is required"
-      if (formData.subCategory.length === 0) newErrors.subCategory = "At least one sub-category is required"
-      if (!formData.description.trim()) newErrors.description = "Description is required"
-      if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
+      if (!formData.title.trim()) newErrors.title = "Title is required";
+      if (formData.category.length === 0) newErrors.category = "At least one category is required";
+      if (formData.subCategory.length === 0) newErrors.subCategory = "At least one sub-category is required";
+      if (!formData.description.trim()) newErrors.description = "Description is required";
+      if (formData.languages.length === 0) newErrors.languages = "At least one language is required";
     } else if (currentStep === 3) {
+      const packageKeys = {
+        Monthly: "monthly",
+        Yearly: "yearly",
+        "One Time": "oneTime",
+      };
       Object.keys(enabledPackages).forEach((pkg) => {
         if (enabledPackages[pkg]) {
-          const packageData = formData.packages[pkg.toLowerCase().replace(" ", "")]
+          const packageData = formData.packages[packageKeys[pkg]];
           if (!packageData.price.trim()) {
-            newErrors[`${pkg.toLowerCase().replace(" ", "")}.price`] = "Price is required"
+            newErrors[`${packageKeys[pkg]}.price`] = "Price is required";
           }
-          if (!packageData.provides.some((item) => item.trim())) {
-            newErrors[`${pkg.toLowerCase().replace(" ", "")}.provides`] = "At least one feature is required"
+          if (!packageData.provides.every((item) => item.trim())) {
+            newErrors[`${packageKeys[pkg]}.provides`] = "All features are required";
           }
         }
-      })
+      });
     }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleNext = () => {
     if (currentStep === 1) {

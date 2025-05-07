@@ -121,15 +121,20 @@ export default function CreateEducationalContent() {
 
   // Validation functions
   const validateText = (text) => {
-    return /^[a-zA-Z\s]+$/.test(text) || text === ""
+    return text.trim() && /^[a-zA-Z\s]+$/.test(text)
   }
 
   const validateInteger = (num) => {
-    return /^\d+$/.test(num) || num === ""
+    return num.trim() && /^\d+$/.test(num) && parseInt(num) > 0
   }
 
   const validateDecimal = (num) => {
-    return /^\d+(\.\d{1,2})?$/.test(num) || num === ""
+    return num.trim() && /^\d+(\.\d{1,2})?$/.test(num) && parseFloat(num) > 0
+  }
+
+  const validateDuration = (duration) => {
+    // Accepts formats like "6 weeks", "10 hours", "2 months", etc.
+    return duration.trim() && /^\d+\s+(weeks?|hours?|months?|days?)$/i.test(duration)
   }
 
   const handleInputChange = (e) => {
@@ -139,13 +144,15 @@ export default function CreateEducationalContent() {
     switch (name) {
       case "title":
         if (!validateText(value)) {
-          newErrors.title = "Title should contain only letters and spaces"
+          newErrors.title = "Title must contain only letters and spaces and cannot be empty"
         } else {
           delete newErrors.title
         }
         break
       case "description":
-        if (value.length > 1000) {
+        if (!value.trim()) {
+          newErrors.description = "Description is required"
+        } else if (value.length > 1000) {
           newErrors.description = "Description cannot exceed 1000 characters"
         } else {
           delete newErrors.description
@@ -153,14 +160,14 @@ export default function CreateEducationalContent() {
         break
       case "price":
         if (!validateDecimal(value)) {
-          newErrors.price = "Price must be a valid number (e.g., 99.99)"
+          newErrors.price = "Price must be a valid positive number (e.g., 99.99) and cannot be zero"
         } else {
           delete newErrors.price
         }
         break
       case "duration":
-        if (!value.trim()) {
-          newErrors.duration = "Duration is required"
+        if (!validateDuration(value)) {
+          newErrors.duration = "Duration must be in the format 'number unit' (e.g., '6 weeks', '10 hours')"
         } else {
           delete newErrors.duration
         }
@@ -181,7 +188,7 @@ export default function CreateEducationalContent() {
     switch (name) {
       case "name":
         if (!validateText(value)) {
-          newErrors[`${packageType}.name`] = "Package name should contain only letters and spaces"
+          newErrors[`${packageType}.name`] = "Package name must contain only letters and spaces and cannot be empty"
         } else {
           delete newErrors[`${packageType}.name`]
         }
@@ -190,14 +197,14 @@ export default function CreateEducationalContent() {
       case "deliveryDays":
       case "maxExtension":
         if (!validateInteger(value)) {
-          newErrors[`${packageType}.${name}`] = "Please enter a valid number"
+          newErrors[`${packageType}.${name}`] = "Must be a positive integer greater than zero"
         } else {
           delete newErrors[`${packageType}.${name}`]
         }
         break
       case "price":
         if (!validateDecimal(value)) {
-          newErrors[`${packageType}.price`] = "Price must be a valid number (e.g., 99.99)"
+          newErrors[`${packageType}.price`] = "Price must be a valid positive number (e.g., 99.99) and cannot be zero"
         } else {
           delete newErrors[`${packageType}.price`]
         }
@@ -220,7 +227,7 @@ export default function CreateEducationalContent() {
   const handleProvideChange = (index, value, packageType) => {
     let newErrors = { ...errors }
     if (!validateText(value)) {
-      newErrors[`${packageType}.provides.${index}`] = "Feature should contain only letters and spaces"
+      newErrors[`${packageType}.provides.${index}`] = "Feature must contain only letters and spaces and cannot be empty"
     } else {
       delete newErrors[`${packageType}.provides.${index}`]
     }
@@ -324,7 +331,6 @@ export default function CreateEducationalContent() {
   const handleLearningOutcomeChange = (index, value) => {
     let newErrors = { ...errors }
     if (!validateText(value)) {
-      newErrors[`learningOutcomes.${index}`] = "Outcome should contain only letters and spaces"
     } else {
       delete newErrors[`learningOutcomes.${index}`]
     }
@@ -363,7 +369,7 @@ export default function CreateEducationalContent() {
   const handleChapterTitleChange = (index, value) => {
     let newErrors = { ...errors }
     if (!validateText(value)) {
-      newErrors[`curriculum.${index}.title`] = "Chapter title should contain only letters and spaces"
+      newErrors[`curriculum.${index}.title`] = "Chapter title must contain only letters and spaces and cannot be empty"
     } else {
       delete newErrors[`curriculum.${index}.title`]
     }
@@ -389,7 +395,7 @@ export default function CreateEducationalContent() {
   const handleTopicChange = (chapterIndex, topicIndex, value) => {
     let newErrors = { ...errors }
     if (!validateText(value)) {
-      newErrors[`curriculum.${chapterIndex}.topics.${topicIndex}`] = "Topic should contain only letters and spaces"
+      newErrors[`curriculum.${chapterIndex}.topics.${topicIndex}`] = "Topic must contain only letters and spaces and cannot be empty"
     } else {
       delete newErrors[`curriculum.${chapterIndex}.topics.${topicIndex}`]
     }
@@ -493,6 +499,7 @@ export default function CreateEducationalContent() {
       toast.success("Question added successfully")
     } else {
       toast.error("Please enter a valid question")
+      setErrors({ ...errors, newQuestion: "Question cannot be empty" })
     }
   }
 
@@ -511,6 +518,7 @@ export default function CreateEducationalContent() {
       toast.success("Question updated successfully")
     } else {
       toast.error("Please enter a valid question")
+      setErrors({ ...errors, newQuestion: "Question cannot be empty" })
     }
   }
 
@@ -552,22 +560,38 @@ export default function CreateEducationalContent() {
     const requiredFields = ["name", "revisions", "deliveryDays", "price"]
     return (
       requiredFields.every((field) => packageData[field]?.trim()) &&
-      packageData.provides.some((item) => item.trim())
+      validateText(packageData.name) &&
+      validateInteger(packageData.revisions) &&
+      validateInteger(packageData.deliveryDays) &&
+      validateDecimal(packageData.price) &&
+      packageData.provides.some((item) => item.trim() && validateText(item))
     )
   }
 
   const validateCourseSummary = () => {
     return (
       formData.duration.trim() &&
+      validateDuration(formData.duration) &&
       formData.languages.length > 0 &&
-      formData.learningOutcomes.some((outcome) => outcome.trim())
+      formData.learningOutcomes.some((outcome) => outcome.trim() && validateText(outcome)) &&
+      formData.level.trim() &&
+      formData.totalVideoDuration.trim() &&
+      formData.chapters.trim() &&
+      formData.documents.trim() &&
+      formData.articles.trim() &&
+      formData.courseFiles.length > 0
     )
   }
 
   const validateCurriculum = () => {
     return (
       formData.curriculum.length > 0 &&
-      formData.curriculum.every((chapter) => chapter.title.trim() && chapter.topics.some((topic) => topic.trim()))
+      formData.curriculum.every(
+        (chapter) =>
+          chapter.title.trim() &&
+          validateText(chapter.title) &&
+          chapter.topics.some((topic) => topic.trim() && validateText(topic))
+      )
     )
   }
 
@@ -576,30 +600,51 @@ export default function CreateEducationalContent() {
 
     if (currentStep === 1) {
       if (!formData.title.trim()) newErrors.title = "Title is required"
+      else if (!validateText(formData.title)) newErrors.title = "Title must contain only letters and spaces"
       if (!formData.category) newErrors.category = "Category is required"
       if (!formData.subCategory) newErrors.subCategory = "Sub-category is required"
       if (!formData.description.trim()) newErrors.description = "Description is required"
+      if (formData.images.length === 0) newErrors.images = "At least one image is required"
       if (contentType === "courses") {
         if (!formData.price.trim()) newErrors.price = "Price is required"
+        else if (!validateDecimal(formData.price)) newErrors.price = "Price must be a valid positive number (e.g., 99.99)"
         if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
+        if (!formData.level) newErrors.level = "Level is required"
       }
     } else if (currentStep === 2 && contentType === "courses") {
       if (!formData.duration.trim()) newErrors.duration = "Duration is required"
+      else if (!validateDuration(formData.duration)) newErrors.duration = "Duration must be in the format 'number unit' (e.g., '6 weeks')"
       if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
       if (!formData.learningOutcomes.some((outcome) => outcome.trim())) {
         newErrors.learningOutcomes = "At least one learning outcome is required"
       }
+      if (!formData.level) newErrors.level = "Level is required"
+      if (!formData.totalVideoDuration) newErrors.totalVideoDuration = "Total video duration is required"
+      if (!formData.chapters) newErrors.chapters = "Chapters selection is required"
+      if (!formData.documents) newErrors.documents = "Documents selection is required"
+      if (!formData.articles) newErrors.articles = "Articles selection is required"
+      if (formData.courseFiles.length === 0) newErrors.courseFiles = "At least one course file is required"
+ 
     } else if (currentStep === 2 && contentType === "educational_support") {
       Object.keys(enabledPackages).forEach((pkg) => {
         if (enabledPackages[pkg]) {
           const packageData = formData.packages[pkg]
           if (!packageData.name.trim()) newErrors[`${pkg}.name`] = "Package name is required"
+          else if (!validateText(packageData.name)) newErrors[`${pkg}.name`] = "Package name must contain only letters and spaces"
           if (!packageData.revisions.trim()) newErrors[`${pkg}.revisions`] = "Revisions are required"
+          else if (!validateInteger(packageData.revisions)) newErrors[`${pkg}.revisions`] = "Revisions must be a positive integer"
           if (!packageData.deliveryDays.trim()) newErrors[`${pkg}.deliveryDays`] = "Delivery days are required"
+          else if (!validateInteger(packageData.deliveryDays)) newErrors[`${pkg}.deliveryDays`] = "Delivery days must be a positive integer"
           if (!packageData.price.trim()) newErrors[`${pkg}.price`] = "Price is required"
+          else if (!validateDecimal(packageData.price)) newErrors[`${pkg}.price`] = "Price must be a valid positive number (e.g., 99.99)"
           if (!packageData.provides.some((item) => item.trim())) {
             newErrors[`${pkg}.provides`] = "At least one feature is required"
           }
+          packageData.provides.forEach((item, index) => {
+            if (item && !validateText(item)) {
+              newErrors[`${pkg}.provides.${index}`] = "Feature must contain only letters and spaces"
+            }
+          })
         }
       })
     } else if (currentStep === 3 && contentType === "courses") {
@@ -608,9 +653,68 @@ export default function CreateEducationalContent() {
         if (!chapter.topics.some((topic) => topic.trim())) {
           newErrors[`curriculum.${index}.topics`] = "At least one topic is required"
         }
+        chapter.topics.forEach((topic, topicIndex) => {
+          if (topic && !validateText(topic)) {
+            newErrors[`curriculum.${index}.topics.${topicIndex}`] = "Topic must contain only letters and spaces"
+          }
+        })
       })
     } else if ((currentStep === 3 && contentType === "educational_support") || 
                (currentStep === 4 && contentType === "courses")) {
+      if (questions.length === 0) {
+        newErrors.questions = "At least one question is required"
+      }
+    } else if (currentStep === 5 && contentType === "courses") {
+      // Final confirmation step: re-validate all previous steps
+      if (!formData.title.trim() || !validateText(formData.title)) newErrors.title = "Valid title is required"
+      if (!formData.category) newErrors.category = "Category is required"
+      if (!formData.subCategory) newErrors.subCategory = "Sub-category is required"
+      if (!formData.description.trim()) newErrors.description = "Description is required"
+      if (formData.images.length === 0) newErrors.images = "At least one image is required"
+      if (!formData.price.trim() || !validateDecimal(formData.price)) newErrors.price = "Valid positive price is required"
+      if (!formData.duration.trim() || !validateDuration(formData.duration)) newErrors.duration = "Valid duration is required"
+      if (formData.languages.length === 0) newErrors.languages = "At least one language is required"
+      if (!formData.level) newErrors.level = "Level is required"
+      if (!formData.totalVideoDuration) newErrors.totalVideoDuration = "Total video duration is required"
+      if (!formData.chapters) newErrors.chapters = "Chapters selection is required"
+      if (!formData.documents) newErrors.documents = "Documents selection is required"
+      if (!formData.articles) newErrors.articles = "Articles selection is required"
+      if (formData.courseFiles.length === 0) newErrors.courseFiles = "At least one course file is required"
+      if (!formData.learningOutcomes.some((outcome) => outcome.trim() && validateText(outcome))) {
+        newErrors.learningOutcomes = "At least one valid learning outcome is required"
+      }
+      if (!validateCurriculum()) {
+        formData.curriculum.forEach((chapter, index) => {
+          if (!chapter.title.trim() || !validateText(chapter.title)) {
+            newErrors[`curriculum.${index}.title`] = "Valid chapter title is required"
+          }
+          if (!chapter.topics.some((topic) => topic.trim() && validateText(topic))) {
+            newErrors[`curriculum.${index}.topics`] = "At least one valid topic is required"
+          }
+        })
+      }
+      if (questions.length === 0) {
+        newErrors.questions = "At least one question is required"
+      }
+    } else if (currentStep === 4 && contentType === "educational_support") {
+      // Final confirmation step: re-validate all previous steps
+      if (!formData.title.trim() || !validateText(formData.title)) newErrors.title = "Valid title is required"
+      if (!formData.category) newErrors.category = "Category is required"
+      if (!formData.subCategory) newErrors.subCategory = "Sub-category is required"
+      if (!formData.description.trim()) newErrors.description = "Description is required"
+      if (formData.images.length === 0) newErrors.images = "At least one image is required"
+      Object.keys(enabledPackages).forEach((pkg) => {
+        if (enabledPackages[pkg]) {
+          const packageData = formData.packages[pkg]
+          if (!packageData.name.trim() || !validateText(packageData.name)) newErrors[`${pkg}.name`] = "Valid package name is required"
+          if (!packageData.revisions.trim() || !validateInteger(packageData.revisions)) newErrors[`${pkg}.revisions`] = "Valid revisions are required"
+          if (!packageData.deliveryDays.trim() || !validateInteger(packageData.deliveryDays)) newErrors[`${pkg}.deliveryDays`] = "Valid delivery days are required"
+          if (!packageData.price.trim() || !validateDecimal(packageData.price)) newErrors[`${pkg}.price`] = "Valid positive price is required"
+          if (!packageData.provides.some((item) => item.trim() && validateText(item))) {
+            newErrors[`${pkg}.provides`] = "At least one valid feature is required"
+          }
+        }
+      })
       if (questions.length === 0) {
         newErrors.questions = "At least one question is required"
       }
@@ -830,7 +934,7 @@ export default function CreateEducationalContent() {
           {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
         </div>
         <div>
-          <label className="block mb-3 text-[15px] font-medium text-text">Upload Pictures</label>
+          <label className="block mb-3 text-[15px] font-medium text-text">Upload Pictures <span className="text-failure">*</span></label>
           <div
             className="bg-[#F5F5F6] border border-dashed border-inputBorder rounded-[20px] p-8 flex flex-col items-center justify-center cursor-pointer max-w-[400px] h-[200px]"
             onClick={() => fileInputRef.current.click()}
@@ -858,6 +962,7 @@ export default function CreateEducationalContent() {
               accept="image/*"
             />
           </div>
+          {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
           {formData.images.length > 0 && (
             <div className="mt-4">
               <button
@@ -899,6 +1004,19 @@ export default function CreateEducationalContent() {
 
             <div>
               <label className="block mb-3 text-[15px] font-medium text-text">
+                Level <span className="text-failure">*</span>
+              </label>
+              <Dropdown
+                options={levels}
+                defaultValue={formData.level || "Select Level"}
+                onChange={(value) => setFormData({ ...formData, level: value })}
+                className={errors.level ? "border-red-500" : ""}
+              />
+              {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level}</p>}
+            </div>
+
+            <div>
+              <label className="block mb-3 text-[15px] font-medium text-text">
                 Price <span className="text-failure">*</span>
               </label>
               <div className="relative">
@@ -933,7 +1051,7 @@ export default function CreateEducationalContent() {
         <h2 className="typoH2 text-center text-text">Course Summary</h2>
 
         <div>
-          <label className="block mb-3 text-[15px] font-medium text-text">Upload Your Course</label>
+          <label className="block mb-3 text-[15px] font-medium text-text">Upload Your Course <span className="text-failure">*</span></label>
           <div
             className="bg-[#F5F5F6] border border-dashed border-inputBorder rounded-[20px] p-8 flex flex-col items-center justify-center cursor-pointer"
             onClick={() => courseFileInputRef.current.click()}
@@ -944,6 +1062,7 @@ export default function CreateEducationalContent() {
             <p className="text-textLight text-sm">Click to Upload or Drag and Drop Files</p>
             <input ref={courseFileInputRef} type="file" multiple className="hidden" onChange={handleCourseFileUpload} />
           </div>
+          {errors.courseFiles && <p className="text-red-500 text-sm mt-1">{errors.courseFiles}</p>}
           {formData.courseFiles.length > 0 && (
             <div className="mt-4">
               <p className="text-sm text-textLight">{formData.courseFiles.length} files uploaded</p>
@@ -963,39 +1082,47 @@ export default function CreateEducationalContent() {
 
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block mb-3 text-[15px] font-medium text-text">Total Video Duration</label>
+            <label className="block mb-3 text-[15px] font-medium text-text">Total Video Duration <span className="text-failure">*</span></label>
             <Dropdown
               options={["1-2 hours", "3-5 hours", "6-10 hours", "10+ hours"]}
               defaultValue={formData.totalVideoDuration || "Select duration"}
               onChange={(value) => setFormData({ ...formData, totalVideoDuration: value })}
+              className={errors.totalVideoDuration ? "border-red-500" : ""}
             />
+            {errors.totalVideoDuration && <p className="text-red-500 text-sm mt-1">{errors.totalVideoDuration}</p>}
           </div>
           <div>
-            <label className="block mb-3 text-[15px] font-medium text-text">Chapters</label>
+            <label className="block mb-3 text-[15px] font-medium text-text">Chapters <span className="text-failure">*</span></label>
             <Dropdown
               options={["1-3 chapters", "4-6 chapters", "7-10 chapters", "10+ chapters"]}
               defaultValue={formData.chapters || "Select chapters"}
               onChange={(value) => setFormData({ ...formData, chapters: value })}
+              className={errors.chapters ? "border-red-500" : ""}
             />
+            {errors.chapters && <p className="text-red-500 text-sm mt-1">{errors.chapters}</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block mb-3 text-[15px] font-medium text-text">Documents</label>
+            <label className="block mb-3 text-[15px] font-medium text-text">Documents <span className="text-failure">*</span></label>
             <Dropdown
               options={["PDF Guides", "Worksheets", "Code Samples", "Documentation", "None"]}
               defaultValue={formData.documents || "Select documents"}
               onChange={(value) => setFormData({ ...formData, documents: value })}
+              className={errors.documents ? "border-red-500" : ""}
             />
+            {errors.documents && <p className="text-red-500 text-sm mt-1">{errors.documents}</p>}
           </div>
           <div>
-            <label className="block mb-3 text-[15px] font-medium text-text">Articles</label>
+            <label className="block mb-3 text-[15px] font-medium text-text">Articles <span className="text-failure">*</span></label>
             <Dropdown
               options={["Blog Posts", "Case Studies", "Research Papers", "Tutorials", "None"]}
               defaultValue={formData.articles || "Select articles"}
               onChange={(value) => setFormData({ ...formData, articles: value })}
+              className={errors.articles ? "border-red-500" : ""}
             />
+            {errors.articles && <p className="text-red-500 text-sm mt-1">{errors.articles}</p>}
           </div>
         </div>
 
@@ -1025,6 +1152,19 @@ export default function CreateEducationalContent() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div>
+          <label className="block mb-3 text-[15px] font-medium text-text">
+            Level <span className="text-failure">*</span>
+          </label>
+          <Dropdown
+            options={levels}
+            defaultValue={formData.level || "Select Level"}
+            onChange={(value) => setFormData({ ...formData, level: value })}
+            className={errors.level ? "border-red-500" : ""}
+          />
+          {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level}</p>}
         </div>
 
         <div>
@@ -1341,7 +1481,7 @@ export default function CreateEducationalContent() {
                 </div>
                 <div>
                   <label className="formLabel block mb-3">
-                    Max Extension Time <span className="typoC1">(in days)</span>
+                    Max Extension Time <span className="text-failure">*</span>
                   </label>
                   <input
                     type="text"
@@ -1350,6 +1490,7 @@ export default function CreateEducationalContent() {
                     className={`formInput ${errors[`${currentPackage}.maxExtension`] ? "border-red-500" : ""}`}
                     value={formData.packages[currentPackage].maxExtension}
                     onChange={(e) => handlePackageInputChange(e, currentPackage)}
+                    required
                   />
                   {errors[`${currentPackage}.maxExtension`] && (
                     <p className="text-red-500 text-sm mt-1">{errors[`${currentPackage}.maxExtension`]}</p>
@@ -1600,6 +1741,10 @@ export default function CreateEducationalContent() {
                   <div>
                     <span className="text-textLight typoB3">Skills Offered:</span>
                     <p className="typoB3">{formData.skills.join(", ") || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <span className="text-textLight typoB3">Level:</span>
+                    <p className="typoB3">{formData.level || "Not provided"}</p>
                   </div>
                 </>
               )}

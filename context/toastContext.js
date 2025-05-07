@@ -1,4 +1,3 @@
-// ToastContext.js
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
@@ -42,7 +41,7 @@ export function ToastProvider({ children }) {
     // After animation duration, actually remove the toast
     setTimeout(() => {
       setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
-    }, 500); // Increased to match new animation duration
+    }, 500); // Matches animation duration
   };
 
   // Helper functions for different toast types
@@ -72,7 +71,7 @@ export function useToast() {
 // The actual toast container component
 function ToastContainer({ toasts, removeToast }) {
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed pt-10 mt-10 top-4 right-4 z-990 flex flex-col gap-2">
       {toasts.map((toast) => (
         <Toast 
           key={toast.id} 
